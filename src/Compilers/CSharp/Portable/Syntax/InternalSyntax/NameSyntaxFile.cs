@@ -43,7 +43,7 @@ internal sealed partial class IdentifierNameSyntax : SimpleNameSyntax
     internal override GreenNode? GetSlot(int index)
         => index == 0 ? this.identifier : null;
 
-    internal override SyntaxNode CreateRed(SyntaxNode? parent, int position) => new CSharp.Syntax.IdentifierNameSyntax(this, parent, position);
+    internal override SyntaxNode CreateRed(SyntaxNode? parent, int position) => new Syntax.IdentifierNameSyntax(this, parent, position);
 
     public override void Accept(CSharpSyntaxVisitor visitor) => visitor.VisitIdentifierName(this);
     public override TResult Accept<TResult>(CSharpSyntaxVisitor<TResult> visitor) => visitor.VisitIdentifierName(this);
