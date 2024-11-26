@@ -49,10 +49,7 @@ namespace Microsoft.CodeAnalysis
         private static readonly SyntaxAnnotation[] s_noAnnotations = Array.Empty<SyntaxAnnotation>();
         private static readonly IEnumerable<SyntaxAnnotation> s_noAnnotationsEnumerable = SpecializedCollections.EmptyEnumerable<SyntaxAnnotation>();
 
-        protected GreenNode(ushort kind)
-        {
-            _kind = kind;
-        }
+        protected GreenNode(ushort kind) => _kind = kind;
 
         protected GreenNode(ushort kind, int fullWidth)
         {
