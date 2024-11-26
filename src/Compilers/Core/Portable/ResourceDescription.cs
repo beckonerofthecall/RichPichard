@@ -5,10 +5,8 @@
 using System;
 using System.IO;
 using Roslyn.Utilities;
-using Microsoft.CodeAnalysis.Emit;
 using System.Reflection;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Security.Cryptography;
 
 namespace Microsoft.CodeAnalysis

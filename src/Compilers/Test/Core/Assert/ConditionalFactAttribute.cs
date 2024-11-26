@@ -12,7 +12,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Test.Utilities;
-using Microsoft.Win32;
 using Roslyn.Utilities;
 using Xunit;
 

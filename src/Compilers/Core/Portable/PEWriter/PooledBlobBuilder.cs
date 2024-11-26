@@ -4,10 +4,6 @@
 
 using System;
 using System.Reflection.Metadata;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Operations;
 using Microsoft.CodeAnalysis.PooledObjects;
 
 namespace Microsoft.Cci

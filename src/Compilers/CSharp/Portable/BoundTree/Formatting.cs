@@ -4,7 +4,6 @@
 
 using Microsoft.CodeAnalysis.PooledObjects;
 using Roslyn.Utilities;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace Microsoft.CodeAnalysis.CSharp

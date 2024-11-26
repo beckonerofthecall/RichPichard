@@ -9,7 +9,6 @@ using Microsoft.CodeAnalysis.PooledObjects;
 using Microsoft.CodeAnalysis.Collections;
 
 #if DEBUG
-using System.Diagnostics;
 #endif
 
 namespace Roslyn.Utilities

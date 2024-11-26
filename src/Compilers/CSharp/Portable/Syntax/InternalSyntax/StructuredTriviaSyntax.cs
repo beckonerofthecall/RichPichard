@@ -4,8 +4,6 @@
 
 #nullable disable
 
-using Roslyn.Utilities;
-
 namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 {
     internal abstract partial class StructuredTriviaSyntax : CSharpSyntaxNode

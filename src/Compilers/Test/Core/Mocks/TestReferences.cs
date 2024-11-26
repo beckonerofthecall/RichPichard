@@ -5,12 +5,10 @@
 #nullable disable
 
 using System;
-using System.IO;
 using System.Threading;
 using Basic.Reference.Assemblies;
 using Microsoft.CodeAnalysis;
 using Roslyn.Test.Utilities;
-using Xunit;
 
 public static class TestReferences
 {

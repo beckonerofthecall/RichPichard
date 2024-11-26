@@ -8,7 +8,6 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using Microsoft.CodeAnalysis.PooledObjects;
-using Microsoft.CodeAnalysis;
 
 namespace Roslyn.Utilities
 {

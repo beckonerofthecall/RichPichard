@@ -4,7 +4,6 @@
 
 #nullable disable
 
-using System;
 using Microsoft.CodeAnalysis.ExternalAccess.FSharp.SignatureHelp;
 using Microsoft.CodeAnalysis.SignatureHelp;
 using Roslyn.Utilities;

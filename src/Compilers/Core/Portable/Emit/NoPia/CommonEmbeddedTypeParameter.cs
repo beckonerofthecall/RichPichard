@@ -5,10 +5,8 @@
 #nullable disable
 
 using Roslyn.Utilities;
-using System;
 using System.Collections.Generic;
 using System.Reflection.Metadata;
-using Cci = Microsoft.Cci;
 
 namespace Microsoft.CodeAnalysis.Emit.NoPia
 {

@@ -17,8 +17,6 @@ using Microsoft.Metadata.Tools;
 using Roslyn.Utilities;
 using Cci = Microsoft.Cci;
 using Microsoft.CodeAnalysis.Symbols;
-using System.Diagnostics;
-using System.Reflection.Metadata.Ecma335;
 
 namespace Roslyn.Test.Utilities
 {

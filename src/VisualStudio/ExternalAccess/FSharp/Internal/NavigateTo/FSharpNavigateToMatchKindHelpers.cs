@@ -4,7 +4,6 @@
 
 #nullable disable
 
-using System;
 using Microsoft.CodeAnalysis.ExternalAccess.FSharp.NavigateTo;
 using Microsoft.CodeAnalysis.NavigateTo;
 using Roslyn.Utilities;

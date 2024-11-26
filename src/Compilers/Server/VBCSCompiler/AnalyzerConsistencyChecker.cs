@@ -4,14 +4,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using Roslyn.Utilities;
 using Microsoft.CodeAnalysis.CommandLine;
 using System.Diagnostics.CodeAnalysis;
-using Microsoft.CodeAnalysis.VisualBasic;
 
 namespace Microsoft.CodeAnalysis.CompilerServer
 {

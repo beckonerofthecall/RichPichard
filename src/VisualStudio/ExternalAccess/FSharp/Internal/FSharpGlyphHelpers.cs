@@ -4,7 +4,6 @@
 
 #nullable disable
 
-using System;
 using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.ExternalAccess.FSharp.Internal

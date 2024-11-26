@@ -5,7 +5,6 @@
 #nullable disable
 
 using System;
-using Xunit;
 using Xunit.Sdk;
 
 namespace Microsoft.CodeAnalysis.Test.Utilities

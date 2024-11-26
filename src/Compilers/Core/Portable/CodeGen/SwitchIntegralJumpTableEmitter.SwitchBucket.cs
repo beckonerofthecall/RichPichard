@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Immutable;
 using System.Diagnostics;
-using Microsoft.CodeAnalysis.Text;
 using System.Collections.Generic;
 
 namespace Microsoft.CodeAnalysis.CodeGen

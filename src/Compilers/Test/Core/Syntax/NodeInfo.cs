@@ -4,8 +4,6 @@
 
 #nullable disable
 
-using System;
-
 namespace Microsoft.CodeAnalysis.Test.Utilities
 {
     //Contains the information about a SyntaxNode that is difficult to get from a variable

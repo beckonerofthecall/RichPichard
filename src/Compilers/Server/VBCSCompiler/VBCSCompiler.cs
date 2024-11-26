@@ -5,7 +5,6 @@
 using Microsoft.CodeAnalysis.CommandLine;
 using System;
 using System.Collections.Specialized;
-using System.IO;
 
 namespace Microsoft.CodeAnalysis.CompilerServer
 {

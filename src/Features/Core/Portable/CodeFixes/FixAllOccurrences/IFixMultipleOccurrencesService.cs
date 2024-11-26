@@ -7,7 +7,6 @@
 using System;
 using System.Collections.Immutable;
 using System.Threading;
-using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.Host;
 
 namespace Microsoft.CodeAnalysis.CodeFixes;

@@ -4,14 +4,12 @@
 
 #nullable disable
 
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Reflection;
 using System.Threading;
 using Microsoft.CodeAnalysis.CodeGen;
-using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis
 {

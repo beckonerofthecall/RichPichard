@@ -4,8 +4,6 @@
 
 #nullable disable
 
-using Microsoft.CodeAnalysis;
-
 namespace Microsoft.CodeAnalysis.CSharp.Symbols
 {
     internal static class AccessibilityExtensions

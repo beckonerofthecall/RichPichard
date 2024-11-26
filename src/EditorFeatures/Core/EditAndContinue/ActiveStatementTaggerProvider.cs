@@ -4,8 +4,6 @@
 
 using System;
 using System.ComponentModel.Composition;
-using System.Diagnostics;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Editor;

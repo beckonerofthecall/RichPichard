@@ -8,7 +8,6 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.DiaSymReader
 {

@@ -10,7 +10,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Roslyn.Utilities;
 using System.Collections.Immutable;
-using System.Reflection;
 
 #if NET
 using System.Runtime.Loader;

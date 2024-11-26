@@ -5,15 +5,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.IO.Pipes;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Globalization;
 using Microsoft.CodeAnalysis.CommandLine;
-using Microsoft.CodeAnalysis.Symbols;
-using Microsoft.CodeAnalysis.CSharp;
 namespace Microsoft.CodeAnalysis.CompilerServer
 {
     /// <summary>

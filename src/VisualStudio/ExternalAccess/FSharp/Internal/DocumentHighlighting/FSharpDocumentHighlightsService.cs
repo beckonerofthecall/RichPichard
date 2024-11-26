@@ -5,7 +5,6 @@
 #nullable disable
 
 using System;
-using System.Linq;
 using System.Composition;
 using System.Collections.Immutable;
 using System.Threading;

@@ -20,7 +20,6 @@ using GetCachedDiagnosticsAsyncDelegateType = Func<Document, string, Cancellatio
 using IsAvailableAsyncDelegateType = Func<CancellationToken, Task<bool>>;
 using StartRefinementSessionAsyncDelegateType = Func<Document, Document, Diagnostic?, CancellationToken, Task>;
 using GetOnTheFlyDocsAsyncDelegateType = Func<string, ImmutableArray<string>, string, CancellationToken, Task<string>>;
-using IsAnyExclusionAsyncDelegateType = Func<CancellationToken, Task<bool>>;
 using IsFileExcludedAsyncDelegateType = Func<string, CancellationToken, Task<bool>>;
 
 internal sealed partial class CSharpCopilotCodeAnalysisService

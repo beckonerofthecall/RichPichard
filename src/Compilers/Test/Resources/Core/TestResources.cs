@@ -4,8 +4,6 @@
 
 #nullable disable
 
-using System;
-
 namespace TestResources
 {
     public static class DiagnosticTests

@@ -10,8 +10,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Build.Evaluation;
-using Microsoft.Build.Globbing;
-using Microsoft.Build.Globbing.Extensions;
 using Roslyn.Utilities;
 using MSB = Microsoft.Build;
 
