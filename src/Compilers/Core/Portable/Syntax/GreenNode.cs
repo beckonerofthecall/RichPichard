@@ -50,12 +50,7 @@ namespace Microsoft.CodeAnalysis
         private static readonly IEnumerable<SyntaxAnnotation> s_noAnnotationsEnumerable = SpecializedCollections.EmptyEnumerable<SyntaxAnnotation>();
 
         protected GreenNode(ushort kind) => _kind = kind;
-
-        protected GreenNode(ushort kind, int fullWidth)
-        {
-            _kind = kind;
-            _fullWidth = fullWidth;
-        }
+        protected GreenNode(ushort kind, int fullWidth) : this(kind) => _fullWidth = fullWidth;
 
         protected GreenNode(ushort kind, DiagnosticInfo[]? diagnostics, int fullWidth)
         {
