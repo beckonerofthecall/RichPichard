@@ -12694,18 +12694,11 @@ done:
             Debug.Assert(this.CurrentToken.Kind == SyntaxKind.NewKeyword);
 
             if (this.IsAnonymousType())
-            {
                 return this.ParseAnonymousTypeExpression();
-            }
             else if (this.IsImplicitlyTypedArray())
-            {
                 return this.ParseImplicitlyTypedArrayCreation();
-            }
             else
-            {
-                // assume object creation as default case
                 return this.ParseArrayOrObjectCreationExpression();
-            }
         }
 
         private CollectionExpressionSyntax ParseCollectionExpression()
@@ -12812,43 +12805,28 @@ done:
         private ExpressionSyntax ParseArrayOrObjectCreationExpression()
         {
             SyntaxToken @new = this.EatToken(SyntaxKind.NewKeyword);
-
             TypeSyntax type = null;
-            InitializerExpressionSyntax initializer = null;
 
             if (!IsImplicitObjectCreation())
             {
                 type = this.ParseType(ParseTypeMode.NewExpression);
                 if (type.Kind == SyntaxKind.ArrayType)
                 {
-                    // Check for an initializer.
-                    if (this.CurrentToken.Kind == SyntaxKind.OpenBraceToken)
-                    {
-                        initializer = this.ParseArrayInitializer();
-                    }
-
-                    return _syntaxFactory.ArrayCreationExpression(@new, (ArrayTypeSyntax)type, initializer);
+                    return _syntaxFactory.ArrayCreationExpression(@new, (ArrayTypeSyntax)type,
+                        this.CurrentToken.Kind == SyntaxKind.OpenBraceToken //Check for initializer.
+                            ? this.ParseArrayInitializer() : null);
                 }
             }
 
-            ArgumentListSyntax argumentList = null;
-            if (this.CurrentToken.Kind == SyntaxKind.OpenParenToken)
-            {
-                argumentList = this.ParseParenthesizedArgumentList();
-            }
-
-            if (this.CurrentToken.Kind == SyntaxKind.OpenBraceToken)
-            {
-                initializer = this.ParseObjectOrCollectionInitializer();
-            }
+            ArgumentListSyntax argumentList = this.CurrentToken.Kind == SyntaxKind.OpenParenToken ? this.ParseParenthesizedArgumentList() : null;
+            InitializerExpressionSyntax initializer = this.CurrentToken.Kind == SyntaxKind.OpenBraceToken ? this.ParseObjectOrCollectionInitializer() : null;
 
             // we need one or the other.  also, don't bother reporting this if we already complained about the new type.
             if (argumentList == null && initializer == null)
             {
                 argumentList = _syntaxFactory.ArgumentList(
                     this.EatToken(SyntaxKind.OpenParenToken, ErrorCode.ERR_BadNewExpr, reportError: type?.ContainsDiagnostics == false),
-                    default(SeparatedSyntaxList<ArgumentSyntax>),
-                    SyntaxFactory.MissingToken(SyntaxKind.CloseParenToken));
+                    default, SyntaxFactory.MissingToken(SyntaxKind.CloseParenToken));
             }
 
             return type is null
