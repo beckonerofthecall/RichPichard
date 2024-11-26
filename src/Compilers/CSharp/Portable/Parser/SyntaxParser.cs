@@ -497,6 +497,27 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         protected SyntaxToken TryEatToken(SyntaxKind kind)
             => this.CurrentToken.Kind == kind ? this.EatToken() : null;
 
+        protected void TryEatTwoKeywords(SyntaxKind kind1, SyntaxKind kind2, out SyntaxToken token1, out SyntaxToken token2)
+        {
+            token1 = token2 = null;
+            if (this.CurrentToken.Kind == kind1)
+            {
+                token1 = this.EatToken();
+                if (this.CurrentToken.Kind == kind2)
+                {
+                    token2 = this.EatToken();
+                }
+            }
+            else if (this.CurrentToken.Kind == kind2)
+            {
+                token1 = this.EatToken();
+                if (this.CurrentToken.Kind == kind1)
+                {
+                    token2 = this.EatToken();
+                }
+            }
+        }
+
         private void MoveToNextToken()
         {
             _prevTokenTrailingTrivia = _currentToken.GetTrailingTrivia();
@@ -663,7 +684,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             }
             else if (code == ErrorCode.ERR_IdentifierExpectedKW)
             {
-                return new SyntaxDiagnosticInfo(offset, width, code, /*unused*/string.Empty, SyntaxFacts.GetText(actual));
+                return new SyntaxDiagnosticInfo(offset, width, code, /*unused*/
+        string.Empty, SyntaxFacts.GetText(actual));
             }
             else
             {

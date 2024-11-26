@@ -135,7 +135,7 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Syntax.InternalSyntax
         End Sub
 
         Protected Sub New(kind As SyntaxKind, errors As DiagnosticInfo(), width As Integer)
-            MyBase.New(CType(kind, UInt16), errors, width)
+            MyBase.New(CType(kind, UInt16), errors, Nothing, width)
             GreenStats.NoteGreen(Me)
         End Sub
 

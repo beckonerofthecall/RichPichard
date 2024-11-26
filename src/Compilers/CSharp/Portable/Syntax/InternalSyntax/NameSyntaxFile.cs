@@ -31,7 +31,7 @@ internal sealed partial class IdentifierNameSyntax : SimpleNameSyntax
     internal IdentifierNameSyntax(SyntaxKind kind, SyntaxToken identifier, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context);
+        context?.Set(this);
         this.SlotCount = 1;
         this.AdjustFlagsAndWidth(identifier);
         this.identifier = identifier;
@@ -82,7 +82,7 @@ internal sealed partial class QualifiedNameSyntax : NameSyntax
     internal QualifiedNameSyntax(SyntaxKind kind, NameSyntax left, SyntaxToken dotToken, SimpleNameSyntax right, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context);
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(left);
         this.left = left;
@@ -146,7 +146,7 @@ internal sealed partial class GenericNameSyntax : SimpleNameSyntax
     internal GenericNameSyntax(SyntaxKind kind, SyntaxToken identifier, TypeArgumentListSyntax typeArgumentList, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context);
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(identifier);
         this.identifier = identifier;
@@ -208,7 +208,7 @@ internal sealed partial class AliasQualifiedNameSyntax : NameSyntax
     internal AliasQualifiedNameSyntax(SyntaxKind kind, IdentifierNameSyntax alias, SyntaxToken colonColonToken, SimpleNameSyntax name, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context);
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(alias);
         this.alias = alias;

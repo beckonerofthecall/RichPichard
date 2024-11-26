@@ -23,7 +23,7 @@ internal sealed partial class TypeArgumentListSyntax : CSharpSyntaxNode
     internal TypeArgumentListSyntax(SyntaxKind kind, SyntaxToken lessThanToken, GreenNode? arguments, SyntaxToken greaterThanToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(lessThanToken);
         this.lessThanToken = lessThanToken;
@@ -90,7 +90,7 @@ internal sealed partial class ArrayRankSpecifierSyntax : CSharpSyntaxNode
     internal ArrayRankSpecifierSyntax(SyntaxKind kind, SyntaxToken openBracketToken, GreenNode? sizes, SyntaxToken closeBracketToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(openBracketToken);
         this.openBracketToken = openBracketToken;
@@ -154,7 +154,7 @@ internal sealed partial class FunctionPointerParameterListSyntax : CSharpSyntaxN
     internal FunctionPointerParameterListSyntax(SyntaxKind kind, SyntaxToken lessThanToken, GreenNode? parameters, SyntaxToken greaterThanToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(lessThanToken);
         this.lessThanToken = lessThanToken;
@@ -221,7 +221,7 @@ internal sealed partial class FunctionPointerCallingConventionSyntax : CSharpSyn
     internal FunctionPointerCallingConventionSyntax(SyntaxKind kind, SyntaxToken managedOrUnmanagedKeyword, FunctionPointerUnmanagedCallingConventionListSyntax? unmanagedCallingConventionList, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(managedOrUnmanagedKeyword);
         this.managedOrUnmanagedKeyword = managedOrUnmanagedKeyword;
@@ -284,7 +284,7 @@ internal sealed partial class FunctionPointerUnmanagedCallingConventionListSynta
     internal FunctionPointerUnmanagedCallingConventionListSyntax(SyntaxKind kind, SyntaxToken openBracketToken, GreenNode? callingConventions, SyntaxToken closeBracketToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(openBracketToken);
         this.openBracketToken = openBracketToken;
@@ -350,7 +350,7 @@ internal sealed partial class FunctionPointerUnmanagedCallingConventionSyntax : 
     internal FunctionPointerUnmanagedCallingConventionSyntax(SyntaxKind kind, SyntaxToken name, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 1;
         this.AdjustFlagsAndWidth(name);
         this.name = name;
@@ -400,7 +400,7 @@ internal sealed partial class TupleElementSyntax : CSharpSyntaxNode
     internal TupleElementSyntax(SyntaxKind kind, TypeSyntax type, SyntaxToken? identifier, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(type);
         this.type = type;
@@ -490,7 +490,7 @@ internal sealed partial class ParenthesizedExpressionSyntax : ExpressionSyntax
     internal ParenthesizedExpressionSyntax(SyntaxKind kind, SyntaxToken openParenToken, ExpressionSyntax expression, SyntaxToken closeParenToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(openParenToken);
         this.openParenToken = openParenToken;
@@ -555,7 +555,7 @@ internal sealed partial class TupleExpressionSyntax : ExpressionSyntax
     internal TupleExpressionSyntax(SyntaxKind kind, SyntaxToken openParenToken, GreenNode? arguments, SyntaxToken closeParenToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(openParenToken);
         this.openParenToken = openParenToken;
@@ -622,7 +622,7 @@ internal sealed partial class PrefixUnaryExpressionSyntax : ExpressionSyntax
     internal PrefixUnaryExpressionSyntax(SyntaxKind kind, SyntaxToken operatorToken, ExpressionSyntax operand, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(operatorToken);
         this.operatorToken = operatorToken;
@@ -681,7 +681,7 @@ internal sealed partial class AwaitExpressionSyntax : ExpressionSyntax
     internal AwaitExpressionSyntax(SyntaxKind kind, SyntaxToken awaitKeyword, ExpressionSyntax expression, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(awaitKeyword);
         this.awaitKeyword = awaitKeyword;
@@ -740,7 +740,7 @@ internal sealed partial class PostfixUnaryExpressionSyntax : ExpressionSyntax
     internal PostfixUnaryExpressionSyntax(SyntaxKind kind, ExpressionSyntax operand, SyntaxToken operatorToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(operand);
         this.operand = operand;
@@ -800,7 +800,7 @@ internal sealed partial class MemberAccessExpressionSyntax : ExpressionSyntax
     internal MemberAccessExpressionSyntax(SyntaxKind kind, ExpressionSyntax expression, SyntaxToken operatorToken, SimpleNameSyntax name, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(expression);
         this.expression = expression;
@@ -865,7 +865,7 @@ internal sealed partial class ConditionalAccessExpressionSyntax : ExpressionSynt
     internal ConditionalAccessExpressionSyntax(SyntaxKind kind, ExpressionSyntax expression, SyntaxToken operatorToken, ExpressionSyntax whenNotNull, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(expression);
         this.expression = expression;
@@ -929,7 +929,7 @@ internal sealed partial class MemberBindingExpressionSyntax : ExpressionSyntax
     internal MemberBindingExpressionSyntax(SyntaxKind kind, SyntaxToken operatorToken, SimpleNameSyntax name, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(operatorToken);
         this.operatorToken = operatorToken;
@@ -987,7 +987,7 @@ internal sealed partial class ElementBindingExpressionSyntax : ExpressionSyntax
     internal ElementBindingExpressionSyntax(SyntaxKind kind, BracketedArgumentListSyntax argumentList, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 1;
         this.AdjustFlagsAndWidth(argumentList);
         this.argumentList = argumentList;
@@ -1038,7 +1038,7 @@ internal sealed partial class RangeExpressionSyntax : ExpressionSyntax
     internal RangeExpressionSyntax(SyntaxKind kind, ExpressionSyntax? leftOperand, SyntaxToken operatorToken, ExpressionSyntax? rightOperand, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         if (leftOperand != null)
         {
@@ -1107,7 +1107,7 @@ internal sealed partial class ImplicitElementAccessSyntax : ExpressionSyntax
     internal ImplicitElementAccessSyntax(SyntaxKind kind, BracketedArgumentListSyntax argumentList, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 1;
         this.AdjustFlagsAndWidth(argumentList);
         this.argumentList = argumentList;
@@ -1158,7 +1158,7 @@ internal sealed partial class BinaryExpressionSyntax : ExpressionSyntax
     internal BinaryExpressionSyntax(SyntaxKind kind, ExpressionSyntax left, SyntaxToken operatorToken, ExpressionSyntax right, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(left);
         this.left = left;
@@ -1223,7 +1223,7 @@ internal sealed partial class AssignmentExpressionSyntax : ExpressionSyntax
     internal AssignmentExpressionSyntax(SyntaxKind kind, ExpressionSyntax left, SyntaxToken operatorToken, ExpressionSyntax right, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(left);
         this.left = left;
@@ -1290,7 +1290,7 @@ internal sealed partial class ConditionalExpressionSyntax : ExpressionSyntax
     internal ConditionalExpressionSyntax(SyntaxKind kind, ExpressionSyntax condition, SyntaxToken questionToken, ExpressionSyntax whenTrue, SyntaxToken colonToken, ExpressionSyntax whenFalse, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 5;
         this.AdjustFlagsAndWidth(condition);
         this.condition = condition;
@@ -1371,7 +1371,7 @@ internal sealed partial class ThisExpressionSyntax : InstanceExpressionSyntax
     internal ThisExpressionSyntax(SyntaxKind kind, SyntaxToken token, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 1;
         this.AdjustFlagsAndWidth(token);
         this.token = token;
@@ -1420,7 +1420,7 @@ internal sealed partial class BaseExpressionSyntax : InstanceExpressionSyntax
     internal BaseExpressionSyntax(SyntaxKind kind, SyntaxToken token, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 1;
         this.AdjustFlagsAndWidth(token);
         this.token = token;
@@ -1469,7 +1469,7 @@ internal sealed partial class LiteralExpressionSyntax : ExpressionSyntax
     internal LiteralExpressionSyntax(SyntaxKind kind, SyntaxToken token, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 1;
         this.AdjustFlagsAndWidth(token);
         this.token = token;
@@ -1518,7 +1518,7 @@ internal sealed partial class FieldExpressionSyntax : ExpressionSyntax
     internal FieldExpressionSyntax(SyntaxKind kind, SyntaxToken token, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 1;
         this.AdjustFlagsAndWidth(token);
         this.token = token;
@@ -1570,7 +1570,7 @@ internal sealed partial class MakeRefExpressionSyntax : ExpressionSyntax
     internal MakeRefExpressionSyntax(SyntaxKind kind, SyntaxToken keyword, SyntaxToken openParenToken, ExpressionSyntax expression, SyntaxToken closeParenToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 4;
         this.AdjustFlagsAndWidth(keyword);
         this.keyword = keyword;
@@ -1641,7 +1641,7 @@ internal sealed partial class RefTypeExpressionSyntax : ExpressionSyntax
     internal RefTypeExpressionSyntax(SyntaxKind kind, SyntaxToken keyword, SyntaxToken openParenToken, ExpressionSyntax expression, SyntaxToken closeParenToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 4;
         this.AdjustFlagsAndWidth(keyword);
         this.keyword = keyword;
@@ -1714,7 +1714,7 @@ internal sealed partial class RefValueExpressionSyntax : ExpressionSyntax
     internal RefValueExpressionSyntax(SyntaxKind kind, SyntaxToken keyword, SyntaxToken openParenToken, ExpressionSyntax expression, SyntaxToken comma, TypeSyntax type, SyntaxToken closeParenToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 6;
         this.AdjustFlagsAndWidth(keyword);
         this.keyword = keyword;
@@ -1795,7 +1795,7 @@ internal sealed partial class CheckedExpressionSyntax : ExpressionSyntax
     internal CheckedExpressionSyntax(SyntaxKind kind, SyntaxToken keyword, SyntaxToken openParenToken, ExpressionSyntax expression, SyntaxToken closeParenToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 4;
         this.AdjustFlagsAndWidth(keyword);
         this.keyword = keyword;
@@ -1866,7 +1866,7 @@ internal sealed partial class DefaultExpressionSyntax : ExpressionSyntax
     internal DefaultExpressionSyntax(SyntaxKind kind, SyntaxToken keyword, SyntaxToken openParenToken, TypeSyntax type, SyntaxToken closeParenToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 4;
         this.AdjustFlagsAndWidth(keyword);
         this.keyword = keyword;
@@ -1937,7 +1937,7 @@ internal sealed partial class TypeOfExpressionSyntax : ExpressionSyntax
     internal TypeOfExpressionSyntax(SyntaxKind kind, SyntaxToken keyword, SyntaxToken openParenToken, TypeSyntax type, SyntaxToken closeParenToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 4;
         this.AdjustFlagsAndWidth(keyword);
         this.keyword = keyword;
@@ -2008,7 +2008,7 @@ internal sealed partial class SizeOfExpressionSyntax : ExpressionSyntax
     internal SizeOfExpressionSyntax(SyntaxKind kind, SyntaxToken keyword, SyntaxToken openParenToken, TypeSyntax type, SyntaxToken closeParenToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 4;
         this.AdjustFlagsAndWidth(keyword);
         this.keyword = keyword;
@@ -2077,7 +2077,7 @@ internal sealed partial class InvocationExpressionSyntax : ExpressionSyntax
     internal InvocationExpressionSyntax(SyntaxKind kind, ExpressionSyntax expression, ArgumentListSyntax argumentList, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(expression);
         this.expression = expression;
@@ -2136,7 +2136,7 @@ internal sealed partial class ElementAccessExpressionSyntax : ExpressionSyntax
     internal ElementAccessExpressionSyntax(SyntaxKind kind, ExpressionSyntax expression, BracketedArgumentListSyntax argumentList, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(expression);
         this.expression = expression;
@@ -2207,7 +2207,7 @@ internal sealed partial class ArgumentListSyntax : BaseArgumentListSyntax
     internal ArgumentListSyntax(SyntaxKind kind, SyntaxToken openParenToken, GreenNode? arguments, SyntaxToken closeParenToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(openParenToken);
         this.openParenToken = openParenToken;
@@ -2275,7 +2275,7 @@ internal sealed partial class BracketedArgumentListSyntax : BaseArgumentListSynt
     internal BracketedArgumentListSyntax(SyntaxKind kind, SyntaxToken openBracketToken, GreenNode? arguments, SyntaxToken closeBracketToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(openBracketToken);
         this.openBracketToken = openBracketToken;
@@ -2343,7 +2343,7 @@ internal sealed partial class ArgumentSyntax : CSharpSyntaxNode
     internal ArgumentSyntax(SyntaxKind kind, NameColonSyntax? nameColon, SyntaxToken? refKindKeyword, ExpressionSyntax expression, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         if (nameColon != null)
         {
@@ -2423,7 +2423,7 @@ internal sealed partial class ExpressionColonSyntax : BaseExpressionColonSyntax
     internal ExpressionColonSyntax(SyntaxKind kind, ExpressionSyntax expression, SyntaxToken colonToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(expression);
         this.expression = expression;
@@ -2480,7 +2480,7 @@ internal sealed partial class NameColonSyntax : BaseExpressionColonSyntax
     internal NameColonSyntax(SyntaxKind kind, IdentifierNameSyntax name, SyntaxToken colonToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(name);
         this.name = name;
@@ -2539,7 +2539,7 @@ internal sealed partial class DeclarationExpressionSyntax : ExpressionSyntax
     internal DeclarationExpressionSyntax(SyntaxKind kind, TypeSyntax type, VariableDesignationSyntax designation, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(type);
         this.type = type;
@@ -2599,7 +2599,7 @@ internal sealed partial class CastExpressionSyntax : ExpressionSyntax
     internal CastExpressionSyntax(SyntaxKind kind, SyntaxToken openParenToken, TypeSyntax type, SyntaxToken closeParenToken, ExpressionSyntax expression, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 4;
         this.AdjustFlagsAndWidth(openParenToken);
         this.openParenToken = openParenToken;
@@ -2693,7 +2693,7 @@ internal sealed partial class AnonymousMethodExpressionSyntax : AnonymousFunctio
     internal AnonymousMethodExpressionSyntax(SyntaxKind kind, GreenNode? modifiers, SyntaxToken delegateKeyword, ParameterListSyntax? parameterList, BlockSyntax block, ExpressionSyntax? expressionBody, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 5;
         if (modifiers != null)
         {
@@ -2798,7 +2798,7 @@ internal sealed partial class SimpleLambdaExpressionSyntax : LambdaExpressionSyn
     internal SimpleLambdaExpressionSyntax(SyntaxKind kind, GreenNode? attributeLists, GreenNode? modifiers, ParameterSyntax parameter, SyntaxToken arrowToken, BlockSyntax? block, ExpressionSyntax? expressionBody, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 6;
         if (attributeLists != null)
         {
@@ -2892,7 +2892,7 @@ internal sealed partial class RefExpressionSyntax : ExpressionSyntax
     internal RefExpressionSyntax(SyntaxKind kind, SyntaxToken refKeyword, ExpressionSyntax expression, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(refKeyword);
         this.refKeyword = refKeyword;
@@ -2954,7 +2954,7 @@ internal sealed partial class ParenthesizedLambdaExpressionSyntax : LambdaExpres
     internal ParenthesizedLambdaExpressionSyntax(SyntaxKind kind, GreenNode? attributeLists, GreenNode? modifiers, TypeSyntax? returnType, ParameterListSyntax parameterList, SyntaxToken arrowToken, BlockSyntax? block, ExpressionSyntax? expressionBody, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 7;
         if (attributeLists != null)
         {
@@ -3057,7 +3057,7 @@ internal sealed partial class InitializerExpressionSyntax : ExpressionSyntax
     internal InitializerExpressionSyntax(SyntaxKind kind, SyntaxToken openBraceToken, GreenNode? expressions, SyntaxToken closeBraceToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(openBraceToken);
         this.openBraceToken = openBraceToken;
@@ -3141,7 +3141,7 @@ internal sealed partial class ImplicitObjectCreationExpressionSyntax : BaseObjec
     internal ImplicitObjectCreationExpressionSyntax(SyntaxKind kind, SyntaxToken newKeyword, ArgumentListSyntax argumentList, InitializerExpressionSyntax? initializer, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(newKeyword);
         this.newKeyword = newKeyword;
@@ -3210,7 +3210,7 @@ internal sealed partial class ObjectCreationExpressionSyntax : BaseObjectCreatio
     internal ObjectCreationExpressionSyntax(SyntaxKind kind, SyntaxToken newKeyword, TypeSyntax type, ArgumentListSyntax? argumentList, InitializerExpressionSyntax? initializer, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 4;
         this.AdjustFlagsAndWidth(newKeyword);
         this.newKeyword = newKeyword;
@@ -3285,7 +3285,7 @@ internal sealed partial class WithExpressionSyntax : ExpressionSyntax
     internal WithExpressionSyntax(SyntaxKind kind, ExpressionSyntax expression, SyntaxToken withKeyword, InitializerExpressionSyntax initializer, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(expression);
         this.expression = expression;
@@ -3346,7 +3346,7 @@ internal sealed partial class AnonymousObjectMemberDeclaratorSyntax : CSharpSynt
     internal AnonymousObjectMemberDeclaratorSyntax(SyntaxKind kind, NameEqualsSyntax? nameEquals, ExpressionSyntax expression, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         if (nameEquals != null)
         {
@@ -3410,7 +3410,7 @@ internal sealed partial class AnonymousObjectCreationExpressionSyntax : Expressi
     internal AnonymousObjectCreationExpressionSyntax(SyntaxKind kind, SyntaxToken newKeyword, SyntaxToken openBraceToken, GreenNode? initializers, SyntaxToken closeBraceToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 4;
         this.AdjustFlagsAndWidth(newKeyword);
         this.newKeyword = newKeyword;
@@ -3483,7 +3483,7 @@ internal sealed partial class ArrayCreationExpressionSyntax : ExpressionSyntax
     internal ArrayCreationExpressionSyntax(SyntaxKind kind, SyntaxToken newKeyword, ArrayTypeSyntax type, InitializerExpressionSyntax? initializer, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(newKeyword);
         this.newKeyword = newKeyword;
@@ -3553,7 +3553,7 @@ internal sealed partial class ImplicitArrayCreationExpressionSyntax : Expression
     internal ImplicitArrayCreationExpressionSyntax(SyntaxKind kind, SyntaxToken newKeyword, SyntaxToken openBracketToken, GreenNode? commas, SyntaxToken closeBracketToken, InitializerExpressionSyntax initializer, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 5;
         this.AdjustFlagsAndWidth(newKeyword);
         this.newKeyword = newKeyword;
@@ -3631,7 +3631,7 @@ internal sealed partial class StackAllocArrayCreationExpressionSyntax : Expressi
     internal StackAllocArrayCreationExpressionSyntax(SyntaxKind kind, SyntaxToken stackAllocKeyword, TypeSyntax type, InitializerExpressionSyntax? initializer, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(stackAllocKeyword);
         this.stackAllocKeyword = stackAllocKeyword;
@@ -3700,7 +3700,7 @@ internal sealed partial class ImplicitStackAllocArrayCreationExpressionSyntax : 
     internal ImplicitStackAllocArrayCreationExpressionSyntax(SyntaxKind kind, SyntaxToken stackAllocKeyword, SyntaxToken openBracketToken, SyntaxToken closeBracketToken, InitializerExpressionSyntax initializer, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 4;
         this.AdjustFlagsAndWidth(stackAllocKeyword);
         this.stackAllocKeyword = stackAllocKeyword;
@@ -3769,7 +3769,7 @@ internal sealed partial class CollectionExpressionSyntax : ExpressionSyntax
     internal CollectionExpressionSyntax(SyntaxKind kind, SyntaxToken openBracketToken, GreenNode? elements, SyntaxToken closeBracketToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(openBracketToken);
         this.openBracketToken = openBracketToken;
@@ -3839,7 +3839,7 @@ internal sealed partial class ExpressionElementSyntax : CollectionElementSyntax
     internal ExpressionElementSyntax(SyntaxKind kind, ExpressionSyntax expression, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 1;
         this.AdjustFlagsAndWidth(expression);
         this.expression = expression;
@@ -3887,7 +3887,7 @@ internal sealed partial class SpreadElementSyntax : CollectionElementSyntax
     internal SpreadElementSyntax(SyntaxKind kind, SyntaxToken operatorToken, ExpressionSyntax expression, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(operatorToken);
         this.operatorToken = operatorToken;
@@ -3957,7 +3957,7 @@ internal sealed partial class QueryExpressionSyntax : ExpressionSyntax
     internal QueryExpressionSyntax(SyntaxKind kind, FromClauseSyntax fromClause, QueryBodySyntax body, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(fromClause);
         this.fromClause = fromClause;
@@ -4014,7 +4014,7 @@ internal sealed partial class QueryBodySyntax : CSharpSyntaxNode
     internal QueryBodySyntax(SyntaxKind kind, GreenNode? clauses, SelectOrGroupClauseSyntax selectOrGroup, QueryContinuationSyntax? continuation, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         if (clauses != null)
         {
@@ -4083,7 +4083,7 @@ internal sealed partial class FromClauseSyntax : QueryClauseSyntax
     internal FromClauseSyntax(SyntaxKind kind, SyntaxToken fromKeyword, TypeSyntax? type, SyntaxToken identifier, SyntaxToken inKeyword, ExpressionSyntax expression, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 5;
         this.AdjustFlagsAndWidth(fromKeyword);
         this.fromKeyword = fromKeyword;
@@ -4157,7 +4157,7 @@ internal sealed partial class LetClauseSyntax : QueryClauseSyntax
     internal LetClauseSyntax(SyntaxKind kind, SyntaxToken letKeyword, SyntaxToken identifier, SyntaxToken equalsToken, ExpressionSyntax expression, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 4;
         this.AdjustFlagsAndWidth(letKeyword);
         this.letKeyword = letKeyword;
@@ -4230,7 +4230,7 @@ internal sealed partial class JoinClauseSyntax : QueryClauseSyntax
     internal JoinClauseSyntax(SyntaxKind kind, SyntaxToken joinKeyword, TypeSyntax? type, SyntaxToken identifier, SyntaxToken inKeyword, ExpressionSyntax inExpression, SyntaxToken onKeyword, ExpressionSyntax leftExpression, SyntaxToken equalsKeyword, ExpressionSyntax rightExpression, JoinIntoClauseSyntax? into, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 10;
         this.AdjustFlagsAndWidth(joinKeyword);
         this.joinKeyword = joinKeyword;
@@ -4324,7 +4324,7 @@ internal sealed partial class JoinIntoClauseSyntax : CSharpSyntaxNode
     internal JoinIntoClauseSyntax(SyntaxKind kind, SyntaxToken intoKeyword, SyntaxToken identifier, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(intoKeyword);
         this.intoKeyword = intoKeyword;
@@ -4381,7 +4381,7 @@ internal sealed partial class WhereClauseSyntax : QueryClauseSyntax
     internal WhereClauseSyntax(SyntaxKind kind, SyntaxToken whereKeyword, ExpressionSyntax condition, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(whereKeyword);
         this.whereKeyword = whereKeyword;
@@ -4437,7 +4437,7 @@ internal sealed partial class OrderByClauseSyntax : QueryClauseSyntax
     internal OrderByClauseSyntax(SyntaxKind kind, SyntaxToken orderByKeyword, GreenNode? orderings, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(orderByKeyword);
         this.orderByKeyword = orderByKeyword;
@@ -4509,7 +4509,7 @@ internal sealed partial class OrderingSyntax : CSharpSyntaxNode
     internal OrderingSyntax(SyntaxKind kind, ExpressionSyntax expression, SyntaxToken? ascendingOrDescendingKeyword, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(expression);
         this.expression = expression;
@@ -4568,7 +4568,7 @@ internal sealed partial class SelectClauseSyntax : SelectOrGroupClauseSyntax
     internal SelectClauseSyntax(SyntaxKind kind, SyntaxToken selectKeyword, ExpressionSyntax expression, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(selectKeyword);
         this.selectKeyword = selectKeyword;
@@ -4626,7 +4626,7 @@ internal sealed partial class GroupClauseSyntax : SelectOrGroupClauseSyntax
     internal GroupClauseSyntax(SyntaxKind kind, SyntaxToken groupKeyword, ExpressionSyntax groupExpression, SyntaxToken byKeyword, ExpressionSyntax byExpression, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 4;
         this.AdjustFlagsAndWidth(groupKeyword);
         this.groupKeyword = groupKeyword;
@@ -4691,7 +4691,7 @@ internal sealed partial class QueryContinuationSyntax : CSharpSyntaxNode
     internal QueryContinuationSyntax(SyntaxKind kind, SyntaxToken intoKeyword, SyntaxToken identifier, QueryBodySyntax body, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(intoKeyword);
         this.intoKeyword = intoKeyword;
@@ -4752,7 +4752,7 @@ internal sealed partial class OmittedArraySizeExpressionSyntax : ExpressionSynta
     internal OmittedArraySizeExpressionSyntax(SyntaxKind kind, SyntaxToken omittedArraySizeExpressionToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 1;
         this.AdjustFlagsAndWidth(omittedArraySizeExpressionToken);
         this.omittedArraySizeExpressionToken = omittedArraySizeExpressionToken;
@@ -4802,7 +4802,7 @@ internal sealed partial class InterpolatedStringExpressionSyntax : ExpressionSyn
     internal InterpolatedStringExpressionSyntax(SyntaxKind kind, SyntaxToken stringStartToken, GreenNode? contents, SyntaxToken stringEndToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(stringStartToken);
         this.stringStartToken = stringStartToken;
@@ -4870,7 +4870,7 @@ internal sealed partial class IsPatternExpressionSyntax : ExpressionSyntax
     internal IsPatternExpressionSyntax(SyntaxKind kind, ExpressionSyntax expression, SyntaxToken isKeyword, PatternSyntax pattern, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(expression);
         this.expression = expression;
@@ -4932,7 +4932,7 @@ internal sealed partial class ThrowExpressionSyntax : ExpressionSyntax
     internal ThrowExpressionSyntax(SyntaxKind kind, SyntaxToken throwKeyword, ExpressionSyntax expression, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(throwKeyword);
         this.throwKeyword = throwKeyword;
@@ -4988,7 +4988,7 @@ internal sealed partial class WhenClauseSyntax : CSharpSyntaxNode
     internal WhenClauseSyntax(SyntaxKind kind, SyntaxToken whenKeyword, ExpressionSyntax condition, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(whenKeyword);
         this.whenKeyword = whenKeyword;
@@ -5050,7 +5050,7 @@ internal sealed partial class DiscardPatternSyntax : PatternSyntax
     internal DiscardPatternSyntax(SyntaxKind kind, SyntaxToken underscoreToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 1;
         this.AdjustFlagsAndWidth(underscoreToken);
         this.underscoreToken = underscoreToken;
@@ -5098,7 +5098,7 @@ internal sealed partial class DeclarationPatternSyntax : PatternSyntax
     internal DeclarationPatternSyntax(SyntaxKind kind, TypeSyntax type, VariableDesignationSyntax designation, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(type);
         this.type = type;
@@ -5154,7 +5154,7 @@ internal sealed partial class VarPatternSyntax : PatternSyntax
     internal VarPatternSyntax(SyntaxKind kind, SyntaxToken varKeyword, VariableDesignationSyntax designation, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(varKeyword);
         this.varKeyword = varKeyword;
@@ -5211,7 +5211,7 @@ internal sealed partial class RecursivePatternSyntax : PatternSyntax
     internal RecursivePatternSyntax(SyntaxKind kind, TypeSyntax? type, PositionalPatternClauseSyntax? positionalPatternClause, PropertyPatternClauseSyntax? propertyPatternClause, VariableDesignationSyntax? designation, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 4;
         if (type != null)
         {
@@ -5288,7 +5288,7 @@ internal sealed partial class PositionalPatternClauseSyntax : CSharpSyntaxNode
     internal PositionalPatternClauseSyntax(SyntaxKind kind, SyntaxToken openParenToken, GreenNode? subpatterns, SyntaxToken closeParenToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(openParenToken);
         this.openParenToken = openParenToken;
@@ -5352,7 +5352,7 @@ internal sealed partial class PropertyPatternClauseSyntax : CSharpSyntaxNode
     internal PropertyPatternClauseSyntax(SyntaxKind kind, SyntaxToken openBraceToken, GreenNode? subpatterns, SyntaxToken closeBraceToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(openBraceToken);
         this.openBraceToken = openBraceToken;
@@ -5415,7 +5415,7 @@ internal sealed partial class SubpatternSyntax : CSharpSyntaxNode
     internal SubpatternSyntax(SyntaxKind kind, BaseExpressionColonSyntax? expressionColon, PatternSyntax pattern, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         if (expressionColon != null)
         {
@@ -5473,7 +5473,7 @@ internal sealed partial class ConstantPatternSyntax : PatternSyntax
     internal ConstantPatternSyntax(SyntaxKind kind, ExpressionSyntax expression, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 1;
         this.AdjustFlagsAndWidth(expression);
         this.expression = expression;
@@ -5523,7 +5523,7 @@ internal sealed partial class ParenthesizedPatternSyntax : PatternSyntax
     internal ParenthesizedPatternSyntax(SyntaxKind kind, SyntaxToken openParenToken, PatternSyntax pattern, SyntaxToken closeParenToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(openParenToken);
         this.openParenToken = openParenToken;
@@ -5583,7 +5583,7 @@ internal sealed partial class RelationalPatternSyntax : PatternSyntax
     internal RelationalPatternSyntax(SyntaxKind kind, SyntaxToken operatorToken, ExpressionSyntax expression, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(operatorToken);
         this.operatorToken = operatorToken;
@@ -5639,7 +5639,7 @@ internal sealed partial class TypePatternSyntax : PatternSyntax
     internal TypePatternSyntax(SyntaxKind kind, TypeSyntax type, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 1;
         this.AdjustFlagsAndWidth(type);
         this.type = type;
@@ -5689,7 +5689,7 @@ internal sealed partial class BinaryPatternSyntax : PatternSyntax
     internal BinaryPatternSyntax(SyntaxKind kind, PatternSyntax left, SyntaxToken operatorToken, PatternSyntax right, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(left);
         this.left = left;
@@ -5749,7 +5749,7 @@ internal sealed partial class UnaryPatternSyntax : PatternSyntax
     internal UnaryPatternSyntax(SyntaxKind kind, SyntaxToken operatorToken, PatternSyntax pattern, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(operatorToken);
         this.operatorToken = operatorToken;
@@ -5807,7 +5807,7 @@ internal sealed partial class ListPatternSyntax : PatternSyntax
     internal ListPatternSyntax(SyntaxKind kind, SyntaxToken openBracketToken, GreenNode? patterns, SyntaxToken closeBracketToken, VariableDesignationSyntax? designation, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 4;
         this.AdjustFlagsAndWidth(openBracketToken);
         this.openBracketToken = openBracketToken;
@@ -5877,7 +5877,7 @@ internal sealed partial class SlicePatternSyntax : PatternSyntax
     internal SlicePatternSyntax(SyntaxKind kind, SyntaxToken dotDotToken, PatternSyntax? pattern, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(dotDotToken);
         this.dotDotToken = dotDotToken;
@@ -5942,7 +5942,7 @@ internal sealed partial class InterpolatedStringTextSyntax : InterpolatedStringC
     internal InterpolatedStringTextSyntax(SyntaxKind kind, SyntaxToken textToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 1;
         this.AdjustFlagsAndWidth(textToken);
         this.textToken = textToken;
@@ -5994,7 +5994,7 @@ internal sealed partial class InterpolationSyntax : InterpolatedStringContentSyn
     internal InterpolationSyntax(SyntaxKind kind, SyntaxToken openBraceToken, ExpressionSyntax expression, InterpolationAlignmentClauseSyntax? alignmentClause, InterpolationFormatClauseSyntax? formatClause, SyntaxToken closeBraceToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 5;
         this.AdjustFlagsAndWidth(openBraceToken);
         this.openBraceToken = openBraceToken;
@@ -6072,7 +6072,7 @@ internal sealed partial class InterpolationAlignmentClauseSyntax : CSharpSyntaxN
     internal InterpolationAlignmentClauseSyntax(SyntaxKind kind, SyntaxToken commaToken, ExpressionSyntax value, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(commaToken);
         this.commaToken = commaToken;
@@ -6128,7 +6128,7 @@ internal sealed partial class InterpolationFormatClauseSyntax : CSharpSyntaxNode
     internal InterpolationFormatClauseSyntax(SyntaxKind kind, SyntaxToken colonToken, SyntaxToken formatStringToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(colonToken);
         this.colonToken = colonToken;
@@ -6186,7 +6186,7 @@ internal sealed partial class GlobalStatementSyntax : MemberDeclarationSyntax
     internal GlobalStatementSyntax(SyntaxKind kind, GreenNode? attributeLists, GreenNode? modifiers, StatementSyntax statement, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         if (attributeLists != null)
         {
@@ -6264,7 +6264,7 @@ internal sealed partial class BlockSyntax : StatementSyntax
     internal BlockSyntax(SyntaxKind kind, GreenNode? attributeLists, SyntaxToken openBraceToken, GreenNode? statements, SyntaxToken closeBraceToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 4;
         if (attributeLists != null)
         {
@@ -6342,7 +6342,7 @@ internal sealed partial class LocalFunctionStatementSyntax : StatementSyntax
     internal LocalFunctionStatementSyntax(SyntaxKind kind, GreenNode? attributeLists, GreenNode? modifiers, TypeSyntax returnType, SyntaxToken identifier, TypeParameterListSyntax? typeParameterList, ParameterListSyntax parameterList, GreenNode? constraintClauses, BlockSyntax? body, ArrowExpressionClauseSyntax? expressionBody, SyntaxToken? semicolonToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 10;
         if (attributeLists != null)
         {
@@ -6457,7 +6457,7 @@ internal sealed partial class LocalDeclarationStatementSyntax : StatementSyntax
     internal LocalDeclarationStatementSyntax(SyntaxKind kind, GreenNode? attributeLists, SyntaxToken? awaitKeyword, SyntaxToken? usingKeyword, GreenNode? modifiers, VariableDeclarationSyntax declaration, SyntaxToken semicolonToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 6;
         if (attributeLists != null)
         {
@@ -6542,7 +6542,7 @@ internal sealed partial class VariableDeclarationSyntax : CSharpSyntaxNode
     internal VariableDeclarationSyntax(SyntaxKind kind, TypeSyntax type, GreenNode? variables, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(type);
         this.type = type;
@@ -6602,7 +6602,7 @@ internal sealed partial class VariableDeclaratorSyntax : CSharpSyntaxNode
     internal VariableDeclaratorSyntax(SyntaxKind kind, SyntaxToken identifier, BracketedArgumentListSyntax? argumentList, EqualsValueClauseSyntax? initializer, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(identifier);
         this.identifier = identifier;
@@ -6669,7 +6669,7 @@ internal sealed partial class EqualsValueClauseSyntax : CSharpSyntaxNode
     internal EqualsValueClauseSyntax(SyntaxKind kind, SyntaxToken equalsToken, ExpressionSyntax value, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(equalsToken);
         this.equalsToken = equalsToken;
@@ -6731,7 +6731,7 @@ internal sealed partial class SingleVariableDesignationSyntax : VariableDesignat
     internal SingleVariableDesignationSyntax(SyntaxKind kind, SyntaxToken identifier, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 1;
         this.AdjustFlagsAndWidth(identifier);
         this.identifier = identifier;
@@ -6778,7 +6778,7 @@ internal sealed partial class DiscardDesignationSyntax : VariableDesignationSynt
     internal DiscardDesignationSyntax(SyntaxKind kind, SyntaxToken underscoreToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 1;
         this.AdjustFlagsAndWidth(underscoreToken);
         this.underscoreToken = underscoreToken;
@@ -6827,7 +6827,7 @@ internal sealed partial class ParenthesizedVariableDesignationSyntax : VariableD
     internal ParenthesizedVariableDesignationSyntax(SyntaxKind kind, SyntaxToken openParenToken, GreenNode? variables, SyntaxToken closeParenToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(openParenToken);
         this.openParenToken = openParenToken;
@@ -6891,7 +6891,7 @@ internal sealed partial class ExpressionStatementSyntax : StatementSyntax
     internal ExpressionStatementSyntax(SyntaxKind kind, GreenNode? attributeLists, ExpressionSyntax expression, SyntaxToken semicolonToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         if (attributeLists != null)
         {
@@ -6954,7 +6954,7 @@ internal sealed partial class EmptyStatementSyntax : StatementSyntax
     internal EmptyStatementSyntax(SyntaxKind kind, GreenNode? attributeLists, SyntaxToken semicolonToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         if (attributeLists != null)
         {
@@ -7016,7 +7016,7 @@ internal sealed partial class LabeledStatementSyntax : StatementSyntax
     internal LabeledStatementSyntax(SyntaxKind kind, GreenNode? attributeLists, SyntaxToken identifier, SyntaxToken colonToken, StatementSyntax statement, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 4;
         if (attributeLists != null)
         {
@@ -7091,7 +7091,7 @@ internal sealed partial class GotoStatementSyntax : StatementSyntax
     internal GotoStatementSyntax(SyntaxKind kind, GreenNode? attributeLists, SyntaxToken gotoKeyword, SyntaxToken? caseOrDefaultKeyword, ExpressionSyntax? expression, SyntaxToken semicolonToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 5;
         if (attributeLists != null)
         {
@@ -7181,7 +7181,7 @@ internal sealed partial class BreakStatementSyntax : StatementSyntax
     internal BreakStatementSyntax(SyntaxKind kind, GreenNode? attributeLists, SyntaxToken breakKeyword, SyntaxToken semicolonToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         if (attributeLists != null)
         {
@@ -7245,7 +7245,7 @@ internal sealed partial class ContinueStatementSyntax : StatementSyntax
     internal ContinueStatementSyntax(SyntaxKind kind, GreenNode? attributeLists, SyntaxToken continueKeyword, SyntaxToken semicolonToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         if (attributeLists != null)
         {
@@ -7310,7 +7310,7 @@ internal sealed partial class ReturnStatementSyntax : StatementSyntax
     internal ReturnStatementSyntax(SyntaxKind kind, GreenNode? attributeLists, SyntaxToken returnKeyword, ExpressionSyntax? expression, SyntaxToken semicolonToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 4;
         if (attributeLists != null)
         {
@@ -7382,7 +7382,7 @@ internal sealed partial class ThrowStatementSyntax : StatementSyntax
     internal ThrowStatementSyntax(SyntaxKind kind, GreenNode? attributeLists, SyntaxToken throwKeyword, ExpressionSyntax? expression, SyntaxToken semicolonToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 4;
         if (attributeLists != null)
         {
@@ -7455,7 +7455,7 @@ internal sealed partial class YieldStatementSyntax : StatementSyntax
     internal YieldStatementSyntax(SyntaxKind kind, GreenNode? attributeLists, SyntaxToken yieldKeyword, SyntaxToken returnOrBreakKeyword, ExpressionSyntax? expression, SyntaxToken semicolonToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 5;
         if (attributeLists != null)
         {
@@ -7533,7 +7533,7 @@ internal sealed partial class WhileStatementSyntax : StatementSyntax
     internal WhileStatementSyntax(SyntaxKind kind, GreenNode? attributeLists, SyntaxToken whileKeyword, SyntaxToken openParenToken, ExpressionSyntax condition, SyntaxToken closeParenToken, StatementSyntax statement, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 6;
         if (attributeLists != null)
         {
@@ -7614,7 +7614,7 @@ internal sealed partial class DoStatementSyntax : StatementSyntax
     internal DoStatementSyntax(SyntaxKind kind, GreenNode? attributeLists, SyntaxToken doKeyword, StatementSyntax statement, SyntaxToken whileKeyword, SyntaxToken openParenToken, ExpressionSyntax condition, SyntaxToken closeParenToken, SyntaxToken semicolonToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 8;
         if (attributeLists != null)
         {
@@ -7706,7 +7706,7 @@ internal sealed partial class ForStatementSyntax : StatementSyntax
     internal ForStatementSyntax(SyntaxKind kind, GreenNode? attributeLists, SyntaxToken forKeyword, SyntaxToken openParenToken, VariableDeclarationSyntax? declaration, GreenNode? initializers, SyntaxToken firstSemicolonToken, ExpressionSyntax? condition, SyntaxToken secondSemicolonToken, GreenNode? incrementors, SyntaxToken closeParenToken, StatementSyntax statement, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 11;
         if (attributeLists != null)
         {
@@ -7842,7 +7842,7 @@ internal sealed partial class ForEachStatementSyntax : CommonForEachStatementSyn
     internal ForEachStatementSyntax(SyntaxKind kind, GreenNode? attributeLists, SyntaxToken? awaitKeyword, SyntaxToken forEachKeyword, SyntaxToken openParenToken, TypeSyntax type, SyntaxToken identifier, SyntaxToken inKeyword, ExpressionSyntax expression, SyntaxToken closeParenToken, StatementSyntax statement, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 10;
         if (attributeLists != null)
         {
@@ -7944,7 +7944,7 @@ internal sealed partial class ForEachVariableStatementSyntax : CommonForEachStat
     internal ForEachVariableStatementSyntax(SyntaxKind kind, GreenNode? attributeLists, SyntaxToken? awaitKeyword, SyntaxToken forEachKeyword, SyntaxToken openParenToken, ExpressionSyntax variable, SyntaxToken inKeyword, ExpressionSyntax expression, SyntaxToken closeParenToken, StatementSyntax statement, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 9;
         if (attributeLists != null)
         {
@@ -8046,7 +8046,7 @@ internal sealed partial class UsingStatementSyntax : StatementSyntax
     internal UsingStatementSyntax(SyntaxKind kind, GreenNode? attributeLists, SyntaxToken? awaitKeyword, SyntaxToken usingKeyword, SyntaxToken openParenToken, VariableDeclarationSyntax? declaration, ExpressionSyntax? expression, SyntaxToken closeParenToken, StatementSyntax statement, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 8;
         if (attributeLists != null)
         {
@@ -8142,7 +8142,7 @@ internal sealed partial class FixedStatementSyntax : StatementSyntax
     internal FixedStatementSyntax(SyntaxKind kind, GreenNode? attributeLists, SyntaxToken fixedKeyword, SyntaxToken openParenToken, VariableDeclarationSyntax declaration, SyntaxToken closeParenToken, StatementSyntax statement, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 6;
         if (attributeLists != null)
         {
@@ -8218,7 +8218,7 @@ internal sealed partial class CheckedStatementSyntax : StatementSyntax
     internal CheckedStatementSyntax(SyntaxKind kind, GreenNode? attributeLists, SyntaxToken keyword, BlockSyntax block, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         if (attributeLists != null)
         {
@@ -8282,7 +8282,7 @@ internal sealed partial class UnsafeStatementSyntax : StatementSyntax
     internal UnsafeStatementSyntax(SyntaxKind kind, GreenNode? attributeLists, SyntaxToken unsafeKeyword, BlockSyntax block, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         if (attributeLists != null)
         {
@@ -8349,7 +8349,7 @@ internal sealed partial class LockStatementSyntax : StatementSyntax
     internal LockStatementSyntax(SyntaxKind kind, GreenNode? attributeLists, SyntaxToken lockKeyword, SyntaxToken openParenToken, ExpressionSyntax expression, SyntaxToken closeParenToken, StatementSyntax statement, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 6;
         if (attributeLists != null)
         {
@@ -8432,7 +8432,7 @@ internal sealed partial class IfStatementSyntax : StatementSyntax
     internal IfStatementSyntax(SyntaxKind kind, GreenNode? attributeLists, SyntaxToken ifKeyword, SyntaxToken openParenToken, ExpressionSyntax condition, SyntaxToken closeParenToken, StatementSyntax statement, ElseClauseSyntax? @else, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 7;
         if (attributeLists != null)
         {
@@ -8533,7 +8533,7 @@ internal sealed partial class ElseClauseSyntax : CSharpSyntaxNode
     internal ElseClauseSyntax(SyntaxKind kind, SyntaxToken elseKeyword, StatementSyntax statement, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(elseKeyword);
         this.elseKeyword = elseKeyword;
@@ -8599,7 +8599,7 @@ internal sealed partial class SwitchStatementSyntax : StatementSyntax
     internal SwitchStatementSyntax(SyntaxKind kind, GreenNode? attributeLists, SyntaxToken switchKeyword, SyntaxToken? openParenToken, ExpressionSyntax expression, SyntaxToken? closeParenToken, SyntaxToken openBraceToken, GreenNode? sections, SyntaxToken closeBraceToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 8;
         if (attributeLists != null)
         {
@@ -8713,7 +8713,7 @@ internal sealed partial class SwitchSectionSyntax : CSharpSyntaxNode
     internal SwitchSectionSyntax(SyntaxKind kind, GreenNode? labels, GreenNode? statements, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         if (labels != null)
         {
@@ -8802,7 +8802,7 @@ internal sealed partial class CasePatternSwitchLabelSyntax : SwitchLabelSyntax
     internal CasePatternSwitchLabelSyntax(SyntaxKind kind, SyntaxToken keyword, PatternSyntax pattern, WhenClauseSyntax? whenClause, SyntaxToken colonToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 4;
         this.AdjustFlagsAndWidth(keyword);
         this.keyword = keyword;
@@ -8875,7 +8875,7 @@ internal sealed partial class CaseSwitchLabelSyntax : SwitchLabelSyntax
     internal CaseSwitchLabelSyntax(SyntaxKind kind, SyntaxToken keyword, ExpressionSyntax value, SyntaxToken colonToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(keyword);
         this.keyword = keyword;
@@ -8940,7 +8940,7 @@ internal sealed partial class DefaultSwitchLabelSyntax : SwitchLabelSyntax
     internal DefaultSwitchLabelSyntax(SyntaxKind kind, SyntaxToken keyword, SyntaxToken colonToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(keyword);
         this.keyword = keyword;
@@ -9000,7 +9000,7 @@ internal sealed partial class SwitchExpressionSyntax : ExpressionSyntax
     internal SwitchExpressionSyntax(SyntaxKind kind, ExpressionSyntax governingExpression, SyntaxToken switchKeyword, SyntaxToken openBraceToken, GreenNode? arms, SyntaxToken closeBraceToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 5;
         this.AdjustFlagsAndWidth(governingExpression);
         this.governingExpression = governingExpression;
@@ -9073,7 +9073,7 @@ internal sealed partial class SwitchExpressionArmSyntax : CSharpSyntaxNode
     internal SwitchExpressionArmSyntax(SyntaxKind kind, PatternSyntax pattern, WhenClauseSyntax? whenClause, SyntaxToken equalsGreaterThanToken, ExpressionSyntax expression, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 4;
         this.AdjustFlagsAndWidth(pattern);
         this.pattern = pattern;
@@ -9143,7 +9143,7 @@ internal sealed partial class TryStatementSyntax : StatementSyntax
     internal TryStatementSyntax(SyntaxKind kind, GreenNode? attributeLists, SyntaxToken tryKeyword, BlockSyntax block, GreenNode? catches, FinallyClauseSyntax? @finally, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 5;
         if (attributeLists != null)
         {
@@ -9222,7 +9222,7 @@ internal sealed partial class CatchClauseSyntax : CSharpSyntaxNode
     internal CatchClauseSyntax(SyntaxKind kind, SyntaxToken catchKeyword, CatchDeclarationSyntax? declaration, CatchFilterClauseSyntax? filter, BlockSyntax block, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 4;
         this.AdjustFlagsAndWidth(catchKeyword);
         this.catchKeyword = catchKeyword;
@@ -9294,7 +9294,7 @@ internal sealed partial class CatchDeclarationSyntax : CSharpSyntaxNode
     internal CatchDeclarationSyntax(SyntaxKind kind, SyntaxToken openParenToken, TypeSyntax type, SyntaxToken? identifier, SyntaxToken closeParenToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 4;
         this.AdjustFlagsAndWidth(openParenToken);
         this.openParenToken = openParenToken;
@@ -9363,7 +9363,7 @@ internal sealed partial class CatchFilterClauseSyntax : CSharpSyntaxNode
     internal CatchFilterClauseSyntax(SyntaxKind kind, SyntaxToken whenKeyword, SyntaxToken openParenToken, ExpressionSyntax filterExpression, SyntaxToken closeParenToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 4;
         this.AdjustFlagsAndWidth(whenKeyword);
         this.whenKeyword = whenKeyword;
@@ -9427,7 +9427,7 @@ internal sealed partial class FinallyClauseSyntax : CSharpSyntaxNode
     internal FinallyClauseSyntax(SyntaxKind kind, SyntaxToken finallyKeyword, BlockSyntax block, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(finallyKeyword);
         this.finallyKeyword = finallyKeyword;
@@ -9486,7 +9486,7 @@ internal sealed partial class CompilationUnitSyntax : CSharpSyntaxNode
     internal CompilationUnitSyntax(SyntaxKind kind, GreenNode? externs, GreenNode? usings, GreenNode? attributeLists, GreenNode? members, SyntaxToken endOfFileToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 5;
         if (externs != null)
         {
@@ -9572,7 +9572,7 @@ internal sealed partial class ExternAliasDirectiveSyntax : CSharpSyntaxNode
     internal ExternAliasDirectiveSyntax(SyntaxKind kind, SyntaxToken externKeyword, SyntaxToken aliasKeyword, SyntaxToken identifier, SyntaxToken semicolonToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 4;
         this.AdjustFlagsAndWidth(externKeyword);
         this.externKeyword = externKeyword;
@@ -9769,7 +9769,7 @@ internal sealed partial class NamespaceDeclarationSyntax : BaseNamespaceDeclarat
     internal NamespaceDeclarationSyntax(SyntaxKind kind, GreenNode? attributeLists, GreenNode? modifiers, SyntaxToken namespaceKeyword, NameSyntax name, SyntaxToken openBraceToken, GreenNode? externs, GreenNode? usings, GreenNode? members, SyntaxToken closeBraceToken, SyntaxToken? semicolonToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 10;
         if (attributeLists != null)
         {
@@ -9882,7 +9882,7 @@ internal sealed partial class FileScopedNamespaceDeclarationSyntax : BaseNamespa
     internal FileScopedNamespaceDeclarationSyntax(SyntaxKind kind, GreenNode? attributeLists, GreenNode? modifiers, SyntaxToken namespaceKeyword, NameSyntax name, SyntaxToken semicolonToken, GreenNode? externs, GreenNode? usings, GreenNode? members, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 8;
         if (attributeLists != null)
         {
@@ -9980,7 +9980,7 @@ internal sealed partial class AttributeListSyntax : CSharpSyntaxNode
     internal AttributeListSyntax(SyntaxKind kind, SyntaxToken openBracketToken, AttributeTargetSpecifierSyntax? target, GreenNode? attributes, SyntaxToken closeBracketToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 4;
         this.AdjustFlagsAndWidth(openBracketToken);
         this.openBracketToken = openBracketToken;
@@ -10055,7 +10055,7 @@ internal sealed partial class AttributeTargetSpecifierSyntax : CSharpSyntaxNode
     internal AttributeTargetSpecifierSyntax(SyntaxKind kind, SyntaxToken identifier, SyntaxToken colonToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(identifier);
         this.identifier = identifier;
@@ -10114,7 +10114,7 @@ internal sealed partial class AttributeSyntax : CSharpSyntaxNode
     internal AttributeSyntax(SyntaxKind kind, NameSyntax name, AttributeArgumentListSyntax? argumentList, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); SetFlags(NodeFlags.ContainsAttributes);
+        context?.Set(this);SetFlags(NodeFlags.ContainsAttributes);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(name);
         this.name = name;
@@ -10176,7 +10176,7 @@ internal sealed partial class AttributeArgumentListSyntax : CSharpSyntaxNode
     internal AttributeArgumentListSyntax(SyntaxKind kind, SyntaxToken openParenToken, GreenNode? arguments, SyntaxToken closeParenToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(openParenToken);
         this.openParenToken = openParenToken;
@@ -10244,7 +10244,7 @@ internal sealed partial class AttributeArgumentSyntax : CSharpSyntaxNode
     internal AttributeArgumentSyntax(SyntaxKind kind, NameEqualsSyntax? nameEquals, NameColonSyntax? nameColon, ExpressionSyntax expression, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         if (nameEquals != null)
         {
@@ -10312,7 +10312,7 @@ internal sealed partial class NameEqualsSyntax : CSharpSyntaxNode
     internal NameEqualsSyntax(SyntaxKind kind, IdentifierNameSyntax name, SyntaxToken equalsToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(name);
         this.name = name;
@@ -10371,7 +10371,7 @@ internal sealed partial class TypeParameterListSyntax : CSharpSyntaxNode
     internal TypeParameterListSyntax(SyntaxKind kind, SyntaxToken lessThanToken, GreenNode? parameters, SyntaxToken greaterThanToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(lessThanToken);
         this.lessThanToken = lessThanToken;
@@ -10439,7 +10439,7 @@ internal sealed partial class TypeParameterSyntax : CSharpSyntaxNode
     internal TypeParameterSyntax(SyntaxKind kind, GreenNode? attributeLists, SyntaxToken? varianceKeyword, SyntaxToken identifier, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         if (attributeLists != null)
         {
@@ -10562,7 +10562,7 @@ internal sealed partial class ClassDeclarationSyntax : TypeDeclarationSyntax
     internal ClassDeclarationSyntax(SyntaxKind kind, GreenNode? attributeLists, GreenNode? modifiers, SyntaxToken keyword, SyntaxToken identifier, TypeParameterListSyntax? typeParameterList, ParameterListSyntax? parameterList, BaseListSyntax? baseList, GreenNode? constraintClauses, SyntaxToken? openBraceToken, GreenNode? members, SyntaxToken? closeBraceToken, SyntaxToken? semicolonToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 12;
         if (attributeLists != null)
         {
@@ -10700,7 +10700,7 @@ internal sealed partial class StructDeclarationSyntax : TypeDeclarationSyntax
     internal StructDeclarationSyntax(SyntaxKind kind, GreenNode? attributeLists, GreenNode? modifiers, SyntaxToken keyword, SyntaxToken identifier, TypeParameterListSyntax? typeParameterList, ParameterListSyntax? parameterList, BaseListSyntax? baseList, GreenNode? constraintClauses, SyntaxToken? openBraceToken, GreenNode? members, SyntaxToken? closeBraceToken, SyntaxToken? semicolonToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 12;
         if (attributeLists != null)
         {
@@ -10838,7 +10838,7 @@ internal sealed partial class InterfaceDeclarationSyntax : TypeDeclarationSyntax
     internal InterfaceDeclarationSyntax(SyntaxKind kind, GreenNode? attributeLists, GreenNode? modifiers, SyntaxToken keyword, SyntaxToken identifier, TypeParameterListSyntax? typeParameterList, ParameterListSyntax? parameterList, BaseListSyntax? baseList, GreenNode? constraintClauses, SyntaxToken? openBraceToken, GreenNode? members, SyntaxToken? closeBraceToken, SyntaxToken? semicolonToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 12;
         if (attributeLists != null)
         {
@@ -10976,7 +10976,7 @@ internal sealed partial class RecordDeclarationSyntax : TypeDeclarationSyntax
     internal RecordDeclarationSyntax(SyntaxKind kind, GreenNode? attributeLists, GreenNode? modifiers, SyntaxToken keyword, SyntaxToken? classOrStructKeyword, SyntaxToken identifier, TypeParameterListSyntax? typeParameterList, ParameterListSyntax? parameterList, BaseListSyntax? baseList, GreenNode? constraintClauses, SyntaxToken? openBraceToken, GreenNode? members, SyntaxToken? closeBraceToken, SyntaxToken? semicolonToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 13;
         if (attributeLists != null)
         {
@@ -11117,7 +11117,7 @@ internal sealed partial class EnumDeclarationSyntax : BaseTypeDeclarationSyntax
     internal EnumDeclarationSyntax(SyntaxKind kind, GreenNode? attributeLists, GreenNode? modifiers, SyntaxToken enumKeyword, SyntaxToken identifier, BaseListSyntax? baseList, SyntaxToken? openBraceToken, GreenNode? members, SyntaxToken? closeBraceToken, SyntaxToken? semicolonToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 9;
         if (attributeLists != null)
         {
@@ -11233,7 +11233,7 @@ internal sealed partial class DelegateDeclarationSyntax : MemberDeclarationSynta
     internal DelegateDeclarationSyntax(SyntaxKind kind, GreenNode? attributeLists, GreenNode? modifiers, SyntaxToken delegateKeyword, TypeSyntax returnType, SyntaxToken identifier, TypeParameterListSyntax? typeParameterList, ParameterListSyntax parameterList, GreenNode? constraintClauses, SyntaxToken semicolonToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 9;
         if (attributeLists != null)
         {
@@ -11337,7 +11337,7 @@ internal sealed partial class EnumMemberDeclarationSyntax : MemberDeclarationSyn
     internal EnumMemberDeclarationSyntax(SyntaxKind kind, GreenNode? attributeLists, GreenNode? modifiers, SyntaxToken identifier, EqualsValueClauseSyntax? equalsValue, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 4;
         if (attributeLists != null)
         {
@@ -11412,7 +11412,7 @@ internal sealed partial class BaseListSyntax : CSharpSyntaxNode
     internal BaseListSyntax(SyntaxKind kind, SyntaxToken colonToken, GreenNode? types, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(colonToken);
         this.colonToken = colonToken;
@@ -11482,7 +11482,7 @@ internal sealed partial class SimpleBaseTypeSyntax : BaseTypeSyntax
     internal SimpleBaseTypeSyntax(SyntaxKind kind, TypeSyntax type, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 1;
         this.AdjustFlagsAndWidth(type);
         this.type = type;
@@ -11530,7 +11530,7 @@ internal sealed partial class PrimaryConstructorBaseTypeSyntax : BaseTypeSyntax
     internal PrimaryConstructorBaseTypeSyntax(SyntaxKind kind, TypeSyntax type, ArgumentListSyntax argumentList, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(type);
         this.type = type;
@@ -11589,7 +11589,7 @@ internal sealed partial class TypeParameterConstraintClauseSyntax : CSharpSyntax
     internal TypeParameterConstraintClauseSyntax(SyntaxKind kind, SyntaxToken whereKeyword, IdentifierNameSyntax name, SyntaxToken colonToken, GreenNode? constraints, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 4;
         this.AdjustFlagsAndWidth(whereKeyword);
         this.whereKeyword = whereKeyword;
@@ -11670,7 +11670,7 @@ internal sealed partial class ConstructorConstraintSyntax : TypeParameterConstra
     internal ConstructorConstraintSyntax(SyntaxKind kind, SyntaxToken newKeyword, SyntaxToken openParenToken, SyntaxToken closeParenToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(newKeyword);
         this.newKeyword = newKeyword;
@@ -11734,7 +11734,7 @@ internal sealed partial class ClassOrStructConstraintSyntax : TypeParameterConst
     internal ClassOrStructConstraintSyntax(SyntaxKind kind, SyntaxToken classOrStructKeyword, SyntaxToken? questionToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(classOrStructKeyword);
         this.classOrStructKeyword = classOrStructKeyword;
@@ -11795,7 +11795,7 @@ internal sealed partial class TypeConstraintSyntax : TypeParameterConstraintSynt
     internal TypeConstraintSyntax(SyntaxKind kind, TypeSyntax type, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 1;
         this.AdjustFlagsAndWidth(type);
         this.type = type;
@@ -11844,7 +11844,7 @@ internal sealed partial class DefaultConstraintSyntax : TypeParameterConstraintS
     internal DefaultConstraintSyntax(SyntaxKind kind, SyntaxToken defaultKeyword, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 1;
         this.AdjustFlagsAndWidth(defaultKeyword);
         this.defaultKeyword = defaultKeyword;
@@ -11894,7 +11894,7 @@ internal sealed partial class AllowsConstraintClauseSyntax : TypeParameterConstr
     internal AllowsConstraintClauseSyntax(SyntaxKind kind, SyntaxToken allowsKeyword, GreenNode? constraints, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(allowsKeyword);
         this.allowsKeyword = allowsKeyword;
@@ -11963,7 +11963,7 @@ internal sealed partial class RefStructConstraintSyntax : AllowsConstraintSyntax
     internal RefStructConstraintSyntax(SyntaxKind kind, SyntaxToken refKeyword, SyntaxToken structKeyword, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(refKeyword);
         this.refKeyword = refKeyword;
@@ -12034,7 +12034,7 @@ internal sealed partial class FieldDeclarationSyntax : BaseFieldDeclarationSynta
     internal FieldDeclarationSyntax(SyntaxKind kind, GreenNode? attributeLists, GreenNode? modifiers, VariableDeclarationSyntax declaration, SyntaxToken semicolonToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 4;
         if (attributeLists != null)
         {
@@ -12107,7 +12107,7 @@ internal sealed partial class EventFieldDeclarationSyntax : BaseFieldDeclaration
     internal EventFieldDeclarationSyntax(SyntaxKind kind, GreenNode? attributeLists, GreenNode? modifiers, SyntaxToken eventKeyword, VariableDeclarationSyntax declaration, SyntaxToken semicolonToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 5;
         if (attributeLists != null)
         {
@@ -12181,7 +12181,7 @@ internal sealed partial class ExplicitInterfaceSpecifierSyntax : CSharpSyntaxNod
     internal ExplicitInterfaceSpecifierSyntax(SyntaxKind kind, NameSyntax name, SyntaxToken dotToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(name);
         this.name = name;
@@ -12265,7 +12265,7 @@ internal sealed partial class MethodDeclarationSyntax : BaseMethodDeclarationSyn
     internal MethodDeclarationSyntax(SyntaxKind kind, GreenNode? attributeLists, GreenNode? modifiers, TypeSyntax returnType, ExplicitInterfaceSpecifierSyntax? explicitInterfaceSpecifier, SyntaxToken identifier, TypeParameterListSyntax? typeParameterList, ParameterListSyntax parameterList, GreenNode? constraintClauses, BlockSyntax? body, ArrowExpressionClauseSyntax? expressionBody, SyntaxToken? semicolonToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 11;
         if (attributeLists != null)
         {
@@ -12395,7 +12395,7 @@ internal sealed partial class OperatorDeclarationSyntax : BaseMethodDeclarationS
     internal OperatorDeclarationSyntax(SyntaxKind kind, GreenNode? attributeLists, GreenNode? modifiers, TypeSyntax returnType, ExplicitInterfaceSpecifierSyntax? explicitInterfaceSpecifier, SyntaxToken operatorKeyword, SyntaxToken? checkedKeyword, SyntaxToken operatorToken, ParameterListSyntax parameterList, BlockSyntax? body, ArrowExpressionClauseSyntax? expressionBody, SyntaxToken? semicolonToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 11;
         if (attributeLists != null)
         {
@@ -12523,7 +12523,7 @@ internal sealed partial class ConversionOperatorDeclarationSyntax : BaseMethodDe
     internal ConversionOperatorDeclarationSyntax(SyntaxKind kind, GreenNode? attributeLists, GreenNode? modifiers, SyntaxToken implicitOrExplicitKeyword, ExplicitInterfaceSpecifierSyntax? explicitInterfaceSpecifier, SyntaxToken operatorKeyword, SyntaxToken? checkedKeyword, TypeSyntax type, ParameterListSyntax parameterList, BlockSyntax? body, ArrowExpressionClauseSyntax? expressionBody, SyntaxToken? semicolonToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 11;
         if (attributeLists != null)
         {
@@ -12648,7 +12648,7 @@ internal sealed partial class ConstructorDeclarationSyntax : BaseMethodDeclarati
     internal ConstructorDeclarationSyntax(SyntaxKind kind, GreenNode? attributeLists, GreenNode? modifiers, SyntaxToken identifier, ParameterListSyntax parameterList, ConstructorInitializerSyntax? initializer, BlockSyntax? body, ArrowExpressionClauseSyntax? expressionBody, SyntaxToken? semicolonToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 8;
         if (attributeLists != null)
         {
@@ -12750,7 +12750,7 @@ internal sealed partial class ConstructorInitializerSyntax : CSharpSyntaxNode
     internal ConstructorInitializerSyntax(SyntaxKind kind, SyntaxToken colonToken, SyntaxToken thisOrBaseKeyword, ArgumentListSyntax argumentList, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(colonToken);
         this.colonToken = colonToken;
@@ -12819,7 +12819,7 @@ internal sealed partial class DestructorDeclarationSyntax : BaseMethodDeclaratio
     internal DestructorDeclarationSyntax(SyntaxKind kind, GreenNode? attributeLists, GreenNode? modifiers, SyntaxToken tildeToken, SyntaxToken identifier, ParameterListSyntax parameterList, BlockSyntax? body, ArrowExpressionClauseSyntax? expressionBody, SyntaxToken? semicolonToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 8;
         if (attributeLists != null)
         {
@@ -12940,7 +12940,7 @@ internal sealed partial class PropertyDeclarationSyntax : BasePropertyDeclaratio
     internal PropertyDeclarationSyntax(SyntaxKind kind, GreenNode? attributeLists, GreenNode? modifiers, TypeSyntax type, ExplicitInterfaceSpecifierSyntax? explicitInterfaceSpecifier, SyntaxToken identifier, AccessorListSyntax? accessorList, ArrowExpressionClauseSyntax? expressionBody, EqualsValueClauseSyntax? initializer, SyntaxToken? semicolonToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 9;
         if (attributeLists != null)
         {
@@ -13047,7 +13047,7 @@ internal sealed partial class ArrowExpressionClauseSyntax : CSharpSyntaxNode
     internal ArrowExpressionClauseSyntax(SyntaxKind kind, SyntaxToken arrowToken, ExpressionSyntax expression, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(arrowToken);
         this.arrowToken = arrowToken;
@@ -13109,7 +13109,7 @@ internal sealed partial class EventDeclarationSyntax : BasePropertyDeclarationSy
     internal EventDeclarationSyntax(SyntaxKind kind, GreenNode? attributeLists, GreenNode? modifiers, SyntaxToken eventKeyword, TypeSyntax type, ExplicitInterfaceSpecifierSyntax? explicitInterfaceSpecifier, SyntaxToken identifier, AccessorListSyntax? accessorList, SyntaxToken? semicolonToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 8;
         if (attributeLists != null)
         {
@@ -13212,7 +13212,7 @@ internal sealed partial class IndexerDeclarationSyntax : BasePropertyDeclaration
     internal IndexerDeclarationSyntax(SyntaxKind kind, GreenNode? attributeLists, GreenNode? modifiers, TypeSyntax type, ExplicitInterfaceSpecifierSyntax? explicitInterfaceSpecifier, SyntaxToken thisKeyword, BracketedParameterListSyntax parameterList, AccessorListSyntax? accessorList, ArrowExpressionClauseSyntax? expressionBody, SyntaxToken? semicolonToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 9;
         if (attributeLists != null)
         {
@@ -13316,7 +13316,7 @@ internal sealed partial class AccessorListSyntax : CSharpSyntaxNode
     internal AccessorListSyntax(SyntaxKind kind, SyntaxToken openBraceToken, GreenNode? accessors, SyntaxToken closeBraceToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(openBraceToken);
         this.openBraceToken = openBraceToken;
@@ -13383,7 +13383,7 @@ internal sealed partial class AccessorDeclarationSyntax : CSharpSyntaxNode
     internal AccessorDeclarationSyntax(SyntaxKind kind, GreenNode? attributeLists, GreenNode? modifiers, SyntaxToken keyword, BlockSyntax? body, ArrowExpressionClauseSyntax? expressionBody, SyntaxToken? semicolonToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 6;
         if (attributeLists != null)
         {
@@ -13489,7 +13489,7 @@ internal sealed partial class ParameterListSyntax : BaseParameterListSyntax
     internal ParameterListSyntax(SyntaxKind kind, SyntaxToken openParenToken, GreenNode? parameters, SyntaxToken closeParenToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(openParenToken);
         this.openParenToken = openParenToken;
@@ -13556,7 +13556,7 @@ internal sealed partial class BracketedParameterListSyntax : BaseParameterListSy
     internal BracketedParameterListSyntax(SyntaxKind kind, SyntaxToken openBracketToken, GreenNode? parameters, SyntaxToken closeBracketToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(openBracketToken);
         this.openBracketToken = openBracketToken;
@@ -13642,7 +13642,7 @@ internal sealed partial class ParameterSyntax : BaseParameterSyntax
     internal ParameterSyntax(SyntaxKind kind, GreenNode? attributeLists, GreenNode? modifiers, TypeSyntax? type, SyntaxToken identifier, EqualsValueClauseSyntax? @default, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 5;
         if (attributeLists != null)
         {
@@ -13727,7 +13727,7 @@ internal sealed partial class FunctionPointerParameterSyntax : BaseParameterSynt
     internal FunctionPointerParameterSyntax(SyntaxKind kind, GreenNode? attributeLists, GreenNode? modifiers, TypeSyntax type, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         if (attributeLists != null)
         {
@@ -13796,7 +13796,7 @@ internal sealed partial class IncompleteMemberSyntax : MemberDeclarationSyntax
     internal IncompleteMemberSyntax(SyntaxKind kind, GreenNode? attributeLists, GreenNode? modifiers, TypeSyntax? type, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         if (attributeLists != null)
         {
@@ -13864,7 +13864,7 @@ internal sealed partial class SkippedTokensTriviaSyntax : StructuredTriviaSyntax
     internal SkippedTokensTriviaSyntax(SyntaxKind kind, GreenNode? tokens, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 1;
         if (tokens != null)
         {
@@ -13915,7 +13915,7 @@ internal sealed partial class DocumentationCommentTriviaSyntax : StructuredTrivi
     internal DocumentationCommentTriviaSyntax(SyntaxKind kind, GreenNode? content, SyntaxToken endOfComment, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         if (content != null)
         {
@@ -13991,7 +13991,7 @@ internal sealed partial class TypeCrefSyntax : CrefSyntax
     internal TypeCrefSyntax(SyntaxKind kind, TypeSyntax type, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 1;
         this.AdjustFlagsAndWidth(type);
         this.type = type;
@@ -14047,7 +14047,7 @@ internal sealed partial class QualifiedCrefSyntax : CrefSyntax
     internal QualifiedCrefSyntax(SyntaxKind kind, TypeSyntax container, SyntaxToken dotToken, MemberCrefSyntax member, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(container);
         this.container = container;
@@ -14127,7 +14127,7 @@ internal sealed partial class NameMemberCrefSyntax : MemberCrefSyntax
     internal NameMemberCrefSyntax(SyntaxKind kind, TypeSyntax name, CrefParameterListSyntax? parameters, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(name);
         this.name = name;
@@ -14190,7 +14190,7 @@ internal sealed partial class IndexerMemberCrefSyntax : MemberCrefSyntax
     internal IndexerMemberCrefSyntax(SyntaxKind kind, SyntaxToken thisKeyword, CrefBracketedParameterListSyntax? parameters, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(thisKeyword);
         this.thisKeyword = thisKeyword;
@@ -14256,7 +14256,7 @@ internal sealed partial class OperatorMemberCrefSyntax : MemberCrefSyntax
     internal OperatorMemberCrefSyntax(SyntaxKind kind, SyntaxToken operatorKeyword, SyntaxToken? checkedKeyword, SyntaxToken operatorToken, CrefParameterListSyntax? parameters, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 4;
         this.AdjustFlagsAndWidth(operatorKeyword);
         this.operatorKeyword = operatorKeyword;
@@ -14334,7 +14334,7 @@ internal sealed partial class ConversionOperatorMemberCrefSyntax : MemberCrefSyn
     internal ConversionOperatorMemberCrefSyntax(SyntaxKind kind, SyntaxToken implicitOrExplicitKeyword, SyntaxToken operatorKeyword, SyntaxToken? checkedKeyword, TypeSyntax type, CrefParameterListSyntax? parameters, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 5;
         this.AdjustFlagsAndWidth(implicitOrExplicitKeyword);
         this.implicitOrExplicitKeyword = implicitOrExplicitKeyword;
@@ -14426,7 +14426,7 @@ internal sealed partial class CrefParameterListSyntax : BaseCrefParameterListSyn
     internal CrefParameterListSyntax(SyntaxKind kind, SyntaxToken openParenToken, GreenNode? parameters, SyntaxToken closeParenToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(openParenToken);
         this.openParenToken = openParenToken;
@@ -14495,7 +14495,7 @@ internal sealed partial class CrefBracketedParameterListSyntax : BaseCrefParamet
     internal CrefBracketedParameterListSyntax(SyntaxKind kind, SyntaxToken openBracketToken, GreenNode? parameters, SyntaxToken closeBracketToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(openBracketToken);
         this.openBracketToken = openBracketToken;
@@ -14567,7 +14567,7 @@ internal sealed partial class CrefParameterSyntax : CSharpSyntaxNode
     internal CrefParameterSyntax(SyntaxKind kind, SyntaxToken? refKindKeyword, SyntaxToken? readOnlyKeyword, TypeSyntax type, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         if (refKindKeyword != null)
         {
@@ -14641,7 +14641,7 @@ internal sealed partial class XmlElementSyntax : XmlNodeSyntax
     internal XmlElementSyntax(SyntaxKind kind, XmlElementStartTagSyntax startTag, GreenNode? content, XmlElementEndTagSyntax endTag, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(startTag);
         this.startTag = startTag;
@@ -14706,7 +14706,7 @@ internal sealed partial class XmlElementStartTagSyntax : CSharpSyntaxNode
     internal XmlElementStartTagSyntax(SyntaxKind kind, SyntaxToken lessThanToken, XmlNameSyntax name, GreenNode? attributes, SyntaxToken greaterThanToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 4;
         this.AdjustFlagsAndWidth(lessThanToken);
         this.lessThanToken = lessThanToken;
@@ -14774,7 +14774,7 @@ internal sealed partial class XmlElementEndTagSyntax : CSharpSyntaxNode
     internal XmlElementEndTagSyntax(SyntaxKind kind, SyntaxToken lessThanSlashToken, XmlNameSyntax name, SyntaxToken greaterThanToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(lessThanSlashToken);
         this.lessThanSlashToken = lessThanSlashToken;
@@ -14836,7 +14836,7 @@ internal sealed partial class XmlEmptyElementSyntax : XmlNodeSyntax
     internal XmlEmptyElementSyntax(SyntaxKind kind, SyntaxToken lessThanToken, XmlNameSyntax name, GreenNode? attributes, SyntaxToken slashGreaterThanToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 4;
         this.AdjustFlagsAndWidth(lessThanToken);
         this.lessThanToken = lessThanToken;
@@ -14903,7 +14903,7 @@ internal sealed partial class XmlNameSyntax : CSharpSyntaxNode
     internal XmlNameSyntax(SyntaxKind kind, XmlPrefixSyntax? prefix, SyntaxToken localName, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         if (prefix != null)
         {
@@ -14962,7 +14962,7 @@ internal sealed partial class XmlPrefixSyntax : CSharpSyntaxNode
     internal XmlPrefixSyntax(SyntaxKind kind, SyntaxToken prefix, SyntaxToken colonToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(prefix);
         this.prefix = prefix;
@@ -15037,7 +15037,7 @@ internal sealed partial class XmlTextAttributeSyntax : XmlAttributeSyntax
     internal XmlTextAttributeSyntax(SyntaxKind kind, XmlNameSyntax name, SyntaxToken equalsToken, SyntaxToken startQuoteToken, GreenNode? textTokens, SyntaxToken endQuoteToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 5;
         this.AdjustFlagsAndWidth(name);
         this.name = name;
@@ -15111,7 +15111,7 @@ internal sealed partial class XmlCrefAttributeSyntax : XmlAttributeSyntax
     internal XmlCrefAttributeSyntax(SyntaxKind kind, XmlNameSyntax name, SyntaxToken equalsToken, SyntaxToken startQuoteToken, CrefSyntax cref, SyntaxToken endQuoteToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 5;
         this.AdjustFlagsAndWidth(name);
         this.name = name;
@@ -15182,7 +15182,7 @@ internal sealed partial class XmlNameAttributeSyntax : XmlAttributeSyntax
     internal XmlNameAttributeSyntax(SyntaxKind kind, XmlNameSyntax name, SyntaxToken equalsToken, SyntaxToken startQuoteToken, IdentifierNameSyntax identifier, SyntaxToken endQuoteToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 5;
         this.AdjustFlagsAndWidth(name);
         this.name = name;
@@ -15249,7 +15249,7 @@ internal sealed partial class XmlTextSyntax : XmlNodeSyntax
     internal XmlTextSyntax(SyntaxKind kind, GreenNode? textTokens, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 1;
         if (textTokens != null)
         {
@@ -15301,7 +15301,7 @@ internal sealed partial class XmlCDataSectionSyntax : XmlNodeSyntax
     internal XmlCDataSectionSyntax(SyntaxKind kind, SyntaxToken startCDataToken, GreenNode? textTokens, SyntaxToken endCDataToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(startCDataToken);
         this.startCDataToken = startCDataToken;
@@ -15366,7 +15366,7 @@ internal sealed partial class XmlProcessingInstructionSyntax : XmlNodeSyntax
     internal XmlProcessingInstructionSyntax(SyntaxKind kind, SyntaxToken startProcessingInstructionToken, XmlNameSyntax name, GreenNode? textTokens, SyntaxToken endProcessingInstructionToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 4;
         this.AdjustFlagsAndWidth(startProcessingInstructionToken);
         this.startProcessingInstructionToken = startProcessingInstructionToken;
@@ -15434,7 +15434,7 @@ internal sealed partial class XmlCommentSyntax : XmlNodeSyntax
     internal XmlCommentSyntax(SyntaxKind kind, SyntaxToken lessThanExclamationMinusMinusToken, GreenNode? textTokens, SyntaxToken minusMinusGreaterThanToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(lessThanExclamationMinusMinusToken);
         this.lessThanExclamationMinusMinusToken = lessThanExclamationMinusMinusToken;
@@ -15543,7 +15543,7 @@ internal sealed partial class IfDirectiveTriviaSyntax : ConditionalDirectiveTriv
     internal IfDirectiveTriviaSyntax(SyntaxKind kind, SyntaxToken hashToken, SyntaxToken ifKeyword, ExpressionSyntax condition, SyntaxToken endOfDirectiveToken, bool isActive, bool branchTaken, bool conditionValue, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 4;
         this.AdjustFlagsAndWidth(hashToken);
         this.hashToken = hashToken;
@@ -15618,7 +15618,7 @@ internal sealed partial class ElifDirectiveTriviaSyntax : ConditionalDirectiveTr
     internal ElifDirectiveTriviaSyntax(SyntaxKind kind, SyntaxToken hashToken, SyntaxToken elifKeyword, ExpressionSyntax condition, SyntaxToken endOfDirectiveToken, bool isActive, bool branchTaken, bool conditionValue, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 4;
         this.AdjustFlagsAndWidth(hashToken);
         this.hashToken = hashToken;
@@ -15691,7 +15691,7 @@ internal sealed partial class ElseDirectiveTriviaSyntax : BranchingDirectiveTriv
     internal ElseDirectiveTriviaSyntax(SyntaxKind kind, SyntaxToken hashToken, SyntaxToken elseKeyword, SyntaxToken endOfDirectiveToken, bool isActive, bool branchTaken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(hashToken);
         this.hashToken = hashToken;
@@ -15757,7 +15757,7 @@ internal sealed partial class EndIfDirectiveTriviaSyntax : DirectiveTriviaSyntax
     internal EndIfDirectiveTriviaSyntax(SyntaxKind kind, SyntaxToken hashToken, SyntaxToken endIfKeyword, SyntaxToken endOfDirectiveToken, bool isActive, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(hashToken);
         this.hashToken = hashToken;
@@ -15821,7 +15821,7 @@ internal sealed partial class RegionDirectiveTriviaSyntax : DirectiveTriviaSynta
     internal RegionDirectiveTriviaSyntax(SyntaxKind kind, SyntaxToken hashToken, SyntaxToken regionKeyword, SyntaxToken endOfDirectiveToken, bool isActive, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(hashToken);
         this.hashToken = hashToken;
@@ -15885,7 +15885,7 @@ internal sealed partial class EndRegionDirectiveTriviaSyntax : DirectiveTriviaSy
     internal EndRegionDirectiveTriviaSyntax(SyntaxKind kind, SyntaxToken hashToken, SyntaxToken endRegionKeyword, SyntaxToken endOfDirectiveToken, bool isActive, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(hashToken);
         this.hashToken = hashToken;
@@ -15949,7 +15949,7 @@ internal sealed partial class ErrorDirectiveTriviaSyntax : DirectiveTriviaSyntax
     internal ErrorDirectiveTriviaSyntax(SyntaxKind kind, SyntaxToken hashToken, SyntaxToken errorKeyword, SyntaxToken endOfDirectiveToken, bool isActive, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(hashToken);
         this.hashToken = hashToken;
@@ -16013,7 +16013,7 @@ internal sealed partial class WarningDirectiveTriviaSyntax : DirectiveTriviaSynt
     internal WarningDirectiveTriviaSyntax(SyntaxKind kind, SyntaxToken hashToken, SyntaxToken warningKeyword, SyntaxToken endOfDirectiveToken, bool isActive, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(hashToken);
         this.hashToken = hashToken;
@@ -16077,7 +16077,7 @@ internal sealed partial class BadDirectiveTriviaSyntax : DirectiveTriviaSyntax
     internal BadDirectiveTriviaSyntax(SyntaxKind kind, SyntaxToken hashToken, SyntaxToken identifier, SyntaxToken endOfDirectiveToken, bool isActive, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(hashToken);
         this.hashToken = hashToken;
@@ -16142,7 +16142,7 @@ internal sealed partial class DefineDirectiveTriviaSyntax : DirectiveTriviaSynta
     internal DefineDirectiveTriviaSyntax(SyntaxKind kind, SyntaxToken hashToken, SyntaxToken defineKeyword, SyntaxToken name, SyntaxToken endOfDirectiveToken, bool isActive, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 4;
         this.AdjustFlagsAndWidth(hashToken);
         this.hashToken = hashToken;
@@ -16211,7 +16211,7 @@ internal sealed partial class UndefDirectiveTriviaSyntax : DirectiveTriviaSyntax
     internal UndefDirectiveTriviaSyntax(SyntaxKind kind, SyntaxToken hashToken, SyntaxToken undefKeyword, SyntaxToken name, SyntaxToken endOfDirectiveToken, bool isActive, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 4;
         this.AdjustFlagsAndWidth(hashToken);
         this.hashToken = hashToken;
@@ -16292,7 +16292,7 @@ internal sealed partial class LineDirectiveTriviaSyntax : LineOrSpanDirectiveTri
     internal LineDirectiveTriviaSyntax(SyntaxKind kind, SyntaxToken hashToken, SyntaxToken lineKeyword, SyntaxToken line, SyntaxToken? file, SyntaxToken endOfDirectiveToken, bool isActive, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 5;
         this.AdjustFlagsAndWidth(hashToken);
         this.hashToken = hashToken;
@@ -16368,7 +16368,7 @@ internal sealed partial class LineDirectivePositionSyntax : CSharpSyntaxNode
     internal LineDirectivePositionSyntax(SyntaxKind kind, SyntaxToken openParenToken, SyntaxToken line, SyntaxToken commaToken, SyntaxToken character, SyntaxToken closeParenToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 5;
         this.AdjustFlagsAndWidth(openParenToken);
         this.openParenToken = openParenToken;
@@ -16443,7 +16443,7 @@ internal sealed partial class LineSpanDirectiveTriviaSyntax : LineOrSpanDirectiv
     internal LineSpanDirectiveTriviaSyntax(SyntaxKind kind, SyntaxToken hashToken, SyntaxToken lineKeyword, LineDirectivePositionSyntax start, SyntaxToken minusToken, LineDirectivePositionSyntax end, SyntaxToken? characterOffset, SyntaxToken file, SyntaxToken endOfDirectiveToken, bool isActive, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 8;
         this.AdjustFlagsAndWidth(hashToken);
         this.hashToken = hashToken;
@@ -16533,7 +16533,7 @@ internal sealed partial class PragmaWarningDirectiveTriviaSyntax : DirectiveTriv
     internal PragmaWarningDirectiveTriviaSyntax(SyntaxKind kind, SyntaxToken hashToken, SyntaxToken pragmaKeyword, SyntaxToken warningKeyword, SyntaxToken disableOrRestoreKeyword, GreenNode? errorCodes, SyntaxToken endOfDirectiveToken, bool isActive, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 6;
         this.AdjustFlagsAndWidth(hashToken);
         this.hashToken = hashToken;
@@ -16616,7 +16616,7 @@ internal sealed partial class PragmaChecksumDirectiveTriviaSyntax : DirectiveTri
     internal PragmaChecksumDirectiveTriviaSyntax(SyntaxKind kind, SyntaxToken hashToken, SyntaxToken pragmaKeyword, SyntaxToken checksumKeyword, SyntaxToken file, SyntaxToken guid, SyntaxToken bytes, SyntaxToken endOfDirectiveToken, bool isActive, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 7;
         this.AdjustFlagsAndWidth(hashToken);
         this.hashToken = hashToken;
@@ -16697,7 +16697,7 @@ internal sealed partial class ReferenceDirectiveTriviaSyntax : DirectiveTriviaSy
     internal ReferenceDirectiveTriviaSyntax(SyntaxKind kind, SyntaxToken hashToken, SyntaxToken referenceKeyword, SyntaxToken file, SyntaxToken endOfDirectiveToken, bool isActive, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 4;
         this.AdjustFlagsAndWidth(hashToken);
         this.hashToken = hashToken;
@@ -16766,7 +16766,7 @@ internal sealed partial class LoadDirectiveTriviaSyntax : DirectiveTriviaSyntax
     internal LoadDirectiveTriviaSyntax(SyntaxKind kind, SyntaxToken hashToken, SyntaxToken loadKeyword, SyntaxToken file, SyntaxToken endOfDirectiveToken, bool isActive, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 4;
         this.AdjustFlagsAndWidth(hashToken);
         this.hashToken = hashToken;
@@ -16834,7 +16834,7 @@ internal sealed partial class ShebangDirectiveTriviaSyntax : DirectiveTriviaSynt
     internal ShebangDirectiveTriviaSyntax(SyntaxKind kind, SyntaxToken hashToken, SyntaxToken exclamationToken, SyntaxToken endOfDirectiveToken, bool isActive, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(hashToken);
         this.hashToken = hashToken;
@@ -16900,7 +16900,7 @@ internal sealed partial class NullableDirectiveTriviaSyntax : DirectiveTriviaSyn
     internal NullableDirectiveTriviaSyntax(SyntaxKind kind, SyntaxToken hashToken, SyntaxToken nullableKeyword, SyntaxToken settingToken, SyntaxToken? targetToken, SyntaxToken endOfDirectiveToken, bool isActive, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context); 
+        context?.Set(this);
         this.SlotCount = 5;
         this.AdjustFlagsAndWidth(hashToken);
         this.hashToken = hashToken;

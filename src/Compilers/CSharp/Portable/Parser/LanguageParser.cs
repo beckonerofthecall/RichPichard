@@ -915,9 +915,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             Debug.Assert(this.CurrentToken.Kind == SyntaxKind.UsingKeyword);
 
             var usingToken = this.EatToken(SyntaxKind.UsingKeyword);
-            var staticToken = this.TryEatToken(SyntaxKind.StaticKeyword);
-            var unsafeToken = this.TryEatToken(SyntaxKind.UnsafeKeyword);
-            staticToken ??= this.TryEatToken(SyntaxKind.StaticKeyword);
+            this.TryEatTwoKeywords(SyntaxKind.StaticKeyword, SyntaxKind.UnsafeKeyword, out var staticToken, out var unsafeToken);
 
             var alias = this.IsNamedAssignment() ? ParseNameEquals() : null;
 

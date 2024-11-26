@@ -32,7 +32,7 @@ internal sealed partial class PredefinedTypeSyntax : TypeSyntax
     internal PredefinedTypeSyntax(SyntaxKind kind, SyntaxToken keyword, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context);
+        context?.Set(this);
         this.SlotCount = 1;
         this.AdjustFlagsAndWidth(keyword);
         this.keyword = keyword;
@@ -82,7 +82,7 @@ internal sealed partial class ArrayTypeSyntax : TypeSyntax
     internal ArrayTypeSyntax(SyntaxKind kind, TypeSyntax elementType, GreenNode? rankSpecifiers, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context);
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(elementType);
         this.elementType = elementType;
@@ -146,7 +146,7 @@ internal sealed partial class PointerTypeSyntax : TypeSyntax
     internal PointerTypeSyntax(SyntaxKind kind, TypeSyntax elementType, SyntaxToken asteriskToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context);
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(elementType);
         this.elementType = elementType;
@@ -206,7 +206,7 @@ internal sealed partial class FunctionPointerTypeSyntax : TypeSyntax
     internal FunctionPointerTypeSyntax(SyntaxKind kind, SyntaxToken delegateKeyword, SyntaxToken asteriskToken, FunctionPointerCallingConventionSyntax? callingConvention, FunctionPointerParameterListSyntax parameterList, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context);
+        context?.Set(this);
         this.SlotCount = 4;
         this.AdjustFlagsAndWidth(delegateKeyword);
         this.delegateKeyword = delegateKeyword;
@@ -280,7 +280,7 @@ internal sealed partial class NullableTypeSyntax : TypeSyntax
     internal NullableTypeSyntax(SyntaxKind kind, TypeSyntax elementType, SyntaxToken questionToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context);
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(elementType);
         this.elementType = elementType;
@@ -340,7 +340,7 @@ internal sealed partial class TupleTypeSyntax : TypeSyntax
     internal TupleTypeSyntax(SyntaxKind kind, SyntaxToken openParenToken, GreenNode? elements, SyntaxToken closeParenToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context);
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(openParenToken);
         this.openParenToken = openParenToken;
@@ -405,7 +405,7 @@ internal sealed partial class OmittedTypeArgumentSyntax : TypeSyntax
     internal OmittedTypeArgumentSyntax(SyntaxKind kind, SyntaxToken omittedTypeArgumentToken, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context);
+        context?.Set(this);
         this.SlotCount = 1;
         this.AdjustFlagsAndWidth(omittedTypeArgumentToken);
         this.omittedTypeArgumentToken = omittedTypeArgumentToken;
@@ -457,7 +457,7 @@ internal sealed partial class RefTypeSyntax : TypeSyntax
     internal RefTypeSyntax(SyntaxKind kind, SyntaxToken refKeyword, SyntaxToken? readOnlyKeyword, TypeSyntax type, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context);
+        context?.Set(this);
         this.SlotCount = 3;
         this.AdjustFlagsAndWidth(refKeyword);
         this.refKeyword = refKeyword;
@@ -522,7 +522,7 @@ internal sealed partial class ScopedTypeSyntax : TypeSyntax
     internal ScopedTypeSyntax(SyntaxKind kind, SyntaxToken scopedKeyword, TypeSyntax type, SyntaxFactoryContext context = null, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null)
       : base(kind, diagnostics, annotations)
     {
-        this.SetFactoryContext(context);
+        context?.Set(this);
         this.SlotCount = 2;
         this.AdjustFlagsAndWidth(scopedKeyword);
         this.scopedKeyword = scopedKeyword;
