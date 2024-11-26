@@ -16,62 +16,17 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
     [DebuggerDisplay("{GetDebuggerDisplay(), nq}")]
     internal abstract class CSharpSyntaxNode : GreenNode
     {
-        internal CSharpSyntaxNode(SyntaxKind kind)
-            : base((ushort)kind)
-        {
-            GreenStats.NoteGreen(this);
-        }
+        public override string Language => LanguageNames.CSharp;
 
-        internal CSharpSyntaxNode(SyntaxKind kind, int fullWidth)
-            : base((ushort)kind, fullWidth)
-        {
-            GreenStats.NoteGreen(this);
-        }
-
-        internal CSharpSyntaxNode(SyntaxKind kind, DiagnosticInfo[] diagnostics)
-            : base((ushort)kind, diagnostics)
-        {
-            GreenStats.NoteGreen(this);
-        }
-
-        internal CSharpSyntaxNode(SyntaxKind kind, DiagnosticInfo[] diagnostics, int fullWidth)
-            : base((ushort)kind, diagnostics, fullWidth)
-        {
-            GreenStats.NoteGreen(this);
-        }
-
-        internal CSharpSyntaxNode(SyntaxKind kind, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations)
-            : base((ushort)kind, diagnostics, annotations)
-        {
-            GreenStats.NoteGreen(this);
-        }
-
-        internal CSharpSyntaxNode(SyntaxKind kind, DiagnosticInfo[] diagnostics, SyntaxAnnotation[] annotations, int fullWidth)
+        internal CSharpSyntaxNode(SyntaxKind kind, DiagnosticInfo[] diagnostics = null, SyntaxAnnotation[] annotations = null, int fullWidth = 0)
             : base((ushort)kind, diagnostics, annotations, fullWidth)
         {
             GreenStats.NoteGreen(this);
         }
 
-        public override string Language
-        {
-            get { return LanguageNames.CSharp; }
-        }
-
-        public SyntaxKind Kind
-        {
-            get { return (SyntaxKind)this.RawKind; }
-        }
-
+        public SyntaxKind Kind => (SyntaxKind)this.RawKind;
         public override string KindText => this.Kind.ToString();
-
-        public override int RawContextualKind
-        {
-            get
-            {
-                return this.RawKind;
-            }
-        }
-
+        public override int RawContextualKind => this.RawKind;
         public override bool IsSkippedTokensTrivia => this.Kind == SyntaxKind.SkippedTokensTrivia;
         public override bool IsDocumentationCommentTrivia => SyntaxFacts.IsDocumentationCommentTrivia(this.Kind);
 
@@ -79,7 +34,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         {
             // This implementation should not support arbitrary
             // length lists since the implementation is O(n).
-            System.Diagnostics.Debug.Assert(index < 11); // Max. slots 11 (TypeDeclarationSyntax)
+            Debug.Assert(index < 11); // Max. slots 11 (TypeDeclarationSyntax)
 
             int offset = 0;
             for (int i = 0; i < index; i++)
@@ -215,25 +170,16 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         /// <summary>
         /// Should only be called during construction.
         /// </summary>
-        /// <remarks>
-        /// This should probably be an extra constructor parameter, but we don't need more constructor overloads.
-        /// </remarks>
-        protected void SetFactoryContext(SyntaxFactoryContext context)
+        public void SetFactoryContext(SyntaxFactoryContext context)
         {
             if (context.IsInAsync)
-            {
                 SetFlags(NodeFlags.FactoryContextIsInAsync);
-            }
 
             if (context.IsInQuery)
-            {
                 SetFlags(NodeFlags.FactoryContextIsInQuery);
-            }
 
             if (context.IsInFieldKeywordContext)
-            {
                 SetFlags(NodeFlags.FactoryContextIsInFieldKeywordContext);
-            }
         }
 
         public sealed override CodeAnalysis.SyntaxToken CreateSeparator(SyntaxNode element)

@@ -49,54 +49,21 @@ namespace Microsoft.CodeAnalysis
         private static readonly SyntaxAnnotation[] s_noAnnotations = Array.Empty<SyntaxAnnotation>();
         private static readonly IEnumerable<SyntaxAnnotation> s_noAnnotationsEnumerable = SpecializedCollections.EmptyEnumerable<SyntaxAnnotation>();
 
-        protected GreenNode(ushort kind) => _kind = kind;
-        protected GreenNode(ushort kind, int fullWidth) : this(kind) => _fullWidth = fullWidth;
-
-        protected GreenNode(ushort kind, DiagnosticInfo[]? diagnostics, int fullWidth)
+        protected GreenNode(ushort kind, int fullWidth)
+            : this(kind, null, null, fullWidth) { }
+        protected GreenNode(ushort kind, DiagnosticInfo[]? diagnostics = null, SyntaxAnnotation[]? annotations = null, int fullWidth = 0)
         {
-            _kind = kind;
-            _fullWidth = fullWidth;
+            this._kind = kind;
+            this._fullWidth = fullWidth;
             if (diagnostics?.Length > 0)
             {
                 SetFlags(NodeFlags.ContainsDiagnostics);
                 s_diagnosticsTable.Add(this, diagnostics);
             }
-        }
-
-        protected GreenNode(ushort kind, DiagnosticInfo[]? diagnostics)
-        {
-            _kind = kind;
-            if (diagnostics?.Length > 0)
-            {
-                SetFlags(NodeFlags.ContainsDiagnostics);
-                s_diagnosticsTable.Add(this, diagnostics);
-            }
-        }
-
-        protected GreenNode(ushort kind, DiagnosticInfo[]? diagnostics, SyntaxAnnotation[]? annotations) :
-            this(kind, diagnostics)
-        {
             if (annotations?.Length > 0)
             {
                 foreach (var annotation in annotations)
-                {
-                    if (annotation == null) throw new ArgumentException(paramName: nameof(annotations), message: "" /*CSharpResources.ElementsCannotBeNull*/);
-                }
-
-                SetFlags(NodeFlags.HasAnnotationsDirectly | NodeFlags.ContainsAnnotations);
-                s_annotationsTable.Add(this, annotations);
-            }
-        }
-
-        protected GreenNode(ushort kind, DiagnosticInfo[]? diagnostics, SyntaxAnnotation[]? annotations, int fullWidth) :
-            this(kind, diagnostics, fullWidth)
-        {
-            if (annotations?.Length > 0)
-            {
-                foreach (var annotation in annotations)
-                {
-                    if (annotation == null) throw new ArgumentException(paramName: nameof(annotations), message: "" /*CSharpResources.ElementsCannotBeNull*/);
-                }
+                    if (annotation == null) throw new ArgumentException();
 
                 SetFlags(NodeFlags.HasAnnotationsDirectly | NodeFlags.ContainsAnnotations);
                 s_annotationsTable.Add(this, annotations);
