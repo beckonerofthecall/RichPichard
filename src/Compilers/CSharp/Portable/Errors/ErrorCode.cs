@@ -2188,7 +2188,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         ERR_BadRefInUsingAlias = 9130,
         ERR_BadUnsafeInUsingDirective = 9131,
         ERR_BadNullableReferenceTypeInUsingAlias = 9132,
-        ERR_BadStaticAfterUnsafe = 9133,
+        ERR_9133 = 9133,
 
         ERR_BadCaseInSwitchArm = 9134,
         ERR_ConstantValueOfTypeExpected = 9135,

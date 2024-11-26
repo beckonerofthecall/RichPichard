@@ -2349,7 +2349,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 or ErrorCode.ERR_BadRefInUsingAlias
                 or ErrorCode.ERR_BadUnsafeInUsingDirective
                 or ErrorCode.ERR_BadNullableReferenceTypeInUsingAlias
-                or ErrorCode.ERR_BadStaticAfterUnsafe
+                or ErrorCode.ERR_9133
                 or ErrorCode.ERR_BadCaseInSwitchArm
                 or ErrorCode.ERR_InterceptorsFeatureNotEnabled
                 or ErrorCode.ERR_InterceptorContainingTypeCannotBeGeneric

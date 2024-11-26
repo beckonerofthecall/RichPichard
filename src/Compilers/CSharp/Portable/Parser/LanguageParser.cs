@@ -752,7 +752,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                             seen = NamespaceParts.MembersAndStatements;
                         else if (seen == NamespaceParts.TypesAndNamespaces)
                             seen = NamespaceParts.TopLevelStatementsAfterTypesAndNamespaces;
-
                         break;
 
                     case SyntaxKind.NamespaceDeclaration:
@@ -765,16 +764,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                     case SyntaxKind.RecordDeclaration:
                     case SyntaxKind.RecordStructDeclaration:
                         if (seen < NamespaceParts.TypesAndNamespaces)
-                        {
                             seen = NamespaceParts.TypesAndNamespaces;
-                        }
                         break;
 
                     default:
                         if (seen < NamespaceParts.MembersAndStatements)
-                        {
                             seen = NamespaceParts.MembersAndStatements;
-                        }
                         break;
                 }
 
@@ -846,15 +841,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             if (this.CurrentToken.ContextualKind == SyntaxKind.PartialKeyword)
             {
                 if (this.IsPartialType())
-                {
                     return true;
-                }
                 else if (this.PeekToken(1).Kind == SyntaxKind.NamespaceKeyword)
-                {
                     return true;
-                }
             }
-
             return false;
         }
 
@@ -894,9 +884,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         private ExternAliasDirectiveSyntax ParseExternAliasDirective()
         {
             if (this.IsIncrementalAndFactoryContextMatches && this.CurrentNodeKind == SyntaxKind.ExternAliasDirective)
-            {
                 return (ExternAliasDirectiveSyntax)this.EatNode();
-            }
 
             Debug.Assert(this.CurrentToken.Kind == SyntaxKind.ExternKeyword);
 
@@ -918,9 +906,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         private UsingDirectiveSyntax ParseUsingDirective()
         {
             if (this.IsIncrementalAndFactoryContextMatches && this.CurrentNodeKind == SyntaxKind.UsingDirective)
-            {
                 return (UsingDirectiveSyntax)this.EatNode();
-            }
 
             var globalToken = this.CurrentToken.ContextualKind == SyntaxKind.GlobalKeyword
                 ? ConvertToKeyword(this.EatToken())
@@ -931,14 +917,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             var usingToken = this.EatToken(SyntaxKind.UsingKeyword);
             var staticToken = this.TryEatToken(SyntaxKind.StaticKeyword);
             var unsafeToken = this.TryEatToken(SyntaxKind.UnsafeKeyword);
-
-            // if the user wrote `using unsafe static` skip the `static` and tell them it needs to be `using static unsafe`.
-            if (staticToken is null && unsafeToken != null && this.CurrentToken.Kind == SyntaxKind.StaticKeyword)
-            {
-                // create a missing 'static' token so that later binding does recognize what the user wanted.
-                staticToken = SyntaxFactory.MissingToken(SyntaxKind.StaticKeyword);
-                unsafeToken = AddTrailingSkippedSyntax(unsafeToken, AddError(this.EatToken(), ErrorCode.ERR_BadStaticAfterUnsafe));
-            }
+            staticToken ??= this.TryEatToken(SyntaxKind.StaticKeyword);
 
             var alias = this.IsNamedAssignment() ? ParseNameEquals() : null;
 
