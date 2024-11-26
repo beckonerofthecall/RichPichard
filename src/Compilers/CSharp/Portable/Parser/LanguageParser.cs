@@ -12821,14 +12821,6 @@ done:
             ArgumentListSyntax argumentList = this.CurrentToken.Kind == SyntaxKind.OpenParenToken ? this.ParseParenthesizedArgumentList() : null;
             InitializerExpressionSyntax initializer = this.CurrentToken.Kind == SyntaxKind.OpenBraceToken ? this.ParseObjectOrCollectionInitializer() : null;
 
-            // we need one or the other.  also, don't bother reporting this if we already complained about the new type.
-            if (argumentList == null && initializer == null)
-            {
-                argumentList = _syntaxFactory.ArgumentList(
-                    this.EatToken(SyntaxKind.OpenParenToken, ErrorCode.ERR_BadNewExpr, reportError: type?.ContainsDiagnostics == false),
-                    default, SyntaxFactory.MissingToken(SyntaxKind.CloseParenToken));
-            }
-
             return type is null
                 ? _syntaxFactory.ImplicitObjectCreationExpression(@new, argumentList, initializer)
                 : _syntaxFactory.ObjectCreationExpression(@new, type, argumentList, initializer);
