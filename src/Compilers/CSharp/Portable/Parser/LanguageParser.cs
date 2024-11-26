@@ -603,15 +603,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                                 reportUnexpectedToken = true;
                                 break;
                             }
-                            else
-                            {
-                                // This token marks the end of a namespace body
-                                return;
-                            }
+                            else return; //This token marks the end of a namespace body
 
                         case SyntaxKind.EndOfFileToken:
-                            // This token marks the end of a namespace body
-                            return;
+                            return; //This token marks the end of a namespace body
 
                         case SyntaxKind.ExternKeyword:
                             if (isGlobal && !ScanExternAliasDirective())
@@ -754,18 +749,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                 {
                     case SyntaxKind.GlobalStatement:
                         if (seen < NamespaceParts.MembersAndStatements)
-                        {
                             seen = NamespaceParts.MembersAndStatements;
-                        }
                         else if (seen == NamespaceParts.TypesAndNamespaces)
-                        {
                             seen = NamespaceParts.TopLevelStatementsAfterTypesAndNamespaces;
-
-                            if (!IsScript)
-                            {
-                                memberOrStatement = this.AddError(memberOrStatement, ErrorCode.ERR_TopLevelStatementAfterNamespaceOrType);
-                            }
-                        }
 
                         break;
 

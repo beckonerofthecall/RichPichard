@@ -2061,7 +2061,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 or ErrorCode.ERR_PartialMemberExtendedModDifference
                 or ErrorCode.ERR_SimpleProgramLocalIsReferencedOutsideOfTopLevelStatement
                 or ErrorCode.ERR_SimpleProgramMultipleUnitsWithTopLevelStatements
-                or ErrorCode.ERR_TopLevelStatementAfterNamespaceOrType
+                or ErrorCode.ERR_8803
                 or ErrorCode.ERR_SimpleProgramDisallowsMainType
                 or ErrorCode.ERR_SimpleProgramNotAnExecutable
                 or ErrorCode.ERR_UnsupportedCallingConvention
