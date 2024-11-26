@@ -365,34 +365,17 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             CSharpSyntaxNode skippedSyntax)
         {
             if (body.Members.Count > 0)
-            {
                 AddTrailingSkippedSyntax(body.Members, skippedSyntax);
-            }
             else if (body.Attributes.Count > 0)
-            {
                 AddTrailingSkippedSyntax(body.Attributes, skippedSyntax);
-            }
             else if (body.Usings.Count > 0)
-            {
                 AddTrailingSkippedSyntax(body.Usings, skippedSyntax);
-            }
             else if (body.Externs.Count > 0)
-            {
                 AddTrailingSkippedSyntax(body.Externs, skippedSyntax);
-            }
             else if (openBraceOrSemicolon != null)
-            {
                 openBraceOrSemicolon = AddTrailingSkippedSyntax(openBraceOrSemicolon, skippedSyntax);
-            }
             else
-            {
-                if (initialBadNodes == null)
-                {
-                    initialBadNodes = _pool.Allocate();
-                }
-
-                initialBadNodes.AddRange(skippedSyntax);
-            }
+                (initialBadNodes ??= _pool.Allocate()).AddRange(skippedSyntax);
         }
 
         // Parts of a namespace declaration in the order they can be defined.
