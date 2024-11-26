@@ -124,7 +124,7 @@ internal class OrganizeDocumentCommandHandler(
         if (!subjectBuffer.TryGetWorkspace(out var workspace))
             return;
 
-        var snapshotSpan = textView.GetTextElementSpan(caretPoint.Value);
+        var snapshotSpan = textView.GetTextElementSpan(textView.Caret.Position.BufferPosition);
 
         var indicatorFactory = workspace.Services.GetRequiredService<IBackgroundWorkIndicatorFactory>();
         using var backgroundWorkContext = indicatorFactory.Create(
@@ -138,7 +138,7 @@ internal class OrganizeDocumentCommandHandler(
 
         await TaskScheduler.Default;
 
-        var currentDocument = await getCurrentDocumentAsync(snapshotSpan.Snapshot, backgroundWorkContext).ConfigureAwait(false);
+        var currentDocument = await getCurrentDocumentAsync(caretPoint.Value.Snapshot, backgroundWorkContext).ConfigureAwait(false);
         if (currentDocument is null)
             return;
 

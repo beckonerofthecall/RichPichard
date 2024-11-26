@@ -22,8 +22,8 @@ internal abstract class AbstractConvertAutoPropertyToFullPropertyCodeRefactoring
     where TCodeGenerationContextInfo : CodeGenerationContextInfo
 {
     protected abstract Task<string> GetFieldNameAsync(Document document, IPropertySymbol propertySymbol, CancellationToken cancellationToken);
-    protected abstract (SyntaxNode newGetAccessor, SyntaxNode newSetAccessor) GetNewAccessors(
-        TCodeGenerationContextInfo info, SyntaxNode property, string fieldName, SyntaxGenerator generator, CancellationToken cancellationToken);
+    protected abstract (SyntaxNode newGetAccessor, SyntaxNode? newSetAccessor) GetNewAccessors(
+        TCodeGenerationContextInfo info, TPropertyDeclarationNode property, string fieldName, SyntaxGenerator generator, CancellationToken cancellationToken);
     protected abstract SyntaxNode GetPropertyWithoutInitializer(SyntaxNode property);
     protected abstract SyntaxNode GetInitializerValue(SyntaxNode property);
     protected abstract SyntaxNode ConvertPropertyToExpressionBodyIfDesired(TCodeGenerationContextInfo info, SyntaxNode fullProperty);
@@ -48,7 +48,7 @@ internal abstract class AbstractConvertAutoPropertyToFullPropertyCodeRefactoring
         context.RegisterRefactoring(
             CodeAction.Create(
                 FeaturesResources.Convert_to_full_property,
-                c => ExpandToFullPropertyAsync(document, property, propertySymbol, root, c),
+                cancellationToken => ExpandToFullPropertyAsync(document, property, propertySymbol, root, cancellationToken),
                 nameof(FeaturesResources.Convert_to_full_property)),
             property.Span);
     }
@@ -60,7 +60,7 @@ internal abstract class AbstractConvertAutoPropertyToFullPropertyCodeRefactoring
         return field != null;
     }
 
-    private static async Task<SyntaxNode?> GetPropertyAsync(CodeRefactoringContext context)
+    private static async Task<TPropertyDeclarationNode?> GetPropertyAsync(CodeRefactoringContext context)
     {
         var containingProperty = await context.TryGetRelevantNodeAsync<TPropertyDeclarationNode>().ConfigureAwait(false);
         if (containingProperty?.Parent is not TTypeDeclarationNode)
@@ -71,7 +71,7 @@ internal abstract class AbstractConvertAutoPropertyToFullPropertyCodeRefactoring
 
     private async Task<Document> ExpandToFullPropertyAsync(
         Document document,
-        SyntaxNode property,
+        TPropertyDeclarationNode property,
         IPropertySymbol propertySymbol,
         SyntaxNode root,
         CancellationToken cancellationToken)
