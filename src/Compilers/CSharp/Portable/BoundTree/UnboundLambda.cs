@@ -1588,7 +1588,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
             else
             {
-                return lambdaBodyBinder.BindEmbeddedBlock((BlockSyntax)this.Body, diagnostics);
+                return lambdaBodyBinder.BindBlock((BlockSyntax)this.Body, diagnostics);
             }
         }
     }

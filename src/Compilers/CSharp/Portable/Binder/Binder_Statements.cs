@@ -164,7 +164,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private BoundStatement BindCheckedStatement(CheckedStatementSyntax node, BindingDiagnosticBag diagnostics)
         {
-            return BindEmbeddedBlock(node.Block, diagnostics);
+            return BindBlock(node.Block, diagnostics);
         }
 
         private BoundStatement BindUnsafeStatement(UnsafeStatementSyntax node, BindingDiagnosticBag diagnostics)
@@ -180,7 +180,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 CheckFeatureAvailability(node.UnsafeKeyword, MessageID.IDS_FeatureRefUnsafeInIteratorAsync, diagnostics);
             }
 
-            return BindEmbeddedBlock(node.Block, diagnostics);
+            return BindBlock(node.Block, diagnostics);
         }
 
         private BoundStatement BindFixedStatement(FixedStatementSyntax node, BindingDiagnosticBag diagnostics)
@@ -565,7 +565,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             BoundBlock expressionBody = null;
             if (node.Body != null)
             {
-                blockBody = runAnalysis(BindEmbeddedBlock(node.Body, diagnostics), diagnostics);
+                blockBody = runAnalysis(BindBlock(node.Body, diagnostics), diagnostics);
 
                 if (node.ExpressionBody != null)
                 {
@@ -1858,12 +1858,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             return Next.LookupLocalFunction(nameToken);
         }
 
-        internal virtual BoundBlock BindEmbeddedBlock(BlockSyntax node, BindingDiagnosticBag diagnostics)
-        {
-            return BindBlock(node, diagnostics);
-        }
-
-        private BoundBlock BindBlock(BlockSyntax node, BindingDiagnosticBag diagnostics)
+        internal virtual BoundBlock BindBlock(BlockSyntax node, BindingDiagnosticBag diagnostics)
         {
             if (node.AttributeLists.Count > 0)
             {
@@ -3201,9 +3196,9 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             Debug.Assert(node != null);
 
-            var tryBlock = BindEmbeddedBlock(node.Block, diagnostics);
+            var tryBlock = BindBlock(node.Block, diagnostics);
             var catchBlocks = BindCatchBlocks(node.Catches, diagnostics);
-            var finallyBlockOpt = (node.Finally != null) ? BindEmbeddedBlock(node.Finally.Block, diagnostics) : null;
+            var finallyBlockOpt = (node.Finally != null) ? BindBlock(node.Finally.Block, diagnostics) : null;
             return new BoundTryStatement(node, tryBlock, catchBlocks, finallyBlockOpt);
         }
 
@@ -3342,7 +3337,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 exceptionSource = new BoundLocal(declaration, local, ConstantValue.NotAvailable, local.Type);
             }
 
-            var block = BindEmbeddedBlock(node.Block, diagnostics);
+            var block = BindBlock(node.Block, diagnostics);
             return new BoundCatchBlock(node, locals, exceptionSource, type, exceptionFilterPrologueOpt: null, boundFilter, block, hasError);
         }
 

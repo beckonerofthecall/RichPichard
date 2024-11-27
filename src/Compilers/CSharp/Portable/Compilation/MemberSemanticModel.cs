@@ -2454,7 +2454,7 @@ foundParent:;
                 return statement;
             }
 
-            internal override BoundBlock BindEmbeddedBlock(BlockSyntax node, BindingDiagnosticBag diagnostics)
+            internal override BoundBlock BindBlock(BlockSyntax node, BindingDiagnosticBag diagnostics)
             {
                 BoundBlock block = (BoundBlock)TryGetBoundNodeFromMap(node);
 
@@ -2463,7 +2463,7 @@ foundParent:;
                     return block;
                 }
 
-                block = base.BindEmbeddedBlock(node, diagnostics);
+                block = base.BindBlock(node, diagnostics);
 
                 Debug.Assert(!block.WasCompilerGenerated);
                 return block;

@@ -941,7 +941,7 @@ internal static class Extensions
     public static BoundBlock BindEmbeddedBlock(this Microsoft.CodeAnalysis.CSharp.Binder binder, BlockSyntax node, DiagnosticBag diagnostics)
     {
         var bindingDiagnostics = Microsoft.CodeAnalysis.CSharp.BindingDiagnosticBag.GetInstance(withDiagnostics: true, withDependencies: false);
-        var result = binder.BindEmbeddedBlock(node, bindingDiagnostics);
+        var result = binder.BindBlock(node, bindingDiagnostics);
         diagnostics.AddRange(bindingDiagnostics.DiagnosticBag);
         bindingDiagnostics.Free();
         return result;
