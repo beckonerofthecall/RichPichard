@@ -287,7 +287,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
 
             var parent2 = parent1.Parent;
-            if (parent2.IsKind(SyntaxKind.Subpattern))
+            if (parent2.IsKind(Subpattern))
             {
                 return true;
             }
@@ -303,7 +303,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return false;
             }
 
-            if (parent3.IsKind(SyntaxKind.TupleExpression))
+            if (parent3.IsKind(TupleExpression))
             {
                 return true;
             }
@@ -362,17 +362,17 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case Accessibility.NotApplicable:
                     return string.Empty;
                 case Accessibility.Private:
-                    return SyntaxFacts.GetText(PrivateKeyword);
+                    return GetText(PrivateKeyword);
                 case Accessibility.ProtectedAndInternal:
-                    return SyntaxFacts.GetText(PrivateKeyword) + " " + SyntaxFacts.GetText(ProtectedKeyword);
+                    return GetText(PrivateKeyword) + " " + GetText(ProtectedKeyword);
                 case Accessibility.Internal:
-                    return SyntaxFacts.GetText(InternalKeyword);
+                    return GetText(InternalKeyword);
                 case Accessibility.Protected:
-                    return SyntaxFacts.GetText(ProtectedKeyword);
+                    return GetText(ProtectedKeyword);
                 case Accessibility.ProtectedOrInternal:
-                    return SyntaxFacts.GetText(ProtectedKeyword) + " " + SyntaxFacts.GetText(InternalKeyword);
+                    return GetText(ProtectedKeyword) + " " + GetText(InternalKeyword);
                 case Accessibility.Public:
-                    return SyntaxFacts.GetText(PublicKeyword);
+                    return GetText(PublicKeyword);
                 default:
                     throw ExceptionUtilities.UnexpectedValue(accessibility);
             }
@@ -434,15 +434,9 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
         }
 
-        [System.Obsolete("IsLambdaBody API is obsolete", true)]
-        public static bool IsLambdaBody(SyntaxNode node)
-        {
-            return LambdaUtilities.IsLambdaBody(node);
-        }
-
         internal static bool IsIdentifierVar(this Syntax.InternalSyntax.SyntaxToken node)
         {
-            return node.ContextualKind == SyntaxKind.VarKeyword;
+            return node.ContextualKind == VarKeyword;
         }
 
         internal static bool IsIdentifierVarOrPredefinedType(this Syntax.InternalSyntax.SyntaxToken node)
@@ -465,15 +459,15 @@ namespace Microsoft.CodeAnalysis.CSharp
             SyntaxToken nameToken;
             switch (syntax.Kind())
             {
-                case SyntaxKind.SingleVariableDesignation:
+                case SingleVariableDesignation:
                     nameToken = ((SingleVariableDesignationSyntax)syntax).Identifier;
                     break;
 
-                case SyntaxKind.DeclarationExpression:
+                case DeclarationExpression:
                     var declaration = (DeclarationExpressionSyntax)syntax;
                     var designationKind = declaration.Designation.Kind();
-                    if (designationKind == SyntaxKind.ParenthesizedVariableDesignation ||
-                        designationKind == SyntaxKind.DiscardDesignation)
+                    if (designationKind == ParenthesizedVariableDesignation ||
+                        designationKind == DiscardDesignation)
                     {
                         return null;
                     }
@@ -481,8 +475,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                     nameToken = ((SingleVariableDesignationSyntax)declaration.Designation).Identifier;
                     break;
 
-                case SyntaxKind.ParenthesizedVariableDesignation:
-                case SyntaxKind.DiscardDesignation:
+                case ParenthesizedVariableDesignation:
+                case DiscardDesignation:
                     return null;
 
                 default:
@@ -532,7 +526,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal static bool IsTopLevelStatement([NotNullWhen(true)] GlobalStatementSyntax? syntax)
         {
-            return syntax?.Parent?.IsKind(SyntaxKind.CompilationUnit) == true;
+            return syntax?.Parent?.IsKind(CompilationUnit) == true;
         }
 
         internal static bool IsSimpleProgramTopLevelStatement(GlobalStatementSyntax? syntax)
@@ -563,10 +557,10 @@ namespace Microsoft.CodeAnalysis.CSharp
             => IsNestedFunction(child.Kind());
 
         private static bool IsNestedFunction(SyntaxKind kind)
-            => kind is SyntaxKind.LocalFunctionStatement
-                or SyntaxKind.AnonymousMethodExpression
-                or SyntaxKind.SimpleLambdaExpression
-                or SyntaxKind.ParenthesizedLambdaExpression;
+            => kind is LocalFunctionStatement
+                or AnonymousMethodExpression
+                or SimpleLambdaExpression
+                or ParenthesizedLambdaExpression;
 
         [PerformanceSensitive("https://github.com/dotnet/roslyn/pull/66970", Constraint = "Use Green nodes for walking to avoid heavy allocations.")]
         internal static bool HasYieldOperations(SyntaxNode? node)
