@@ -53,7 +53,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static bool IsInvoked(ExpressionSyntax node)
         {
-            node = (ExpressionSyntax)SyntaxFactory.GetStandaloneExpression(node);
+            node = SyntaxFactory.GetStandaloneExpression(node);
             var inv = node.Parent as InvocationExpressionSyntax;
             return inv != null && inv.Expression == node;
         }
