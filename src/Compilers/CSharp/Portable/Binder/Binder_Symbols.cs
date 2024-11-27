@@ -2607,12 +2607,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return diagnostics.Add(ErrorCode.ERR_AliasNotFound, location, whereText);
             }
 
-            if ((where as IdentifierNameSyntax)?.Identifier.Text == "var" && !options.IsAttributeTypeLookup())
-            {
-                var code = (where.Parent is QueryClauseSyntax) ? ErrorCode.ERR_TypeVarNotFoundRangeVariable : ErrorCode.ERR_TypeVarNotFound;
-                return diagnostics.Add(code, location);
-            }
-
             forwardedToAssembly = GetForwardedToAssembly(simpleName, arity, ref qualifierOpt, diagnostics, location);
 
             if ((object)forwardedToAssembly != null)

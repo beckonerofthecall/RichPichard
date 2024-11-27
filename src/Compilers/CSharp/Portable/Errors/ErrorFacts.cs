@@ -1103,7 +1103,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 or ErrorCode.ERR_ImplicitlyTypedLocalCannotBeFixed
                 or ErrorCode.ERR_ImplicitlyTypedVariableCannotBeConst
                 or ErrorCode.WRN_ExternCtorNoImplementation
-                or ErrorCode.ERR_TypeVarNotFound
+                //or ErrorCode.ERR_TypeVarNotFound
                 or ErrorCode.ERR_ImplicitlyTypedArrayNoBestType
                 or ErrorCode.ERR_AnonymousTypePropertyAssignedBadValue
                 or ErrorCode.ERR_ExpressionTreeContainsBaseAccess
