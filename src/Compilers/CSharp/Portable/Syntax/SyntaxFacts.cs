@@ -439,11 +439,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             return node.ContextualKind == VarKeyword;
         }
 
-        internal static bool IsIdentifierVarOrPredefinedType(this Syntax.InternalSyntax.SyntaxToken node)
-        {
-            return node.IsIdentifierVar() || IsPredefinedType(node.Kind);
-        }
-
         internal static bool IsDeclarationExpressionType(SyntaxNode node, [NotNullWhen(true)] out DeclarationExpressionSyntax? parent)
         {
             parent = node.ModifyingScopedOrRefTypeOrSelf().Parent as DeclarationExpressionSyntax;
