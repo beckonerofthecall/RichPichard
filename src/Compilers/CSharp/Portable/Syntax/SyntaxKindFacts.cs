@@ -18,10 +18,10 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public static IEnumerable<SyntaxKind> GetReservedKeywordKinds()
         {
-            for (int i = (int)SyntaxKind.BoolKeyword; i <= (int)SyntaxKind.ImplicitKeyword; i++)
+            for (int i = (int)SyntaxKind.BoolKeyword; i <= (int)SyntaxKind.ThenKeyword; i++)
             {
-                Debug.Assert(Enum.IsDefined(typeof(SyntaxKind), (SyntaxKind)i));
-                yield return (SyntaxKind)i;
+                if (Enum.IsDefined(typeof(SyntaxKind), (SyntaxKind)i))
+                    yield return (SyntaxKind)i;
             }
         }
 
@@ -40,7 +40,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public static bool IsReservedKeyword(SyntaxKind kind)
         {
-            return kind >= SyntaxKind.BoolKeyword && kind <= SyntaxKind.ImplicitKeyword;
+            return kind >= SyntaxKind.BoolKeyword && kind <= SyntaxKind.ReservedKeyword;
         }
 
         public static bool IsAttributeTargetSpecifier(SyntaxKind kind)
@@ -1012,6 +1012,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return SyntaxKind.ImplicitKeyword;
                 case "explicit":
                     return SyntaxKind.ExplicitKeyword;
+                case "then":
+                    return SyntaxKind.ThenKeyword;
                 default:
                     return SyntaxKind.None;
             }
