@@ -46,28 +46,16 @@ namespace Microsoft.CodeAnalysis.CSharp
             return p is not null && p.Name == node;
         }
 
-        /// <summary>
-        /// Returns true if the node is the object of an invocation expression.
-        /// </summary>
-        public static bool IsInvoked(ExpressionSyntax node)
-        {
-            node = SyntaxFactory.GetStandaloneExpression(node);
-            var inv = node.Parent as InvocationExpressionSyntax;
-            return inv is not null && inv.Expression == node;
-        }
+        /// <summary> Returns true if the node is the object of an invocation expression. </summary>
+        public static bool IsInvoked(ExpressionSyntax node) => (SyntaxFactory.GetStandaloneExpression(node).Parent as InvocationExpressionSyntax)?.Expression == node;
 
-        /// <summary>
-        /// Returns true if the node is the object of an element access expression.
-        /// </summary>
+        /// <summary> Returns true if the node is the object of an element access expression. </summary>
         public static bool IsIndexed(ExpressionSyntax node) => (SyntaxFactory.GetStandaloneExpression(node).Parent as ElementAccessExpressionSyntax)?.Expression == node;
 
         public static bool IsNamespaceAliasQualifier(ExpressionSyntax node) => (node.Parent as AliasQualifiedNameSyntax)?.Alias == node;
 
-        /// <summary>
-        /// Returns true if the node is in a tree location that is expected to be a type
-        /// </summary>
+        /// <summary> Returns true if the node is in a tree location that is expected to be a type </summary>
         /// <param name="node"></param>
-        /// <returns></returns>
         public static bool IsInTypeOnlyContext(ExpressionSyntax node)
         {
             node = SyntaxFactory.GetStandaloneExpression(node);
