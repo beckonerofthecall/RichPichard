@@ -10972,7 +10972,7 @@ done:
             // 1. Only take the conditional part of the expression if we're at or below its precedence.
             // 2. When parsing the branches of the expression, parse at the highest precedence again ('expression').
             //    This allows for things like assignments/lambdas in the branches of the conditional.
-            if (this.CurrentToken.Kind == SyntaxKind.QuestionToken && precedence <= Precedence.Conditional)
+            if (this.CurrentToken.Kind is SyntaxKind.QuestionToken or SyntaxKind.ThenKeyword && precedence <= Precedence.Conditional)
                 return consumeConditionalExpression(currentExpression);
 
             return currentExpression;
@@ -11232,11 +11232,13 @@ done:
                 }
                 else
                 {
+                    var colonToken = this.TryEatToken(SyntaxKind.ColonToken);
                     return _syntaxFactory.ConditionalExpression(
                         leftOperand,
                         questionToken,
                         whenTrue,
-                        this.EatToken(SyntaxKind.ColonToken),
+                        colonToken ?? SyntaxToken.CreateMissing(SyntaxKind.ColonToken),
+                        colonToken is null ? _syntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression, SyntaxFactory.MissingToken(SyntaxKind.NullKeyword)) :
                         this.ParsePossibleRefExpression());
                 }
             }

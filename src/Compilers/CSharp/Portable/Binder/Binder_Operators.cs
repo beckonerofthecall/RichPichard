@@ -4014,8 +4014,14 @@ namespace Microsoft.CodeAnalysis.CSharp
             TypeSymbol optRightType = rightOperand.Type; // "B"
             bool isLeftNullable = (object)optLeftType != null && optLeftType.IsNullableType();
             TypeSymbol optLeftType0 = isLeftNullable ?  // "A0"
-                optLeftType.GetNullableUnderlyingType() :
-                optLeftType;
+                optLeftType.GetNullableUnderlyingType() : optLeftType;
+
+            if (optLeftType.SpecialType is SpecialType.System_Boolean)
+            {
+                var trueExpression = new BoundLiteral(SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression, SyntaxFactory.MissingToken(SyntaxKind.NullKeyword)), ConstantValue.Null, optRightType);
+                return new BoundConditionalOperator(node, optRightType.IsReferenceType, leftOperand, trueExpression, rightOperand,
+                    FoldConditionalOperator(leftOperand, trueExpression, rightOperand), optRightType, false, optRightType);
+            }
 
             // SPEC: The left hand side must be either the null literal or it must have a type. Lambdas and method groups do not have a type,
             // SPEC: so using one is an error.
@@ -4028,8 +4034,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             // SPEC: condition, to ensure that we don't allow previously illegal code in old language versions.
             if ((object)optLeftType != null && !optLeftType.IsReferenceType && !isLeftNullable)
             {
-                    return GenerateNullCoalescingBadBinaryOpsError(node, leftOperand, rightOperand, diagnostics);
-                }
+                return GenerateNullCoalescingBadBinaryOpsError(node, leftOperand, rightOperand, diagnostics);
+            }
 
             // SPEC:    If b is a dynamic expression, the result is dynamic. At runtime, a is first
             // SPEC:    evaluated. If a is not null, a is converted to a dynamic type, and this becomes
