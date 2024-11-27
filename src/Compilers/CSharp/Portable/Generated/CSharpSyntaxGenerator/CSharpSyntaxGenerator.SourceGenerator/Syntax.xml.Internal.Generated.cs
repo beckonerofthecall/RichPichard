@@ -19071,16 +19071,6 @@ internal partial class ContextAwareSyntax
 
     public ConditionalExpressionSyntax ConditionalExpression(ExpressionSyntax condition, SyntaxToken questionToken, ExpressionSyntax whenTrue, SyntaxToken colonToken, ExpressionSyntax whenFalse)
     {
-#if DEBUG
-        if (condition == null) throw new ArgumentNullException(nameof(condition));
-        if (questionToken == null) throw new ArgumentNullException(nameof(questionToken));
-        if (questionToken.Kind != SyntaxKind.QuestionToken) throw new ArgumentException(nameof(questionToken));
-        if (whenTrue == null) throw new ArgumentNullException(nameof(whenTrue));
-        if (colonToken == null) throw new ArgumentNullException(nameof(colonToken));
-        if (colonToken.Kind != SyntaxKind.ColonToken) throw new ArgumentException(nameof(colonToken));
-        if (whenFalse == null) throw new ArgumentNullException(nameof(whenFalse));
-#endif
-
         return new ConditionalExpressionSyntax(SyntaxKind.ConditionalExpression, condition, questionToken, whenTrue, colonToken, whenFalse, this.context);
     }
 

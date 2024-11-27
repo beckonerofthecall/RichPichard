@@ -1059,18 +1059,11 @@ namespace Microsoft.CodeAnalysis.Operations
 
                 if (syntax.IsMissing)
                 {
-                    // If the underlying syntax IsMissing, then that means we're in case where the compiler generated a piece of syntax to fill in for
-                    // an error, such as this case:
-                    //
-                    //  int i = ;
-                    //
+                    // If the underlying syntax IsMissing, then that means we're in case where the compiler generated a piece of syntax to fill in for an error, such as this case:
+                    // int i = ; 
                     // Semantic model has a special case here that we match: if the underlying syntax is missing, don't create a conversion expression,
                     // and instead directly return the operand, which will be a BoundBadExpression. When we generate a node for the BoundBadExpression,
                     // the resulting IOperation will also have a null Type.
-                    Debug.Assert(boundOperand.Kind == BoundKind.BadExpression ||
-                                 ((boundOperand as BoundLambda)?.Body.Statements.SingleOrDefault() as BoundReturnStatement)?.
-                                     ExpressionOpt?.Kind == BoundKind.BadExpression);
-                    Debug.Assert(!forceOperandImplicitLiteral);
                     return Create(boundOperand);
                 }
 

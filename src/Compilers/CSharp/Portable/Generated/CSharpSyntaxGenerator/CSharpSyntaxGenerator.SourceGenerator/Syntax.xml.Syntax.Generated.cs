@@ -3,10 +3,9 @@
 #nullable enable
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using Microsoft.CodeAnalysis.Syntax.InternalSyntax;
-using Roslyn.Utilities;
+
+#pragma warning disable RS0016
+
 using CoreSyntax = Microsoft.CodeAnalysis.Syntax.InternalSyntax;
 
 namespace Microsoft.CodeAnalysis.CSharp.Syntax;
