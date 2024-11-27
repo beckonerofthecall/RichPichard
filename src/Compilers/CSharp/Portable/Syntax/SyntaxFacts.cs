@@ -22,16 +22,14 @@ namespace Microsoft.CodeAnalysis.CSharp
         public static bool IsAliasQualifier(SyntaxNode node)
         {
             var p = node.Parent as AliasQualifiedNameSyntax;
-            return p != null && p.Alias == node;
+            return p is not null && p.Alias == node;
         }
 
         public static bool IsAttributeName(SyntaxNode node)
         {
             var parent = node.Parent;
-            if (parent == null || !IsName(node.Kind()))
-            {
+            if (parent is null || !IsName(node.Kind()))
                 return false;
-            }
 
             switch (parent.Kind())
             {
@@ -45,7 +43,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
 
             var p = node.Parent as AttributeSyntax;
-            return p != null && p.Name == node;
+            return p is not null && p.Name == node;
         }
 
         /// <summary>
@@ -55,7 +53,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             node = SyntaxFactory.GetStandaloneExpression(node);
             var inv = node.Parent as InvocationExpressionSyntax;
-            return inv != null && inv.Expression == node;
+            return inv is not null && inv.Expression == node;
         }
 
         /// <summary>
@@ -64,14 +62,13 @@ namespace Microsoft.CodeAnalysis.CSharp
         public static bool IsIndexed(ExpressionSyntax node)
         {
             node = SyntaxFactory.GetStandaloneExpression(node);
-            var indexer = node.Parent as ElementAccessExpressionSyntax;
-            return indexer != null && indexer.Expression == node;
+            return (node.Parent as ElementAccessExpressionSyntax)?.Expression == node;
         }
 
         public static bool IsNamespaceAliasQualifier(ExpressionSyntax node)
         {
             var parent = node.Parent as AliasQualifiedNameSyntax;
-            return parent != null && parent.Alias == node;
+            return parent is not null && parent.Alias == node;
         }
 
         /// <summary>
