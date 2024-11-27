@@ -8555,7 +8555,7 @@ done:
                         return null;
 
                     case SyntaxKind.OpenParenToken:
-                        if (current.IsIdentifierVar())
+                        if (current.ContextualKind == SyntaxKind.VarKeyword)
                         {
                             // potentially either a tuple type in a local declaration (true), or
                             // a tuple lvalue in a deconstruction assignment (false).
@@ -9386,15 +9386,11 @@ done:
             bool typeIsVar = IsVarType();
             SyntaxToken lastTokenOfType;
             if (ScanType(mode, out lastTokenOfType) == ScanTypeFlags.NotType)
-            {
                 return false;
-            }
 
             // check for a designation
             if (!ScanDesignation(permitTupleDesignation && (typeIsVar || IsPredefinedType(lastTokenOfType.Kind))))
-            {
                 return false;
-            }
 
             switch (mode)
             {
@@ -9409,29 +9405,10 @@ done:
             }
         }
 
-        /// <summary>
-        /// Is the following set of tokens, interpreted as a type, the type <c>var</c>?
-        /// </summary>
+        /// <summary> Is the following set of tokens, interpreted as a type, the type <c>var</c>? </summary>
         private bool IsVarType()
-        {
-            if (!this.CurrentToken.IsIdentifierVar())
-            {
-                return false;
-            }
-
-            switch (this.PeekToken(1).Kind)
-            {
-                case SyntaxKind.DotToken:
-                case SyntaxKind.ColonColonToken:
-                case SyntaxKind.OpenBracketToken:
-                case SyntaxKind.AsteriskToken:
-                case SyntaxKind.QuestionToken:
-                case SyntaxKind.LessThanToken:
-                    return false;
-                default:
-                    return true;
-            }
-        }
+            => !(this.CurrentToken.ContextualKind != SyntaxKind.VarKeyword || this.PeekToken(1).Kind is
+                SyntaxKind.DotToken or SyntaxKind.ColonColonToken or SyntaxKind.OpenBracketToken or SyntaxKind.AsteriskToken or SyntaxKind.QuestionToken);
 
         private static bool IsValidForeachVariable(ExpressionSyntax variable)
         {
@@ -9491,6 +9468,7 @@ done:
             var stack = ArrayBuilder<(SyntaxToken, SyntaxToken, ExpressionSyntax, SyntaxToken, StatementSyntax, SyntaxToken)>.GetInstance();
 
             StatementSyntax alternative = null;
+
             while (true)
             {
                 var ifKeyword = this.EatToken(SyntaxKind.IfKeyword);
@@ -9500,8 +9478,7 @@ done:
                 var consequence = this.ParseEmbeddedStatement();
 
                 var elseKeyword = this.CurrentToken.Kind != SyntaxKind.ElseKeyword ?
-                    null :
-                    this.EatToken(SyntaxKind.ElseKeyword);
+                    null : this.EatToken(SyntaxKind.ElseKeyword);
                 stack.Push((ifKeyword, openParen, condition, closeParen, consequence, elseKeyword));
 
                 if (elseKeyword is null)
@@ -11646,7 +11623,7 @@ done:
         /// </summary>
         private bool IsPossibleDeconstructionLeft(Precedence precedence)
         {
-            if (precedence > Precedence.Assignment || !(this.CurrentToken.IsIdentifierVar() || IsPredefinedType(this.CurrentToken.Kind)))
+            if (precedence > Precedence.Assignment || !(this.CurrentToken.ContextualKind == SyntaxKind.VarKeyword || IsPredefinedType(this.CurrentToken.Kind)))
             {
                 return false;
             }
