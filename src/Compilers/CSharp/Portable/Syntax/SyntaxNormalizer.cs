@@ -679,7 +679,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
                 return true;
             }
 
-            if (token.IsKind(SyntaxKind.QuestionToken))
+            if (token.IsKind(SyntaxKind.QuestionToken) || token.IsKind(SyntaxKind.ThenKeyword))
             {
                 if (token.Parent.IsKind(SyntaxKind.ConditionalExpression) || token.Parent is TypeSyntax)
                 {

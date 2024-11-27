@@ -2379,7 +2379,7 @@ internal static partial class SyntaxTreeExtensions
         }
 
         // goo ? |
-        if (token.IsKind(SyntaxKind.QuestionToken) &&
+        if ((token.IsKind(SyntaxKind.QuestionToken) || token.IsKind(SyntaxKind.ThenKeyword)) &&
             token.Parent is ConditionalExpressionSyntax conditionalExpression)
         {
             // If the condition is simply a TypeSyntax that binds to a type, treat this as a nullable type.

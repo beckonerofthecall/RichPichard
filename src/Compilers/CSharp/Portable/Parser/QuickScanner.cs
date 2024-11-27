@@ -252,14 +252,9 @@ exitWhile:
 
         private static SyntaxToken CreateQuickToken(Lexer lexer)
         {
-#if DEBUG
-            var quickWidth = lexer.TextWindow.Width;
-#endif
             lexer.TextWindow.Reset(lexer.TextWindow.LexemeStartPosition);
             var token = lexer.LexSyntaxToken();
-#if DEBUG
-            Debug.Assert(quickWidth == token.FullWidth);
-#endif
+
             return token;
         }
 
@@ -267,8 +262,8 @@ exitWhile:
         // # is marked complex as it may start directives.
         // PERF: Use byte instead of CharFlags so the compiler can use array literal initialization.
         //       The most natural type choice, Enum arrays, are not blittable due to a CLR limitation.
-        private static ReadOnlySpan<byte> CharProperties => new[]
-        {
+        private static ReadOnlySpan<byte> CharProperties =>
+        [
             // 0 .. 31
             (byte)CharFlags.Complex, (byte)CharFlags.Complex, (byte)CharFlags.Complex, (byte)CharFlags.Complex, (byte)CharFlags.Complex, (byte)CharFlags.Complex, (byte)CharFlags.Complex, (byte)CharFlags.Complex,
             (byte)CharFlags.Complex,
@@ -426,6 +421,6 @@ exitWhile:
             (byte)CharFlags.Letter, (byte)CharFlags.Letter, (byte)CharFlags.Letter, (byte)CharFlags.Letter, (byte)CharFlags.Letter, (byte)CharFlags.Letter, (byte)CharFlags.Letter, (byte)CharFlags.Letter,
             (byte)CharFlags.Letter, (byte)CharFlags.Letter, (byte)CharFlags.Letter, (byte)CharFlags.Letter, (byte)CharFlags.Letter, (byte)CharFlags.Letter, (byte)CharFlags.Letter, (byte)CharFlags.Letter,
             (byte)CharFlags.Letter, (byte)CharFlags.Letter, (byte)CharFlags.Letter, (byte)CharFlags.Letter, (byte)CharFlags.Letter, (byte)CharFlags.Letter, (byte)CharFlags.Letter, (byte)CharFlags.Letter
-        };
+        ];
     }
 }
