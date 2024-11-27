@@ -169,7 +169,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private BoundStatement BindUnsafeStatement(UnsafeStatementSyntax node, BindingDiagnosticBag diagnostics)
         {
-            var unsafeBinder = this.GetBinder(node);
+            _ = this.GetBinder(node);
 
             if (!this.Compilation.Options.AllowUnsafe)
             {
