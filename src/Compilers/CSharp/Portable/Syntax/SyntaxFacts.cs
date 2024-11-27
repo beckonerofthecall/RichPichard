@@ -63,7 +63,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static bool IsIndexed(ExpressionSyntax node)
         {
-            node = (ExpressionSyntax)SyntaxFactory.GetStandaloneExpression(node);
+            node = SyntaxFactory.GetStandaloneExpression(node);
             var indexer = node.Parent as ElementAccessExpressionSyntax;
             return indexer != null && indexer.Expression == node;
         }
