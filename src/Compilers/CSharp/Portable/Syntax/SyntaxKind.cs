@@ -328,6 +328,8 @@ namespace Microsoft.CodeAnalysis.CSharp
         ImplicitKeyword = 8384,
 
         ThenKeyword = 8385,
+        LogKeyword = 8386,
+        ErrKeyword = 8387,
 
         ReservedKeyword = 8404,
 

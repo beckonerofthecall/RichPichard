@@ -18,7 +18,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public static IEnumerable<SyntaxKind> GetReservedKeywordKinds()
         {
-            for (int i = (int)SyntaxKind.BoolKeyword; i <= (int)SyntaxKind.ThenKeyword; i++)
+            for (int i = (int)SyntaxKind.BoolKeyword; i <= (int)SyntaxKind.ReservedKeyword; i++)
             {
                 if (Enum.IsDefined(typeof(SyntaxKind), (SyntaxKind)i))
                     yield return (SyntaxKind)i;
@@ -1014,6 +1014,10 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return SyntaxKind.ExplicitKeyword;
                 case "then":
                     return SyntaxKind.ThenKeyword;
+                case "log":
+                    return SyntaxKind.LogKeyword;
+                case "err":
+                    return SyntaxKind.ErrKeyword;
                 default:
                     return SyntaxKind.None;
             }
@@ -1663,6 +1667,21 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return "implicit";
                 case SyntaxKind.ExplicitKeyword:
                     return "explicit";
+
+                case SyntaxKind.ThenKeyword:
+                    return "then";
+                case SyntaxKind.LogKeyword:
+                    return "log";
+                case SyntaxKind.ErrKeyword:
+                    return "err";
+
+
+
+
+
+
+
+
                 case SyntaxKind.ElifKeyword:
                     return "elif";
                 case SyntaxKind.EndIfKeyword:

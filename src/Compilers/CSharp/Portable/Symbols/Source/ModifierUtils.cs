@@ -92,7 +92,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                             goto default;
                         }
 
-                        diagnostics.Add(ErrorCode.ERR_StaticNotVirtual, errorLocation, ModifierUtils.ConvertSingleModifierToSyntaxText(oneError));
+                        diagnostics.Add(ErrorCode.ERR_StaticNotVirtual, errorLocation, ConvertSingleModifierToSyntaxText(oneError));
                         break;
 
                     default:
