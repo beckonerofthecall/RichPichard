@@ -60,7 +60,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             node = SyntaxFactory.GetStandaloneExpression(node);
             var parent = node.Parent;
-            if (parent != null)
+            if (parent is not null)
             {
                 switch (parent.Kind())
                 {
@@ -216,11 +216,11 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// <returns></returns>
         public static bool IsInNamespaceOrTypeContext(ExpressionSyntax? node)
         {
-            if (node != null)
+            if (node is not null)
             {
                 node = SyntaxFactory.GetStandaloneExpression(node);
                 var parent = node.Parent;
-                if (parent != null)
+                if (parent is not null)
                 {
                     switch (parent.Kind())
                     {
@@ -253,48 +253,32 @@ namespace Microsoft.CodeAnalysis.CSharp
             // Invocation, ObjectCreation, ObjectInitializer, ElementAccess or Subpattern.
 
             if (!node.IsKind(IdentifierName))
-            {
                 return false;
-            }
 
             var parent1 = node.Parent;
-            if (parent1 == null || !parent1.IsKind(NameColon))
-            {
+            if (parent1 is null || !parent1.IsKind(NameColon))
                 return false;
-            }
 
             var parent2 = parent1.Parent;
             if (parent2.IsKind(Subpattern))
-            {
                 return true;
-            }
 
-            if (parent2 == null || !(parent2.IsKind(Argument) || parent2.IsKind(AttributeArgument)))
-            {
+            if (parent2 is null || !(parent2.IsKind(Argument) || parent2.IsKind(AttributeArgument)))
                 return false;
-            }
 
             var parent3 = parent2.Parent;
-            if (parent3 == null)
-            {
+            if (parent3 is null)
                 return false;
-            }
 
             if (parent3.IsKind(TupleExpression))
-            {
                 return true;
-            }
 
             if (!(parent3 is BaseArgumentListSyntax || parent3.IsKind(AttributeArgumentList)))
-            {
                 return false;
-            }
 
             var parent4 = parent3.Parent;
-            if (parent4 == null)
-            {
+            if (parent4 is null)
                 return false;
-            }
 
             switch (parent4.Kind())
             {
@@ -323,13 +307,13 @@ namespace Microsoft.CodeAnalysis.CSharp
             // Dig through parens because dev10 does (even though the spec doesn't say so)
             // Dig through casts because there's a special error code (CS0254) for such casts.
             while (current != null && (current.IsKind(ParenthesizedExpression) || current.IsKind(CastExpression))) current = current.Parent;
-            if (current == null || !current.IsKind(EqualsValueClause)) return false;
+            if (current is null || !current.IsKind(EqualsValueClause)) return false;
             current = current.Parent;
-            if (current == null || !current.IsKind(VariableDeclarator)) return false;
+            if (current is null || !current.IsKind(VariableDeclarator)) return false;
             current = current.Parent;
-            if (current == null || !current.IsKind(VariableDeclaration)) return false;
+            if (current is null || !current.IsKind(VariableDeclaration)) return false;
             current = current.Parent;
-            return current != null && current.IsKind(FixedStatement);
+            return current is not null && current.IsKind(FixedStatement);
         }
 
         public static string GetText(Accessibility accessibility)
@@ -436,15 +420,13 @@ namespace Microsoft.CodeAnalysis.CSharp
                     break;
 
                 case DeclarationExpression:
-                    var declaration = (DeclarationExpressionSyntax)syntax;
-                    var designationKind = declaration.Designation.Kind();
-                    if (designationKind == ParenthesizedVariableDesignation ||
-                        designationKind == DiscardDesignation)
-                    {
-                        return null;
-                    }
+                    DeclarationExpressionSyntax declaration = (DeclarationExpressionSyntax)syntax;
 
-                    nameToken = ((SingleVariableDesignationSyntax)declaration.Designation).Identifier;
+                    if (declaration.Designation.Kind() is ParenthesizedVariableDesignation or DiscardDesignation)
+                        return null;
+
+                    nameToken = (declaration.Designation as SingleVariableDesignationSyntax)!.Identifier;
+
                     break;
 
                 case ParenthesizedVariableDesignation:
