@@ -308,15 +308,15 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
         {
             if (language == LanguageNames.CSharp)
             {
-                if (CodeAnalysis.CSharp.LanguageVersionFacts.TryParse(languageVersionAttribute.Value, out var languageVersion))
+                if (CSharp.LanguageVersionFacts.TryParse(languageVersionAttribute.Value, out var languageVersion))
                 {
                     return ((CSharpParseOptions)parseOptions).WithLanguageVersion(languageVersion);
                 }
             }
             else if (language == LanguageNames.VisualBasic)
             {
-                var languageVersion = CodeAnalysis.VisualBasic.LanguageVersion.Default;
-                if (CodeAnalysis.VisualBasic.LanguageVersionFacts.TryParse(languageVersionAttribute.Value, ref languageVersion))
+                var languageVersion = VisualBasic.LanguageVersion.Default;
+                if (VisualBasic.LanguageVersionFacts.TryParse(languageVersionAttribute.Value, ref languageVersion))
                 {
                     return ((VisualBasicParseOptions)parseOptions).WithLanguageVersion(languageVersion);
                 }
