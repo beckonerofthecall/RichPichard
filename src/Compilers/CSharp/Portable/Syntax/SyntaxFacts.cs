@@ -59,17 +59,9 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// <summary>
         /// Returns true if the node is the object of an element access expression.
         /// </summary>
-        public static bool IsIndexed(ExpressionSyntax node)
-        {
-            node = SyntaxFactory.GetStandaloneExpression(node);
-            return (node.Parent as ElementAccessExpressionSyntax)?.Expression == node;
-        }
+        public static bool IsIndexed(ExpressionSyntax node) => (SyntaxFactory.GetStandaloneExpression(node).Parent as ElementAccessExpressionSyntax)?.Expression == node;
 
-        public static bool IsNamespaceAliasQualifier(ExpressionSyntax node)
-        {
-            var parent = node.Parent as AliasQualifiedNameSyntax;
-            return parent is not null && parent.Alias == node;
-        }
+        public static bool IsNamespaceAliasQualifier(ExpressionSyntax node) => (node.Parent as AliasQualifiedNameSyntax)?.Alias == node;
 
         /// <summary>
         /// Returns true if the node is in a tree location that is expected to be a type
