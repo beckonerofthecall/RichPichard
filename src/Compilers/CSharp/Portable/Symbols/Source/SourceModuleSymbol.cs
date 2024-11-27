@@ -625,14 +625,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             base.AddSynthesizedAttributes(moduleBuilder, ref attributes);
 
             var compilation = _assemblySymbol.DeclaringCompilation;
-            if (compilation.Options.AllowUnsafe)
+            // NOTE: GlobalAttrBind::EmitCompilerGeneratedAttrs skips attribute if the well-known type isn't available.
+            if (!(compilation.GetWellKnownType(WellKnownType.System_Security_UnverifiableCodeAttribute) is MissingMetadataTypeSymbol))
             {
-                // NOTE: GlobalAttrBind::EmitCompilerGeneratedAttrs skips attribute if the well-known type isn't available.
-                if (!(compilation.GetWellKnownType(WellKnownType.System_Security_UnverifiableCodeAttribute) is MissingMetadataTypeSymbol))
-                {
-                    AddSynthesizedAttribute(ref attributes, compilation.TrySynthesizeAttribute(
-                        WellKnownMember.System_Security_UnverifiableCodeAttribute__ctor));
-                }
+                AddSynthesizedAttribute(ref attributes, compilation.TrySynthesizeAttribute(
+                    WellKnownMember.System_Security_UnverifiableCodeAttribute__ctor));
             }
 
             if (RequiresRefSafetyRulesAttribute())

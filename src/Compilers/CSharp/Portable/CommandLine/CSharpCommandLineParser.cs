@@ -65,7 +65,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             bool optimize = false;
             bool checkOverflow = false;
             NullableContextOptions nullableContextOptions = NullableContextOptions.Disable;
-            bool allowUnsafe = false;
             bool concurrentBuild = true;
             bool deterministic = false; // TODO(5431): Enable deterministic mode by default
             bool emitPdb = false;
@@ -972,14 +971,12 @@ namespace Microsoft.CodeAnalysis.CSharp
                             if (valueMemory is not null)
                                 break;
 
-                            allowUnsafe = true;
                             continue;
 
                         case "unsafe-":
                             if (valueMemory is not null)
                                 break;
 
-                            allowUnsafe = false;
                             continue;
 
                         case "delaysign":
@@ -1492,7 +1489,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                 optimizationLevel: optimize ? OptimizationLevel.Release : OptimizationLevel.Debug,
                 checkOverflow: checkOverflow,
                 nullableContextOptions: nullableContextOptions,
-                allowUnsafe: allowUnsafe,
                 deterministic: deterministic,
                 concurrentBuild: concurrentBuild,
                 cryptoKeyContainer: keyContainerSetting,
@@ -1743,13 +1739,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
 
             return builder.ToImmutableAndFree();
-        }
-
-        public static IEnumerable<string> ParseConditionalCompilationSymbols(string value, out IEnumerable<Diagnostic> diagnostics)
-        {
-            var builder = ArrayBuilder<string>.GetInstance();
-            ParseConditionalCompilationSymbols(value.AsMemory(), builder, out diagnostics);
-            return builder.ToArrayAndFree();
         }
 
         internal static void ParseConditionalCompilationSymbols(ReadOnlyMemory<char> valueMemory, ArrayBuilder<string> defines, out IEnumerable<Diagnostic> diagnostics)

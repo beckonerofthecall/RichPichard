@@ -684,10 +684,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         private static void ReportDiagnosticsForUnsafeSynthesizedAttributes(CSharpCompilation compilation, BindingDiagnosticBag diagnostics)
         {
             CSharpCompilationOptions compilationOptions = compilation.Options;
-            if (!compilationOptions.AllowUnsafe)
-            {
-                return;
-            }
 
             TypeSymbol unverifiableCodeAttribute = compilation.GetWellKnownType(WellKnownType.System_Security_UnverifiableCodeAttribute);
             Debug.Assert((object)unverifiableCodeAttribute != null, "GetWellKnownType unexpectedly returned null");
@@ -1812,38 +1808,35 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             // synthesized security attributes:
 
-            if (_compilation.Options.AllowUnsafe)
+            // NOTE: GlobalAttrBind::EmitCompilerGeneratedAttrs skips attribute if the well-known types aren't available.
+            if (!(_compilation.GetWellKnownType(WellKnownType.System_Security_UnverifiableCodeAttribute) is MissingMetadataTypeSymbol) &&
+                !(_compilation.GetWellKnownType(WellKnownType.System_Security_Permissions_SecurityPermissionAttribute) is MissingMetadataTypeSymbol))
             {
-                // NOTE: GlobalAttrBind::EmitCompilerGeneratedAttrs skips attribute if the well-known types aren't available.
-                if (!(_compilation.GetWellKnownType(WellKnownType.System_Security_UnverifiableCodeAttribute) is MissingMetadataTypeSymbol) &&
-                    !(_compilation.GetWellKnownType(WellKnownType.System_Security_Permissions_SecurityPermissionAttribute) is MissingMetadataTypeSymbol))
+                var securityActionType = _compilation.GetWellKnownType(WellKnownType.System_Security_Permissions_SecurityAction);
+                if (!(securityActionType is MissingMetadataTypeSymbol))
                 {
-                    var securityActionType = _compilation.GetWellKnownType(WellKnownType.System_Security_Permissions_SecurityAction);
-                    if (!(securityActionType is MissingMetadataTypeSymbol))
+                    var fieldRequestMinimum = (FieldSymbol)_compilation.GetWellKnownTypeMember(WellKnownMember.System_Security_Permissions_SecurityAction__RequestMinimum);
+
+                    // NOTE: Dev10 handles missing enum value.
+                    object constantValue = (object)fieldRequestMinimum == null || fieldRequestMinimum.HasUseSiteError ? 0 : fieldRequestMinimum.ConstantValue;
+                    var typedConstantRequestMinimum = new TypedConstant(securityActionType, TypedConstantKind.Enum, constantValue);
+
+                    var boolType = _compilation.GetSpecialType(SpecialType.System_Boolean);
+                    Debug.Assert(!boolType.HasUseSiteError,
+                        "Use site errors should have been checked ahead of time (type bool).");
+
+                    var typedConstantTrue = new TypedConstant(boolType, TypedConstantKind.Primitive, value: true);
+
+                    var attribute = _compilation.TrySynthesizeAttribute(
+                        WellKnownMember.System_Security_Permissions_SecurityPermissionAttribute__ctor,
+                        [typedConstantRequestMinimum],
+                        [new KeyValuePair<WellKnownMember, TypedConstant>(
+                            WellKnownMember.System_Security_Permissions_SecurityPermissionAttribute__SkipVerification,
+                            typedConstantTrue)]);
+
+                    if (attribute != null)
                     {
-                        var fieldRequestMinimum = (FieldSymbol)_compilation.GetWellKnownTypeMember(WellKnownMember.System_Security_Permissions_SecurityAction__RequestMinimum);
-
-                        // NOTE: Dev10 handles missing enum value.
-                        object constantValue = (object)fieldRequestMinimum == null || fieldRequestMinimum.HasUseSiteError ? 0 : fieldRequestMinimum.ConstantValue;
-                        var typedConstantRequestMinimum = new TypedConstant(securityActionType, TypedConstantKind.Enum, constantValue);
-
-                        var boolType = _compilation.GetSpecialType(SpecialType.System_Boolean);
-                        Debug.Assert(!boolType.HasUseSiteError,
-                            "Use site errors should have been checked ahead of time (type bool).");
-
-                        var typedConstantTrue = new TypedConstant(boolType, TypedConstantKind.Primitive, value: true);
-
-                        var attribute = _compilation.TrySynthesizeAttribute(
-                            WellKnownMember.System_Security_Permissions_SecurityPermissionAttribute__ctor,
-                            ImmutableArray.Create(typedConstantRequestMinimum),
-                            ImmutableArray.Create(new KeyValuePair<WellKnownMember, TypedConstant>(
-                                WellKnownMember.System_Security_Permissions_SecurityPermissionAttribute__SkipVerification,
-                                typedConstantTrue)));
-
-                        if (attribute != null)
-                        {
-                            yield return new Cci.SecurityAttribute((DeclarativeSecurityAction)(int)constantValue, attribute);
-                        }
+                        yield return new Cci.SecurityAttribute((DeclarativeSecurityAction)(int)constantValue, attribute);
                     }
                 }
             }

@@ -60,7 +60,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Scripting
                     usings: script.Options.Imports,
                     optimizationLevel: script.Options.OptimizationLevel,
                     checkOverflow: script.Options.CheckOverflow,
-                    allowUnsafe: script.Options.AllowUnsafe,
                     platform: Platform.AnyCpu,
                     warningLevel: script.Options.WarningLevel,
                     xmlReferenceResolver: null, // don't support XML file references in interactive (permissions & doc comment includes)

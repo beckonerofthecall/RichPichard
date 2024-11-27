@@ -26,7 +26,6 @@ namespace Microsoft.Cci
         public const string Checked = "checked";
         public const string Language = "language";
         public const string LanguageVersion = "language-version";
-        public const string Unsafe = "unsafe";
         public const string Nullable = "nullable";
         public const string Define = "define";
         public const string SourceFileCount = "source-file-count";

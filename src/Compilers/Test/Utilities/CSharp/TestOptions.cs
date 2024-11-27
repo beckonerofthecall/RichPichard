@@ -88,11 +88,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Test.Utilities
         public static readonly CSharpCompilationOptions ReleaseModule = CreateTestOptions(OutputKind.NetModule, OptimizationLevel.Release);
         public static readonly CSharpCompilationOptions DebugModule = CreateTestOptions(OutputKind.NetModule, OptimizationLevel.Debug);
 
-        public static readonly CSharpCompilationOptions UnsafeReleaseDll = ReleaseDll.WithAllowUnsafe(true);
-        public static readonly CSharpCompilationOptions UnsafeReleaseExe = ReleaseExe.WithAllowUnsafe(true);
+        public static readonly CSharpCompilationOptions UnsafeReleaseDll = ReleaseDll;
+        public static readonly CSharpCompilationOptions UnsafeReleaseExe = ReleaseExe;
 
-        public static readonly CSharpCompilationOptions UnsafeDebugDll = DebugDll.WithAllowUnsafe(true);
-        public static readonly CSharpCompilationOptions UnsafeDebugExe = DebugExe.WithAllowUnsafe(true);
+        public static readonly CSharpCompilationOptions UnsafeDebugDll = DebugDll;
+        public static readonly CSharpCompilationOptions UnsafeDebugExe = DebugExe;
 
         public static readonly CSharpCompilationOptions SigningReleaseDll = ReleaseDll.WithStrongNameProvider(SigningTestHelpers.DefaultDesktopStrongNameProvider);
         public static readonly CSharpCompilationOptions SigningReleaseExe = ReleaseExe.WithStrongNameProvider(SigningTestHelpers.DefaultDesktopStrongNameProvider);
@@ -185,9 +185,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Test.Utilities
         /// <param name="outputKind">The output kind of the created compilation options.</param>
         /// <param name="optimizationLevel">The optimization level of the created compilation options.</param>
         /// <param name="allowUnsafe">A boolean specifying whether to allow unsafe code. Defaults to false.</param>
-        /// <returns>A CSharpCompilationOptions with the specified <paramref name="outputKind"/>, <paramref name="optimizationLevel"/>, and <paramref name="allowUnsafe"/>.</returns>
-        internal static CSharpCompilationOptions CreateTestOptions(OutputKind outputKind, OptimizationLevel optimizationLevel, bool allowUnsafe = false)
-            => new CSharpCompilationOptions(outputKind, optimizationLevel: optimizationLevel, warningLevel: Diagnostic.MaxWarningLevel, allowUnsafe: allowUnsafe);
+        /// <returns>A CSharpCompilationOptions with the specified <paramref name="outputKind"/>, and <paramref name="optimizationLevel"/>.</returns>
+        internal static CSharpCompilationOptions CreateTestOptions(OutputKind outputKind, OptimizationLevel optimizationLevel)
+            => new CSharpCompilationOptions(outputKind, optimizationLevel: optimizationLevel, warningLevel: Diagnostic.MaxWarningLevel);
     }
 }
 

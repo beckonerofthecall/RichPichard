@@ -65,7 +65,6 @@ namespace Microsoft.CodeAnalysis.Rebuild
             pdbOptions.TryGetUniqueOption(CompilationOptionNames.Define, out var define);
             pdbOptions.TryGetUniqueOption(CompilationOptionNames.Checked, out var checkedString);
             pdbOptions.TryGetUniqueOption(CompilationOptionNames.Nullable, out var nullable);
-            pdbOptions.TryGetUniqueOption(CompilationOptionNames.Unsafe, out var unsafeString);
 
             CS.LanguageVersionFacts.TryParse(langVersionString, out var langVersion);
 
@@ -92,7 +91,6 @@ namespace Microsoft.CodeAnalysis.Rebuild
                 usings: null,
                 optimizationLevel,
                 !string.IsNullOrEmpty(checkedString) && bool.Parse(checkedString),
-                !string.IsNullOrEmpty(unsafeString) && bool.Parse(unsafeString),
                 cryptoKeyContainer: null,
                 cryptoKeyFile: null,
                 cryptoPublicKey: optionsReader.GetPublicKey()?.ToImmutableArray() ?? default,

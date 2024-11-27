@@ -4757,11 +4757,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                 writeValue(CompilationOptionNames.Nullable, Options.NullableContextOptions.ToString());
             }
 
-            if (Options.AllowUnsafe)
-            {
-                writeValue(CompilationOptionNames.Unsafe, Options.AllowUnsafe.ToString());
-            }
-
             var preprocessorSymbols = GetPreprocessorSymbols();
             if (preprocessorSymbols.Any())
             {

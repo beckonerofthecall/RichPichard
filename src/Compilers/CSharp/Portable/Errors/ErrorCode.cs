@@ -194,7 +194,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         ERR_BadVarargs = 224,
         ERR_ParamsMustBeCollection = 225,
         ERR_IllegalArglist = 226,
-        ERR_IllegalUnsafe = 227,
+        //ERR_IllegalUnsafe = 227,
         //ERR_NoAccessibleMember = 228,
         ERR_AmbigMember = 229,
         ERR_BadForeachDecl = 230,

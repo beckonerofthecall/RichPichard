@@ -37,7 +37,6 @@ internal sealed class CSharpInteractiveEvaluatorLanguageInfoProvider : Interacti
             new CSharpCompilationOptions(
                 OutputKind.DynamicallyLinkedLibrary,
                 scriptClassName: name,
-                allowUnsafe: true,
                 xmlReferenceResolver: null, // no support for permission set and doc includes in interactive
                 usings: imports,
                 sourceReferenceResolver: sourceReferenceResolver,

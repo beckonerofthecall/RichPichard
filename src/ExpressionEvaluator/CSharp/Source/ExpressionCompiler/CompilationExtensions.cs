@@ -141,7 +141,6 @@ namespace Microsoft.CodeAnalysis.CSharp.ExpressionEvaluator
         // XML file references, #r directives not supported:
         private static readonly CSharpCompilationOptions s_compilationOptions = new CSharpCompilationOptions(
             outputKind: OutputKind.DynamicallyLinkedLibrary,
-            allowUnsafe: true,
             platform: Platform.AnyCpu, // Platform should match PEModule.Machine, in this case I386.
             optimizationLevel: OptimizationLevel.Release,
             assemblyIdentityComparer: IdentityComparer).

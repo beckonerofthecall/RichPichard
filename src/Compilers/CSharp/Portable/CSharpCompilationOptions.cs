@@ -23,11 +23,6 @@ namespace Microsoft.CodeAnalysis.CSharp
 #pragma warning restore CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode().
     {
         /// <summary>
-        /// Allow unsafe regions (i.e. unsafe modifiers on members and unsafe blocks).
-        /// </summary>
-        public bool AllowUnsafe { get; private set; }
-
-        /// <summary>
         /// Global namespace usings.
         /// </summary>
         public ImmutableArray<string> Usings { get; private set; }
@@ -54,7 +49,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             IEnumerable<string>? usings = null,
             OptimizationLevel optimizationLevel = OptimizationLevel.Debug,
             bool checkOverflow = false,
-            bool allowUnsafe = false,
             string? cryptoKeyContainer = null,
             string? cryptoKeyFile = null,
             ImmutableArray<byte> cryptoPublicKey = default,
@@ -74,7 +68,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             MetadataImportOptions metadataImportOptions = MetadataImportOptions.Public,
             NullableContextOptions nullableContextOptions = NullableContextOptions.Disable)
             : this(outputKind, reportSuppressedDiagnostics, moduleName, mainTypeName, scriptClassName,
-                   usings, optimizationLevel, checkOverflow, allowUnsafe,
+                   usings, optimizationLevel, checkOverflow,
                    cryptoKeyContainer, cryptoKeyFile, cryptoPublicKey, delaySign, platform,
                    generalDiagnosticOption, warningLevel,
                    specificDiagnosticOptions, concurrentBuild, deterministic,
@@ -94,93 +88,6 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
         }
 
-        // 15.9 BACKCOMPAT OVERLOAD -- DO NOT TOUCH
-        public CSharpCompilationOptions(
-            OutputKind outputKind,
-            bool reportSuppressedDiagnostics,
-            string? moduleName,
-            string? mainTypeName,
-            string? scriptClassName,
-            IEnumerable<string>? usings,
-            OptimizationLevel optimizationLevel,
-            bool checkOverflow,
-            bool allowUnsafe,
-            string? cryptoKeyContainer,
-            string? cryptoKeyFile,
-            ImmutableArray<byte> cryptoPublicKey,
-            bool? delaySign,
-            Platform platform,
-            ReportDiagnostic generalDiagnosticOption,
-            int warningLevel,
-            IEnumerable<KeyValuePair<string, ReportDiagnostic>>? specificDiagnosticOptions,
-            bool concurrentBuild,
-            bool deterministic,
-            XmlReferenceResolver? xmlReferenceResolver,
-            SourceReferenceResolver? sourceReferenceResolver,
-            MetadataReferenceResolver? metadataReferenceResolver,
-            AssemblyIdentityComparer? assemblyIdentityComparer,
-            StrongNameProvider? strongNameProvider,
-            bool publicSign,
-            MetadataImportOptions metadataImportOptions)
-            : this(outputKind, reportSuppressedDiagnostics, moduleName, mainTypeName, scriptClassName,
-                   usings, optimizationLevel, checkOverflow, allowUnsafe,
-                   cryptoKeyContainer, cryptoKeyFile, cryptoPublicKey, delaySign, platform,
-                   generalDiagnosticOption, warningLevel,
-                   specificDiagnosticOptions, concurrentBuild, deterministic,
-                   xmlReferenceResolver,
-                   sourceReferenceResolver,
-                   metadataReferenceResolver,
-                   assemblyIdentityComparer,
-                   strongNameProvider,
-                   publicSign,
-                   metadataImportOptions,
-                   nullableContextOptions: NullableContextOptions.Disable)
-        {
-        }
-
-        // 15.6 BACKCOMPAT OVERLOAD -- DO NOT TOUCH
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public CSharpCompilationOptions(
-            OutputKind outputKind,
-            bool reportSuppressedDiagnostics,
-            string? moduleName,
-            string? mainTypeName,
-            string? scriptClassName,
-            IEnumerable<string>? usings,
-            OptimizationLevel optimizationLevel,
-            bool checkOverflow,
-            bool allowUnsafe,
-            string? cryptoKeyContainer,
-            string? cryptoKeyFile,
-            ImmutableArray<byte> cryptoPublicKey,
-            bool? delaySign,
-            Platform platform,
-            ReportDiagnostic generalDiagnosticOption,
-            int warningLevel,
-            IEnumerable<KeyValuePair<string, ReportDiagnostic>>? specificDiagnosticOptions,
-            bool concurrentBuild,
-            bool deterministic,
-            XmlReferenceResolver? xmlReferenceResolver,
-            SourceReferenceResolver? sourceReferenceResolver,
-            MetadataReferenceResolver? metadataReferenceResolver,
-            AssemblyIdentityComparer? assemblyIdentityComparer,
-            StrongNameProvider? strongNameProvider,
-            bool publicSign)
-            : this(outputKind, reportSuppressedDiagnostics, moduleName, mainTypeName, scriptClassName,
-                   usings, optimizationLevel, checkOverflow, allowUnsafe,
-                   cryptoKeyContainer, cryptoKeyFile, cryptoPublicKey, delaySign, platform,
-                   generalDiagnosticOption, warningLevel,
-                   specificDiagnosticOptions, concurrentBuild, deterministic,
-                   xmlReferenceResolver,
-                   sourceReferenceResolver,
-                   metadataReferenceResolver,
-                   assemblyIdentityComparer,
-                   strongNameProvider,
-                   publicSign,
-                   MetadataImportOptions.Public)
-        {
-        }
-
         // Expects correct arguments.
         internal CSharpCompilationOptions(
             OutputKind outputKind,
@@ -191,7 +98,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             IEnumerable<string>? usings,
             OptimizationLevel optimizationLevel,
             bool checkOverflow,
-            bool allowUnsafe,
             string? cryptoKeyContainer,
             string? cryptoKeyFile,
             ImmutableArray<byte> cryptoPublicKey,
@@ -223,7 +129,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                    assemblyIdentityComparer, strongNameProvider, metadataImportOptions, referencesSupersedeLowerVersions)
         {
             this.Usings = usings.AsImmutableOrEmpty();
-            this.AllowUnsafe = allowUnsafe;
             this.TopLevelBinderFlags = topLevelBinderFlags;
             this.NullableContextOptions = nullableContextOptions;
         }
@@ -236,7 +141,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             usings: other.Usings,
             optimizationLevel: other.OptimizationLevel,
             checkOverflow: other.CheckOverflow,
-            allowUnsafe: other.AllowUnsafe,
             cryptoKeyContainer: other.CryptoKeyContainer,
             cryptoKeyFile: other.CryptoKeyFile,
             cryptoPublicKey: other.CryptoPublicKey,
@@ -408,16 +312,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
 
             return new CSharpCompilationOptions(this) { NullableContextOptions = options };
-        }
-
-        public CSharpCompilationOptions WithAllowUnsafe(bool enabled)
-        {
-            if (enabled == this.AllowUnsafe)
-            {
-                return this;
-            }
-
-            return new CSharpCompilationOptions(this) { AllowUnsafe = enabled };
         }
 
         public new CSharpCompilationOptions WithPlatform(Platform platform)
@@ -739,8 +633,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return false;
             }
 
-            return this.AllowUnsafe == other.AllowUnsafe &&
-                   this.TopLevelBinderFlags == other.TopLevelBinderFlags &&
+            return this.TopLevelBinderFlags == other.TopLevelBinderFlags &&
                    (this.Usings == null ? other.Usings == null : this.Usings.SequenceEqual(other.Usings, StringComparer.Ordinal) &&
                    this.NullableContextOptions == other.NullableContextOptions);
         }
@@ -753,9 +646,8 @@ namespace Microsoft.CodeAnalysis.CSharp
         protected override int ComputeHashCode()
         {
             return Hash.Combine(GetHashCodeHelper(),
-                   Hash.Combine(this.AllowUnsafe,
                    Hash.Combine(Hash.CombineValues(this.Usings, StringComparer.Ordinal),
-                   Hash.Combine(((uint)TopLevelBinderFlags).GetHashCode(), ((int)this.NullableContextOptions).GetHashCode()))));
+                   Hash.Combine(((uint)TopLevelBinderFlags).GetHashCode(), ((int)this.NullableContextOptions).GetHashCode())));
         }
 
         internal override Diagnostic? FilterDiagnostic(Diagnostic diagnostic, CancellationToken cancellationToken)
@@ -808,136 +700,6 @@ namespace Microsoft.CodeAnalysis.CSharp
         protected override CompilationOptions CommonWithCheckOverflow(bool checkOverflow)
         {
             return WithOverflowChecks(checkOverflow);
-        }
-
-        // 1.1 BACKCOMPAT OVERLOAD -- DO NOT TOUCH
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public CSharpCompilationOptions(
-            OutputKind outputKind,
-            string? moduleName,
-            string? mainTypeName,
-            string? scriptClassName,
-            IEnumerable<string>? usings,
-            OptimizationLevel optimizationLevel,
-            bool checkOverflow,
-            bool allowUnsafe,
-            string? cryptoKeyContainer,
-            string? cryptoKeyFile,
-            ImmutableArray<byte> cryptoPublicKey,
-            bool? delaySign,
-            Platform platform,
-            ReportDiagnostic generalDiagnosticOption,
-            int warningLevel,
-            IEnumerable<KeyValuePair<string, ReportDiagnostic>>? specificDiagnosticOptions,
-            bool concurrentBuild,
-            bool deterministic,
-            XmlReferenceResolver? xmlReferenceResolver,
-            SourceReferenceResolver? sourceReferenceResolver,
-            MetadataReferenceResolver? metadataReferenceResolver,
-            AssemblyIdentityComparer? assemblyIdentityComparer,
-            StrongNameProvider? strongNameProvider)
-            : this(outputKind, false, moduleName, mainTypeName, scriptClassName, usings,
-                   optimizationLevel, checkOverflow, allowUnsafe, cryptoKeyContainer, cryptoKeyFile,
-                   cryptoPublicKey, delaySign, platform, generalDiagnosticOption, warningLevel,
-                   specificDiagnosticOptions, concurrentBuild, deterministic,
-                   xmlReferenceResolver: xmlReferenceResolver,
-                   sourceReferenceResolver: sourceReferenceResolver,
-                   metadataReferenceResolver: metadataReferenceResolver,
-                   assemblyIdentityComparer: assemblyIdentityComparer,
-                   strongNameProvider: strongNameProvider,
-                   publicSign: false)
-        {
-        }
-
-        // 1.0 BACKCOMPAT OVERLOAD -- DO NOT TOUCH
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public CSharpCompilationOptions(
-            OutputKind outputKind,
-            string? moduleName,
-            string? mainTypeName,
-            string? scriptClassName,
-            IEnumerable<string>? usings,
-            OptimizationLevel optimizationLevel,
-            bool checkOverflow,
-            bool allowUnsafe,
-            string? cryptoKeyContainer,
-            string? cryptoKeyFile,
-            ImmutableArray<byte> cryptoPublicKey,
-            bool? delaySign,
-            Platform platform,
-            ReportDiagnostic generalDiagnosticOption,
-            int warningLevel,
-            IEnumerable<KeyValuePair<string, ReportDiagnostic>>? specificDiagnosticOptions,
-            bool concurrentBuild,
-            XmlReferenceResolver? xmlReferenceResolver,
-            SourceReferenceResolver? sourceReferenceResolver,
-            MetadataReferenceResolver? metadataReferenceResolver,
-            AssemblyIdentityComparer? assemblyIdentityComparer,
-            StrongNameProvider? strongNameProvider)
-            : this(outputKind, moduleName, mainTypeName, scriptClassName, usings,
-                   optimizationLevel, checkOverflow, allowUnsafe,
-                   cryptoKeyContainer, cryptoKeyFile, cryptoPublicKey, delaySign,
-                   platform, generalDiagnosticOption, warningLevel,
-                   specificDiagnosticOptions, concurrentBuild,
-                   deterministic: false,
-                   xmlReferenceResolver: xmlReferenceResolver,
-                   sourceReferenceResolver: sourceReferenceResolver,
-                   metadataReferenceResolver: metadataReferenceResolver,
-                   assemblyIdentityComparer: assemblyIdentityComparer,
-                   strongNameProvider: strongNameProvider)
-        {
-        }
-
-        // Bad constructor -- DO NOT USE
-        // Violates the rules for optional parameter overloads detailed at
-        // https://github.com/dotnet/roslyn/blob/e8fdb391703dcb5712ff6a5b83d768d784cba4cf/docs/Adding%20Optional%20Parameters%20in%20Public%20API.md
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public CSharpCompilationOptions(
-            OutputKind outputKind,
-#pragma warning disable IDE0060 // Remove unused parameter
-            bool reportSuppressedDiagnostics,
-#pragma warning restore IDE0060 // Remove unused parameter
-            string? moduleName,
-            string? mainTypeName,
-            string? scriptClassName,
-            IEnumerable<string>? usings,
-            OptimizationLevel optimizationLevel,
-            bool checkOverflow,
-            bool allowUnsafe,
-            string? cryptoKeyContainer,
-            string? cryptoKeyFile,
-            ImmutableArray<byte> cryptoPublicKey,
-            bool? delaySign,
-            Platform platform,
-            ReportDiagnostic generalDiagnosticOption,
-            int warningLevel,
-            IEnumerable<KeyValuePair<string, ReportDiagnostic>>? specificDiagnosticOptions,
-            bool concurrentBuild,
-            bool deterministic,
-            XmlReferenceResolver? xmlReferenceResolver,
-            SourceReferenceResolver? sourceReferenceResolver,
-            MetadataReferenceResolver? metadataReferenceResolver,
-            AssemblyIdentityComparer? assemblyIdentityComparer,
-            StrongNameProvider? strongNameProvider)
-            : this(outputKind, false, moduleName, mainTypeName, scriptClassName, usings, optimizationLevel,
-                   checkOverflow, allowUnsafe, cryptoKeyContainer, cryptoKeyFile, cryptoPublicKey,
-                   delaySign, platform, generalDiagnosticOption, warningLevel,
-                   specificDiagnosticOptions, concurrentBuild,
-                   deterministic: deterministic,
-                   currentLocalTime: default,
-                   debugPlusMode: false,
-                   xmlReferenceResolver: xmlReferenceResolver,
-                   sourceReferenceResolver: sourceReferenceResolver,
-                   syntaxTreeOptionsProvider: null,
-                   metadataReferenceResolver: metadataReferenceResolver,
-                   assemblyIdentityComparer: assemblyIdentityComparer,
-                   strongNameProvider: strongNameProvider,
-                   metadataImportOptions: MetadataImportOptions.Public,
-                   referencesSupersedeLowerVersions: false,
-                   publicSign: false,
-                   topLevelBinderFlags: BinderFlags.None,
-                   nullableContextOptions: NullableContextOptions.Disable)
-        {
         }
     }
 }

@@ -790,7 +790,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 or ErrorCode.ERR_BadVarargs
                 or ErrorCode.ERR_ParamsMustBeCollection
                 or ErrorCode.ERR_IllegalArglist
-                or ErrorCode.ERR_IllegalUnsafe
+                //or ErrorCode.ERR_IllegalUnsafe
                 or ErrorCode.ERR_AmbigMember
                 or ErrorCode.ERR_BadForeachDecl
                 or ErrorCode.ERR_ParamsLast

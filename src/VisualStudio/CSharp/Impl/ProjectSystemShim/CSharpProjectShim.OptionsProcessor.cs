@@ -135,7 +135,7 @@ namespace Microsoft.VisualStudio.LanguageServices.CSharp.ProjectSystemShim
 
                 // TODO: appConfigPath: GetFilePathOption(CompilerOptions.OPTID_FUSIONCONFIG), bug #869604
 
-                return ((CSharpCompilationOptions)compilationOptions).WithAllowUnsafe(GetBooleanOption(CompilerOptions.OPTID_UNSAFE))
+                return ((CSharpCompilationOptions)compilationOptions)
                     .WithOverflowChecks(GetBooleanOption(CompilerOptions.OPTID_CHECKED))
                     .WithCryptoKeyContainer(GetStringOption(CompilerOptions.OPTID_KEYNAME, defaultValue: null))
                     .WithCryptoKeyFile(GetFilePathRelativeOption(CompilerOptions.OPTID_KEYFILE))

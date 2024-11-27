@@ -1525,18 +1525,6 @@ namespace System.Diagnostics.CodeAnalysis
             }
         }
 
-        /// <summary>
-        /// Like CompileAndVerify, but confirms that execution raises an exception.
-        /// </summary>
-        /// <typeparam name="T">Expected type of the exception.</typeparam>
-        /// <param name="source">Program to compile and execute.</param>
-        /// <param name="expectedMessage">Ignored if null.</param>
-        internal CompilationVerifier CompileAndVerifyException<T>(string source, string expectedMessage = null, bool allowUnsafe = false, Verification verify = default) where T : Exception
-        {
-            var comp = CreateCompilation(source, options: TestOptions.ReleaseExe.WithAllowUnsafe(allowUnsafe));
-            return CompileAndVerifyException<T>(comp, expectedMessage, verify);
-        }
-
         internal CompilationVerifier CompileAndVerifyException<T>(CSharpCompilation comp, string expectedMessage = null, Verification verify = default) where T : Exception
         {
             try

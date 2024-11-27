@@ -18,13 +18,9 @@ namespace Microsoft.CodeAnalysis.CSharp
         protected override void WriteCompilationOptionsCore(JsonWriter writer, CompilationOptions options)
         {
             if (options is not CSharpCompilationOptions csharpOptions)
-            {
                 throw new ArgumentException(null, nameof(options));
-            }
 
             base.WriteCompilationOptionsCore(writer, options);
-
-            writer.Write("unsafe", csharpOptions.AllowUnsafe);
             writer.Write("topLevelBinderFlags", csharpOptions.TopLevelBinderFlags);
             writer.WriteKey("usings");
             writer.WriteArrayStart();

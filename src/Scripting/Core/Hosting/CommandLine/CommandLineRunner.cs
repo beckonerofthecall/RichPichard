@@ -170,7 +170,6 @@ namespace Microsoft.CodeAnalysis.Scripting.Hosting
                 emitDebugInformation: emitDebugInformation,
                 fileEncoding: null,
                 optimizationLevel: OptimizationLevel.Debug,
-                allowUnsafe: true,
                 checkOverflow: false,
                 warningLevel: 4,
                 parseOptions: arguments.ParseOptions,

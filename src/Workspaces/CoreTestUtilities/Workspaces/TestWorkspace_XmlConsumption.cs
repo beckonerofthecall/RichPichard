@@ -496,7 +496,7 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
 
                     // VB needs Compilation.ParseOptions set (we do the same at the VS layer)
                     return language == LanguageNames.CSharp
-                       ? new CSharpCompilationOptions(OutputKind.WindowsRuntimeMetadata, allowUnsafe: allowUnsafe)
+                       ? new CSharpCompilationOptions(OutputKind.WindowsRuntimeMetadata)
                        : new VisualBasicCompilationOptions(OutputKind.WindowsRuntimeMetadata).WithGlobalImports(globalImports).WithRootNamespace(rootNamespace)
                             .WithParseOptions((VisualBasicParseOptions)parseOptions ?? VisualBasicParseOptions.Default);
                 }
@@ -526,7 +526,7 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
 
             if (language == LanguageNames.CSharp)
             {
-                compilationOptions = ((CSharpCompilationOptions)compilationOptions).WithAllowUnsafe(allowUnsafe).WithNullableContextOptions(nullable);
+                compilationOptions = ((CSharpCompilationOptions)compilationOptions).WithNullableContextOptions(nullable);
             }
 
             if (language == LanguageNames.VisualBasic)

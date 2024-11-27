@@ -32,7 +32,6 @@ namespace Microsoft.CodeAnalysis.Scripting
             fileEncoding: null,
             OptimizationLevel.Debug,
             checkOverflow: false,
-            allowUnsafe: true,
             warningLevel: 4,
             parseOptions: null);
 
@@ -129,11 +128,6 @@ namespace Microsoft.CodeAnalysis.Scripting
         public bool CheckOverflow { get; private set; }
 
         /// <summary>
-        /// Allow unsafe regions (i.e. unsafe modifiers on members and unsafe blocks).
-        /// </summary>
-        public bool AllowUnsafe { get; private set; }
-
-        /// <summary>
         /// Global warning level (from 0 to 4).
         /// </summary>
         public int WarningLevel { get; private set; }
@@ -152,7 +146,6 @@ namespace Microsoft.CodeAnalysis.Scripting
             Encoding? fileEncoding,
             OptimizationLevel optimizationLevel,
             bool checkOverflow,
-            bool allowUnsafe,
             int warningLevel,
             ParseOptions? parseOptions,
             Func<string, PEStreamOptions, MetadataReferenceProperties, MetadataImageReference>? createFromFileFunc = null)
@@ -172,7 +165,6 @@ namespace Microsoft.CodeAnalysis.Scripting
             FileEncoding = fileEncoding;
             OptimizationLevel = optimizationLevel;
             CheckOverflow = checkOverflow;
-            AllowUnsafe = allowUnsafe;
             WarningLevel = warningLevel;
             ParseOptions = parseOptions;
             CreateFromFileFunc = createFromFileFunc ?? Script.CreateFromFile;
@@ -188,7 +180,6 @@ namespace Microsoft.CodeAnalysis.Scripting
                    fileEncoding: other.FileEncoding,
                    optimizationLevel: other.OptimizationLevel,
                    checkOverflow: other.CheckOverflow,
-                   allowUnsafe: other.AllowUnsafe,
                    warningLevel: other.WarningLevel,
                    parseOptions: other.ParseOptions,
                    createFromFileFunc: other.CreateFromFileFunc)
@@ -369,12 +360,6 @@ namespace Microsoft.CodeAnalysis.Scripting
         /// <returns></returns>
         public ScriptOptions WithOptimizationLevel(OptimizationLevel optimizationLevel)
             => optimizationLevel == OptimizationLevel ? this : new ScriptOptions(this) { OptimizationLevel = optimizationLevel };
-
-        /// <summary>
-        /// Create a new <see cref="ScriptOptions"/> with unsafe code regions allowed.
-        /// </summary>
-        public ScriptOptions WithAllowUnsafe(bool allowUnsafe)
-            => allowUnsafe == AllowUnsafe ? this : new ScriptOptions(this) { AllowUnsafe = allowUnsafe };
 
         /// <summary>
         /// Create a new <see cref="ScriptOptions"/> with bounds checking on integer arithmetic enforced.

@@ -146,11 +146,7 @@ namespace Microsoft.CodeAnalysis.Test.Utilities
 
             var element = new XElement(CompilationOptionsElementName);
 
-            if (options is CodeAnalysis.CSharp.CSharpCompilationOptions csOptions)
-            {
-                element.SetAttributeValue(AllowUnsafeAttributeName, csOptions.AllowUnsafe);
-            }
-            else if (options is CodeAnalysis.VisualBasic.VisualBasicCompilationOptions vbOptions)
+            if (options is VisualBasicCompilationOptions vbOptions)
             {
                 element.Add(vbOptions.GlobalImports.AsEnumerable().Select(i => new XElement(GlobalImportElementName, i.Name)));
 

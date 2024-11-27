@@ -29,7 +29,6 @@ internal class CSharpOptionsSerializationService : AbstractOptionsSerializationS
 
         var csharpOptions = (CSharpCompilationOptions)options;
         writer.WriteArray(csharpOptions.Usings, static (w, u) => w.WriteString(u));
-        writer.WriteBoolean(csharpOptions.AllowUnsafe);
         writer.WriteByte((byte)csharpOptions.NullableContextOptions);
     }
 
@@ -52,11 +51,10 @@ internal class CSharpOptionsSerializationService : AbstractOptionsSerializationS
             strongNameProvider) = ReadCompilationOptionsPieces(reader, cancellationToken);
 
         var usings = reader.ReadArray(static r => r.ReadString());
-        var allowUnsafe = reader.ReadBoolean();
         var nullableContextOptions = (NullableContextOptions)reader.ReadByte();
 
         return new CSharpCompilationOptions(
-            outputKind, reportSuppressedDiagnostics, moduleName, mainTypeName, scriptClassName, usings, optimizationLevel, checkOverflow, allowUnsafe,
+            outputKind, reportSuppressedDiagnostics, moduleName, mainTypeName, scriptClassName, usings, optimizationLevel, checkOverflow,
             cryptoKeyContainer, cryptoKeyFile, cryptoPublicKey, delaySign, platform, generalDiagnosticOption, warningLevel, specificDiagnosticOptions, concurrentBuild,
             deterministic, xmlReferenceResolver, sourceReferenceResolver, metadataReferenceResolver, assemblyIdentityComparer, strongNameProvider, publicSign,
             metadataImportOptions, nullableContextOptions);
