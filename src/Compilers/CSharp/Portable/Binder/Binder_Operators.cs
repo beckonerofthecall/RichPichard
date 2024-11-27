@@ -4028,17 +4028,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             // SPEC: condition, to ensure that we don't allow previously illegal code in old language versions.
             if ((object)optLeftType != null && !optLeftType.IsReferenceType && !isLeftNullable)
             {
-                // Prior to C# 8.0, the spec said that the left type must be either a reference type or a nullable value type. This was relaxed
-                // with C# 8.0, so if the feature is not enabled then issue a diagnostic and return
-                if (!optLeftType.IsValueType)
-                {
-                    CheckFeatureAvailability(node, MessageID.IDS_FeatureUnconstrainedTypeParameterInNullCoalescingOperator, diagnostics);
-                }
-                else
-                {
                     return GenerateNullCoalescingBadBinaryOpsError(node, leftOperand, rightOperand, diagnostics);
                 }
-            }
 
             // SPEC:    If b is a dynamic expression, the result is dynamic. At runtime, a is first
             // SPEC:    evaluated. If a is not null, a is converted to a dynamic type, and this becomes
