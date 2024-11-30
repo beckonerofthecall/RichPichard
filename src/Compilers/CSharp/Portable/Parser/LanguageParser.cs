@@ -9503,9 +9503,6 @@ done:
         {
             Debug.Assert(this.CurrentToken.Kind == SyntaxKind.ElseKeyword);
 
-
-
-            +
             return _syntaxFactory.IfStatement(
                 attributes,
                 this.EatToken(SyntaxKind.IfKeyword, ErrorCode.ERR_ElseCannotStartStatement),
