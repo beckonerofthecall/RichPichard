@@ -365,9 +365,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     && arity == 0
                     && !hasParameterList)
                 {
-                    result.Free(); // Won't be using this.
-                    Debug.Assert(memberName == memberNameText);
-                    CheckFeatureAvailability(syntax, MessageID.IDS_FeatureNativeInt, diagnostics);
+                    result.Free();
                     builder = ArrayBuilder<Symbol>.GetInstance();
                     builder.Add(this.GetSpecialType(memberName == "nint" ? SpecialType.System_IntPtr : SpecialType.System_UIntPtr, diagnostics, syntax).AsNativeInteger());
                 }
@@ -934,7 +932,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                 RefKind refKind = parameter.RefKindKeyword.Kind().GetRefKind();
                 if (refKind == RefKind.Ref && parameter.ReadOnlyKeyword.IsKind(SyntaxKind.ReadOnlyKeyword))
                 {
-                    CheckFeatureAvailability(parameter.ReadOnlyKeyword, MessageID.IDS_FeatureRefReadonlyParameters, diagnostics, forceWarning: true);
                     refKind = RefKind.RefReadOnlyParameter;
                 }
 

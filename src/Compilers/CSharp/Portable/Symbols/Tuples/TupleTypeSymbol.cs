@@ -34,14 +34,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             ImmutableArray<string?> elementNames,
             CSharpCompilation compilation,
             bool shouldCheckConstraints,
-            bool includeNullability,
             ImmutableArray<bool> errorPositions,
             CSharpSyntaxNode? syntax = null,
             BindingDiagnosticBag? diagnostics = null)
         {
             Debug.Assert(!shouldCheckConstraints || syntax is object);
             Debug.Assert(elementNames.IsDefault || elementTypesWithAnnotations.Length == elementNames.Length);
-            Debug.Assert(!includeNullability || shouldCheckConstraints);
 
             int numElements = elementTypesWithAnnotations.Length;
 
@@ -63,8 +61,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             if (shouldCheckConstraints && diagnostics != null)
             {
                 Debug.Assert(syntax is object);
-                constructedType.CheckConstraints(new ConstraintsHelper.CheckConstraintsArgs(compilation, compilation.Conversions, includeNullability, syntax.Location, diagnostics),
-                                                 syntax, elementLocations, nullabilityDiagnosticsOpt: includeNullability ? diagnostics : null);
+                constructedType.CheckConstraints(new ConstraintsHelper.CheckConstraintsArgs(compilation, compilation.Conversions, syntax.Location, diagnostics),
+                                                 syntax, elementLocations, nullabilityDiagnosticsOpt: diagnostics);
             }
 
             return constructedType;

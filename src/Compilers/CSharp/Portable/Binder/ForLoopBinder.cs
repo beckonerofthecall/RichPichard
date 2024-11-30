@@ -67,25 +67,9 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private BoundForStatement BindForParts(ForStatementSyntax node, Binder originalBinder, BindingDiagnosticBag diagnostics)
         {
-            BoundStatement initializer;
-            // Declaration and Initializers are mutually exclusive.
-            if (_syntax.Declaration != null)
-            {
-                var type = _syntax.Declaration.Type.SkipScoped(out _);
-
-                if (type is RefTypeSyntax)
-                {
-                    // Checking for 'ref for' (7.3) automatically checks for 'ref' (7.0), so no need for an explicit
-                    // check feature as well here.
-                    MessageID.IDS_FeatureRefFor.CheckFeatureAvailability(diagnostics, type);
-                }
-
-                initializer = originalBinder.BindForOrUsingOrFixedDeclarations(node.Declaration, LocalDeclarationKind.RegularVariable, diagnostics, out _);
-            }
-            else
-            {
-                initializer = originalBinder.BindStatementExpressionList(node.Initializers, diagnostics);
-            }
+            BoundStatement initializer = _syntax.Declaration is null ? 
+                originalBinder.BindStatementExpressionList(node.Initializers, diagnostics) :
+                originalBinder.BindForOrUsingOrFixedDeclarations(node.Declaration, LocalDeclarationKind.RegularVariable, diagnostics, out _);
 
             BoundExpression condition = null;
             var innerLocals = ImmutableArray<LocalSymbol>.Empty;

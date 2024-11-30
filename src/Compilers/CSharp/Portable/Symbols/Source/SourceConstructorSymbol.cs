@@ -59,11 +59,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 }
             }
 
-            if (methodKind == MethodKind.StaticConstructor)
-            {
-                CheckFeatureAvailabilityAndRuntimeSupport(syntax, location, hasAnyBody, diagnostics);
-            }
-
             ModifierUtils.CheckAccessibility(this.DeclarationModifiers, this, isExplicitInterfaceImplementation: false, diagnostics, location);
 
             if (!modifierErrors)
@@ -151,9 +146,18 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                 if (isInterface)
                 {
-                    ModifierUtils.ReportDefaultInterfaceImplementationModifiers(hasBody, mods,
-                                                                                DeclarationModifiers.Extern,
-                                                                                location, diagnostics);
+                    if ((mods & DeclarationModifiers.Extern) != 0)
+                    {
+                        if ((mods & DeclarationModifiers.Extern & DeclarationModifiers.Static) != 0 &&
+                            (mods & DeclarationModifiers.Extern & (DeclarationModifiers.Sealed | DeclarationModifiers.Abstract | DeclarationModifiers.Virtual)) != 0)
+                        {
+                            if ((mods & DeclarationModifiers.Extern & DeclarationModifiers.Sealed) != 0 &&
+                                (mods & DeclarationModifiers.Extern & (DeclarationModifiers.Abstract | DeclarationModifiers.Virtual)) != 0)
+                            {
+                                diagnostics.Add(ErrorCode.ERR_BadMemberFlag, location, ModifierUtils.ConvertSingleModifierToSyntaxText(DeclarationModifiers.Sealed));
+                            }
+                        }
+                    }
                 }
             }
 

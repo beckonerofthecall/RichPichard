@@ -43,17 +43,12 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 var attributeList = node.AttributeLists[0];
 
-                // Currently, attributes are only allowed on local-functions.
-                if (node.Kind() == SyntaxKind.LocalFunctionStatement)
-                {
-                    CheckFeatureAvailability(attributeList, MessageID.IDS_FeatureLocalFunctionAttributes, diagnostics);
-                }
-                else if (node.Kind() != SyntaxKind.Block)
+                /*if (node.Kind() != SyntaxKind.Block)
                 {
                     // Don't explicitly error here for blocks.  Some codepaths bypass BindStatement
                     // to directly call BindBlock.
                     Error(diagnostics, ErrorCode.ERR_AttributesNotAllowed, attributeList);
-                }
+                }*/
             }
 
             Debug.Assert(node != null);
@@ -171,11 +166,6 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             _ = this.GetBinder(node);
 
-            if (this.IsIndirectlyInIterator) // called *after* we know the binder map has been created.
-            {
-                CheckFeatureAvailability(node.UnsafeKeyword, MessageID.IDS_FeatureRefUnsafeInIteratorAsync, diagnostics);
-            }
-
             return BindBlock(node.Block, diagnostics);
         }
 
@@ -183,9 +173,6 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             var fixedBinder = this.GetBinder(node);
             Debug.Assert(fixedBinder != null);
-
-            fixedBinder.ReportUnsafeIfNotAllowed(node, diagnostics);
-
             return fixedBinder.BindFixedStatementParts(node, diagnostics);
         }
 
@@ -206,20 +193,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                                            GetDeclaredLocalsForScope(node),
                                            boundMultipleDeclarations,
                                            boundBody);
-        }
-
-        private void CheckRequiredLangVersionForIteratorMethods(YieldStatementSyntax statement, BindingDiagnosticBag diagnostics)
-        {
-            MessageID.IDS_FeatureIterators.CheckFeatureAvailability(diagnostics, statement.YieldKeyword);
-
-            var method = (MethodSymbol)this.ContainingMemberOrLambda;
-            if (method.IsAsync)
-            {
-                MessageID.IDS_FeatureAsyncStreams.CheckFeatureAvailability(
-                    diagnostics,
-                    method.DeclaringCompilation,
-                    method.GetFirstLocation());
-            }
         }
 
         protected virtual void ValidateYield(YieldStatementSyntax node, BindingDiagnosticBag diagnostics)
@@ -263,12 +236,11 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 Error(diagnostics, ErrorCode.ERR_YieldNotAllowedInScript, node.YieldKeyword);
             }
-            else if (InUnsafeRegion && Compilation.IsFeatureEnabled(MessageID.IDS_FeatureRefUnsafeInIteratorAsync))
+            else if (InUnsafeRegion)
             {
                 Error(diagnostics, ErrorCode.ERR_BadYieldInUnsafe, node.YieldKeyword);
             }
 
-            CheckRequiredLangVersionForIteratorMethods(node, diagnostics);
             return new BoundYieldReturnStatement(node, argument);
         }
 
@@ -284,7 +256,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
 
             ValidateYield(node, diagnostics);
-            CheckRequiredLangVersionForIteratorMethods(node, diagnostics);
+
             return new BoundYieldBreakStatement(node);
         }
 
@@ -387,45 +359,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         }
 
         private BoundExpression BindThrownExpression(ExpressionSyntax exprSyntax, BindingDiagnosticBag diagnostics, ref bool hasErrors)
-        {
-            var boundExpr = BindValue(exprSyntax, diagnostics, BindValueKind.RValue);
-            if (Compilation.LanguageVersion < MessageID.IDS_FeatureSwitchExpression.RequiredVersion())
-            {
-                // This is the pre-C# 8 algorithm for binding a thrown expression.
-                // SPEC VIOLATION: The spec requires the thrown exception to have a type, and that the type
-                // be System.Exception or derived from System.Exception. (Or, if a type parameter, to have
-                // an effective base class that meets that criterion.) However, we allow the literal null
-                // to be thrown, even though it does not meet that criterion and will at runtime always
-                // produce a null reference exception.
-                if (!boundExpr.IsLiteralNull())
-                {
-                    boundExpr = BindToNaturalType(boundExpr, diagnostics);
-                    var type = boundExpr.Type;
-
-                    // If the expression is a lambda, anonymous method, or method group then it will
-                    // have no compile-time type; give the same error as if the type was wrong.
-                    CompoundUseSiteInfo<AssemblySymbol> useSiteInfo = GetNewCompoundUseSiteInfo(diagnostics);
-
-                    if ((object)type == null || !type.IsErrorType() && !Compilation.IsExceptionType(type.EffectiveType(ref useSiteInfo), ref useSiteInfo))
-                    {
-                        diagnostics.Add(ErrorCode.ERR_BadExceptionType, exprSyntax.Location);
-                        hasErrors = true;
-                        diagnostics.Add(exprSyntax, useSiteInfo);
-                    }
-                    else
-                    {
-                        diagnostics.AddDependencies(useSiteInfo);
-                    }
-                }
-            }
-            else
-            {
-                // In C# 8 and later we follow the ECMA specification, which neatly handles null and expressions of exception type.
-                boundExpr = GenerateConversionForAssignment(GetWellKnownType(WellKnownType.System_Exception, diagnostics, exprSyntax), boundExpr, diagnostics);
-            }
-
-            return boundExpr;
-        }
+            => GenerateConversionForAssignment(GetWellKnownType(WellKnownType.System_Exception, diagnostics, exprSyntax), BindValue(exprSyntax, diagnostics, BindValueKind.RValue), diagnostics);
 
         private BoundStatement BindThrow(ThrowStatementSyntax node, BindingDiagnosticBag diagnostics)
         {
@@ -549,8 +483,6 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private BoundStatement BindLocalFunctionStatement(LocalFunctionStatementSyntax node, BindingDiagnosticBag diagnostics)
         {
-            MessageID.IDS_FeatureLocalFunctions.CheckFeatureAvailability(diagnostics, node.Identifier);
-
             // already defined symbol in containing block
             var localSymbol = this.LookupLocalFunction(node.Identifier);
 
@@ -590,14 +522,6 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             Symbol.CheckForBlockAndExpressionBody(
                 node.Body, node.ExpressionBody, node, diagnostics);
-
-            foreach (var modifier in node.Modifiers)
-            {
-                if (modifier.IsKind(SyntaxKind.StaticKeyword))
-                    MessageID.IDS_FeatureStaticLocalFunctions.CheckFeatureAvailability(diagnostics, modifier);
-                else if (modifier.IsKind(SyntaxKind.ExternKeyword))
-                    MessageID.IDS_FeatureExternLocalFunctions.CheckFeatureAvailability(diagnostics, modifier);
-            }
 
             return new BoundLocalFunctionStatement(node, localSymbol, blockBody, expressionBody, hasErrors);
 
@@ -705,9 +629,6 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             if (typeSyntax is ScopedTypeSyntax scopedType)
             {
-                // Check for support for 'scoped'.
-                ModifierUtils.CheckScopedModifierAvailability(node, scopedType.ScopedKeyword, diagnostics);
-
                 typeSyntax = scopedType.Type;
             }
 
@@ -991,11 +912,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             bool nameConflict = localSymbol.ScopeBinder.ValidateDeclarationNameConflictsInScope(localSymbol, diagnostics);
             bool hasErrors = false;
 
-            if (localSymbol.RefKind != RefKind.None)
-            {
-                CheckRefLocalInAsyncOrIteratorMethod(localSymbol.IdentifierToken, diagnostics);
-            }
-
             EqualsValueClauseSyntax equalsClauseSyntax = declarator.Initializer;
 
             BindValueKind valueKind;
@@ -1090,8 +1006,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
             }
 
-            CheckRestrictedTypeInAsyncMethod(this.ContainingMemberOrLambda, declTypeOpt.Type, localDiagnostics, typeSyntax);
-
             if (localSymbol.Scope == ScopedKind.ScopedValue && !declTypeOpt.Type.IsErrorOrRefLikeOrAllowsRefLikeType())
             {
                 localDiagnostics.Add(ErrorCode.ERR_ScopedRefAndRefStructOnly, typeSyntax.Location);
@@ -1153,16 +1067,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                 argumentsOpt: arguments,
                 inferredType: isVar,
                 hasErrors: hasErrors | nameConflict);
-        }
-
-        protected bool CheckRefLocalInAsyncOrIteratorMethod(SyntaxToken identifierToken, BindingDiagnosticBag diagnostics)
-        {
-            if (IsDirectlyInIterator || IsInAsyncMethod())
-            {
-                return !CheckFeatureAvailability(identifierToken, MessageID.IDS_FeatureRefUnsafeInIteratorAsync, diagnostics);
-            }
-
-            return false;
         }
 
         internal ImmutableArray<BoundExpression> BindDeclaratorArguments(VariableDeclaratorSyntax declarator, BindingDiagnosticBag diagnostics)
@@ -1280,20 +1184,13 @@ namespace Microsoft.CodeAnalysis.CSharp
                         break;
                     }
 
-                    // if the feature was enabled, but something went wrong with the method, report that, otherwise don't.
-                    // If feature is not enabled, additional errors would be just noise.
-                    bool extensibleFixedEnabled = ((CSharpParseOptions)initializerOpt.SyntaxTree.Options)?.IsFeatureEnabled(MessageID.IDS_FeatureExtensibleFixedStatement) != false;
-                    if (extensibleFixedEnabled)
-                    {
-                        diagnostics.AddRange(additionalDiagnostics);
-                    }
+                    diagnostics.AddRange(additionalDiagnostics);
 
                     additionalDiagnostics.Free();
 
                     if ((object)fixedPatternMethod != null)
                     {
                         elementType = fixedPatternMethod.ReturnType;
-                        CheckFeatureAvailability(initializerOpt.Syntax, MessageID.IDS_FeatureExtensibleFixedStatement, diagnostics);
                         break;
                     }
                     else
@@ -1411,10 +1308,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             var rhsExpr = node.Right.CheckAndUnwrapRefExpression(diagnostics, out var refKind);
             var isRef = refKind == RefKind.Ref;
             var lhsKind = isRef ? BindValueKind.RefAssignable : BindValueKind.Assignable;
-
-            if (isRef)
-                MessageID.IDS_FeatureRefReassignment.CheckFeatureAvailability(diagnostics, node.Right.GetFirstToken());
-
             var op1 = BindValue(node.Left, diagnostics, lhsKind);
             ReportSuppressionIfNeeded(op1, diagnostics);
 
@@ -2475,8 +2368,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                                 errorCode = ErrorCode.ERR_AddressOfToNonFunctionPointer;
                             }
                             else if (Conversions.IsValidFunctionTypeConversionTarget(targetType, ref discardedUseSiteInfo) &&
-                                !targetType.IsNonGenericExpressionType() &&
-                                syntax.IsFeatureEnabled(MessageID.IDS_FeatureInferredDelegateType))
+                                !targetType.IsNonGenericExpressionType())
                             {
                                 Error(diagnostics, ErrorCode.ERR_CannotInferDelegateType, location);
                                 return;
@@ -2791,15 +2683,9 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
 
             var typeSyntax = nodeOpt.Type;
-            Debug.Assert(typeSyntax is not ScopedTypeSyntax || localKind is LocalDeclarationKind.RegularVariable or LocalDeclarationKind.UsingVariable);
 
             if (typeSyntax is ScopedTypeSyntax scopedType)
-            {
-                // Check for support for 'scoped'.
-                ModifierUtils.CheckScopedModifierAvailability(typeSyntax, scopedType.ScopedKeyword, diagnostics);
-
                 typeSyntax = scopedType.Type;
-            }
 
             // Fixed and using variables are not allowed to be ref-like, but regular variables are
             if (localKind == LocalDeclarationKind.RegularVariable)
@@ -3339,8 +3225,6 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private BoundExpression BindCatchFilter(CatchFilterClauseSyntax filter, BindingDiagnosticBag diagnostics)
         {
-            MessageID.IDS_FeatureExceptionFilter.CheckFeatureAvailability(diagnostics, filter.WhenKeyword);
-
             BoundExpression boundFilter = this.BindBooleanExpression(filter.FilterExpression, diagnostics);
             if (boundFilter.ConstantValueOpt != ConstantValue.NotAvailable)
             {
@@ -3551,8 +3435,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                 _ => throw ExceptionUtilities.UnexpectedValue(expressionBody.Parent.Kind()),
             };
 
-            messageId?.CheckFeatureAvailability(diagnostics, expressionBody.ArrowToken);
-
             Binder bodyBinder = this.GetBinder(expressionBody);
             Debug.Assert(bodyBinder != null);
 
@@ -3652,7 +3534,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                     if (first)
                     {
                         first = false;
-                        MessageID.IDS_TopLevelStatements.CheckFeatureAvailability(diagnostics, topLevelStatement);
                     }
 
                     var boundStatement = BindStatement(topLevelStatement.Statement, diagnostics);

@@ -173,8 +173,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             bool hasError = false;
 
             BinaryOperatorSignature bestSignature = best.Signature;
-
-            CheckNativeIntegerFeatureAvailability(bestSignature.Kind, node, diagnostics);
+            
             CheckConstraintLanguageVersionAndRuntimeSupportForOperator(node, bestSignature.Method,
                 isUnsignedRightShift: bestSignature.Kind.Operator() == BinaryOperatorKind.UnsignedRightShift, bestSignature.ConstrainedToTypeOpt, diagnostics);
 
@@ -310,7 +309,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
                 else
                 {
-                    CheckReceiverAndRuntimeSupportForSymbolAccess(node, receiverOpt, method, diagnostics);
+                    CheckReceiverForSymbolAccess(node, receiverOpt, method, diagnostics);
                 }
 
                 if (eventSymbol.IsWindowsRuntimeEvent)
@@ -544,7 +543,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             if (IsTupleBinaryOperation(left, right) &&
                 (kind == BinaryOperatorKind.Equal || kind == BinaryOperatorKind.NotEqual))
             {
-                CheckFeatureAvailability(node, MessageID.IDS_FeatureTupleEquality, diagnostics);
                 return BindTupleBinaryOperator(node, kind, left, right, diagnostics);
             }
 
@@ -621,7 +619,6 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             if (foundOperator)
             {
-                CheckNativeIntegerFeatureAvailability(resultOperatorKind, node, diagnostics);
                 CheckConstraintLanguageVersionAndRuntimeSupportForOperator(node, signature.Method,
                     isUnsignedRightShift: resultOperatorKind.Operator() == BinaryOperatorKind.UnsignedRightShift, signature.ConstrainedToTypeOpt, diagnostics);
             }
@@ -1378,12 +1375,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             if ((object)operatorMethod != null)
             {
                 ReportDiagnosticsIfObsolete(diagnostics, operatorMethod, node, hasBaseReceiver: false);
-
-                if (operatorMethod.ContainingType.IsInterface &&
-                    operatorMethod.ContainingModule != Compilation.SourceModule)
-                {
-                    Binder.CheckFeatureAvailability(node, MessageID.IDS_DefaultInterfaceImplementation, diagnostics);
-                }
             }
         }
 
@@ -2333,7 +2324,6 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             var signature = best.Signature;
 
-            CheckNativeIntegerFeatureAvailability(signature.Kind, node, diagnostics);
             CheckConstraintLanguageVersionAndRuntimeSupportForOperator(node, signature.Method, isUnsignedRightShift: false, signature.ConstrainedToTypeOpt, diagnostics);
 
             var resultPlaceholder = new BoundValuePlaceholder(node, signature.ReturnType).MakeCompilerGenerated();
@@ -2377,14 +2367,11 @@ namespace Microsoft.CodeAnalysis.CSharp
                 hasErrors);
         }
 
-#nullable enable
         /// <summary>
         /// Returns false if reported an error, true otherwise.
         /// </summary>
         private bool CheckConstraintLanguageVersionAndRuntimeSupportForOperator(SyntaxNode node, MethodSymbol? methodOpt, bool isUnsignedRightShift, TypeSymbol? constrainedToTypeOpt, BindingDiagnosticBag diagnostics)
         {
-            bool result = true;
-
             if (methodOpt?.ContainingType?.IsInterface == true && methodOpt.IsStatic)
             {
                 if (methodOpt.IsAbstract || methodOpt.IsVirtual)
@@ -2394,73 +2381,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                         Error(diagnostics, ErrorCode.ERR_BadAbstractStaticMemberAccess, node);
                         return false;
                     }
-
-                    if (Compilation.SourceModule != methodOpt.ContainingModule)
-                    {
-                        result = CheckFeatureAvailability(node, MessageID.IDS_FeatureStaticAbstractMembersInInterfaces, diagnostics);
-
-                        if (!Compilation.Assembly.RuntimeSupportsStaticAbstractMembersInInterfaces)
-                        {
-                            Error(diagnostics, ErrorCode.ERR_RuntimeDoesNotSupportStaticAbstractMembersInInterfaces, node);
-                            return false;
-                        }
-                    }
-                }
-                else if (methodOpt.Name is WellKnownMemberNames.EqualityOperatorName or WellKnownMemberNames.InequalityOperatorName)
-                {
-                    result = CheckFeatureAvailability(node, MessageID.IDS_FeatureStaticAbstractMembersInInterfaces, diagnostics);
                 }
             }
-
-            if (methodOpt is null)
-            {
-                if (isUnsignedRightShift)
-                {
-                    result &= CheckFeatureAvailability(node, MessageID.IDS_FeatureUnsignedRightShift, diagnostics);
-                }
-            }
-            else
-            {
-                Debug.Assert((methodOpt.Name == WellKnownMemberNames.UnsignedRightShiftOperatorName) == isUnsignedRightShift);
-
-                if (Compilation.SourceModule != methodOpt.ContainingModule)
-                {
-                    if (SyntaxFacts.IsCheckedOperator(methodOpt.Name))
-                    {
-                        result &= CheckFeatureAvailability(node, MessageID.IDS_FeatureCheckedUserDefinedOperators, diagnostics);
-                    }
-                    else if (isUnsignedRightShift)
-                    {
-                        result &= CheckFeatureAvailability(node, MessageID.IDS_FeatureUnsignedRightShift, diagnostics);
-                    }
-                }
-            }
-
-            return result;
-        }
-#nullable disable
-
-        private BoundExpression BindSuppressNullableWarningExpression(PostfixUnaryExpressionSyntax node, BindingDiagnosticBag diagnostics)
-        {
-            MessageID.IDS_FeatureNullableReferenceTypes.CheckFeatureAvailability(diagnostics, node.OperatorToken);
-
-            var expr = BindExpression(node.Operand, diagnostics);
-            switch (expr.Kind)
-            {
-                case BoundKind.NamespaceExpression:
-                case BoundKind.TypeExpression:
-                    Error(diagnostics, ErrorCode.ERR_IllegalSuppression, expr.Syntax);
-                    break;
-                default:
-                    if (expr.IsSuppressed)
-                    {
-                        Debug.Assert(node.Operand.SkipParens().GetLastToken().Kind() == SyntaxKind.ExclamationToken);
-                        Error(diagnostics, ErrorCode.ERR_DuplicateNullSuppression, expr.Syntax);
-                    }
-                    break;
-            }
-
-            return expr.WithSuppression();
+            return true;
         }
 
         // Based on ExpressionBinder::bindPtrIndirection.
@@ -2719,7 +2642,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (expr.IsSuppressed)
             {
-                Error(diagnostics, ErrorCode.ERR_IllegalSuppression, expr.Syntax);
+                Error(diagnostics, ErrorCode.ERR_DuplicateSuppression, expr.Syntax);
             }
         }
 
@@ -2794,7 +2717,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             UnaryOperatorKind resultOperatorKind = signature.Kind;
             var resultConstant = FoldUnaryOperator(node, resultOperatorKind, resultOperand, resultType, diagnostics);
 
-            CheckNativeIntegerFeatureAvailability(resultOperatorKind, node, diagnostics);
             CheckConstraintLanguageVersionAndRuntimeSupportForOperator(node, signature.Method, isUnsignedRightShift: false, signature.ConstrainedToTypeOpt, diagnostics);
 
             return new BoundUnaryOperator(
@@ -3226,9 +3148,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             // try binding as a type, but back off to binding as an expression if that does not work.
             bool wasUnderscore = IsUnderscore(node.Right);
-            if (!tryBindAsType(node.Right, diagnostics, out BindingDiagnosticBag isTypeDiagnostics, out BoundTypeExpression typeExpression) &&
-                !wasUnderscore &&
-                ((CSharpParseOptions)node.SyntaxTree.Options).IsFeatureEnabled(MessageID.IDS_FeaturePatternMatching))
+            if (!tryBindAsType(node.Right, diagnostics, out BindingDiagnosticBag isTypeDiagnostics, out BoundTypeExpression typeExpression) && !wasUnderscore)
             {
                 // it did not bind as a type; try binding as a constant expression pattern
                 var isPatternDiagnostics = BindingDiagnosticBag.GetInstance(diagnostics);
@@ -3275,7 +3195,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return new BoundIsOperator(node, operand, typeExpression, ConversionKind.NoConversion, resultType, hasErrors: true);
             }
 
-            if (wasUnderscore && ((CSharpParseOptions)node.SyntaxTree.Options).IsFeatureEnabled(MessageID.IDS_FeatureRecursivePatterns))
+            if (wasUnderscore)
             {
                 diagnostics.Add(ErrorCode.WRN_IsTypeNamedUnderscore, node.Right.Location, typeExpression.AliasOpt ?? (Symbol)targetType);
             }
@@ -4167,8 +4087,6 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private BoundExpression BindNullCoalescingAssignmentOperator(AssignmentExpressionSyntax node, BindingDiagnosticBag diagnostics)
         {
-            MessageID.IDS_FeatureCoalesceAssignmentExpression.CheckFeatureAvailability(diagnostics, node.OperatorToken);
-
             BoundExpression leftOperand = BindValue(node.Left, diagnostics, BindValueKind.CompoundAssignment);
             ReportSuppressionIfNeeded(leftOperand, diagnostics);
             BoundExpression rightOperand = BindValue(node.Right, diagnostics, BindValueKind.RValue);
@@ -4285,10 +4203,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     diagnostics.Add(ErrorCode.ERR_RefConditionalNeedsTwoRefs, whenTrue.GetFirstToken().GetLocation());
                 }
-            }
-            else
-            {
-                CheckFeatureAvailability(node, MessageID.IDS_FeatureRefConditional, diagnostics);
             }
 
             return isRef ? BindRefConditionalOperator(node, whenTrue, whenFalse, diagnostics) : BindValueConditionalOperator(node, whenTrue, whenFalse, diagnostics);
@@ -4429,38 +4343,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             else
             {
                 return ConstantValue.Bad;
-            }
-        }
-
-        private void CheckNativeIntegerFeatureAvailability(BinaryOperatorKind operatorKind, SyntaxNode syntax, BindingDiagnosticBag diagnostics)
-        {
-            if (Compilation.Assembly.RuntimeSupportsNumericIntPtr)
-            {
-                return;
-            }
-
-            switch (operatorKind & BinaryOperatorKind.TypeMask)
-            {
-                case BinaryOperatorKind.NInt:
-                case BinaryOperatorKind.NUInt:
-                    CheckFeatureAvailability(syntax, MessageID.IDS_FeatureNativeInt, diagnostics);
-                    break;
-            }
-        }
-
-        private void CheckNativeIntegerFeatureAvailability(UnaryOperatorKind operatorKind, SyntaxNode syntax, BindingDiagnosticBag diagnostics)
-        {
-            if (Compilation.Assembly.RuntimeSupportsNumericIntPtr)
-            {
-                return;
-            }
-
-            switch (operatorKind & UnaryOperatorKind.TypeMask)
-            {
-                case UnaryOperatorKind.NInt:
-                case UnaryOperatorKind.NUInt:
-                    CheckFeatureAvailability(syntax, MessageID.IDS_FeatureNativeInt, diagnostics);
-                    break;
             }
         }
     }

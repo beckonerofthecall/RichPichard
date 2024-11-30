@@ -269,77 +269,6 @@ namespace Microsoft.CodeAnalysis.CSharp
         Default = 0,
     }
 
-    internal static class LanguageVersionExtensionsInternal
-    {
-        internal static bool IsValid(this LanguageVersion value)
-        {
-            switch (value)
-            {
-                case LanguageVersion.CSharp1:
-                case LanguageVersion.CSharp2:
-                case LanguageVersion.CSharp3:
-                case LanguageVersion.CSharp4:
-                case LanguageVersion.CSharp5:
-                case LanguageVersion.CSharp6:
-                case LanguageVersion.CSharp7:
-                case LanguageVersion.CSharp7_1:
-                case LanguageVersion.CSharp7_2:
-                case LanguageVersion.CSharp7_3:
-                case LanguageVersion.CSharp8:
-                case LanguageVersion.CSharp9:
-                case LanguageVersion.CSharp10:
-                case LanguageVersion.CSharp11:
-                case LanguageVersion.CSharp12:
-                case LanguageVersion.CSharp13:
-                case LanguageVersion.Preview:
-                    return true;
-            }
-
-            return false;
-        }
-
-        internal static ErrorCode GetErrorCode(this LanguageVersion version)
-        {
-            switch (version)
-            {
-                case LanguageVersion.CSharp1:
-                    return ErrorCode.ERR_FeatureNotAvailableInVersion1;
-                case LanguageVersion.CSharp2:
-                    return ErrorCode.ERR_FeatureNotAvailableInVersion2;
-                case LanguageVersion.CSharp3:
-                    return ErrorCode.ERR_FeatureNotAvailableInVersion3;
-                case LanguageVersion.CSharp4:
-                    return ErrorCode.ERR_FeatureNotAvailableInVersion4;
-                case LanguageVersion.CSharp5:
-                    return ErrorCode.ERR_FeatureNotAvailableInVersion5;
-                case LanguageVersion.CSharp6:
-                    return ErrorCode.ERR_FeatureNotAvailableInVersion6;
-                case LanguageVersion.CSharp7:
-                    return ErrorCode.ERR_FeatureNotAvailableInVersion7;
-                case LanguageVersion.CSharp7_1:
-                    return ErrorCode.ERR_FeatureNotAvailableInVersion7_1;
-                case LanguageVersion.CSharp7_2:
-                    return ErrorCode.ERR_FeatureNotAvailableInVersion7_2;
-                case LanguageVersion.CSharp7_3:
-                    return ErrorCode.ERR_FeatureNotAvailableInVersion7_3;
-                case LanguageVersion.CSharp8:
-                    return ErrorCode.ERR_FeatureNotAvailableInVersion8;
-                case LanguageVersion.CSharp9:
-                    return ErrorCode.ERR_FeatureNotAvailableInVersion9;
-                case LanguageVersion.CSharp10:
-                    return ErrorCode.ERR_FeatureNotAvailableInVersion10;
-                case LanguageVersion.CSharp11:
-                    return ErrorCode.ERR_FeatureNotAvailableInVersion11;
-                case LanguageVersion.CSharp12:
-                    return ErrorCode.ERR_FeatureNotAvailableInVersion12;
-                case LanguageVersion.CSharp13:
-                    return ErrorCode.ERR_FeatureNotAvailableInVersion13;
-                default:
-                    throw ExceptionUtilities.UnexpectedValue(version);
-            }
-        }
-    }
-
     internal class CSharpRequiredLanguageVersion : RequiredLanguageVersion
     {
         internal LanguageVersion Version { get; }
@@ -548,29 +477,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                 default:
                     return version;
             }
-        }
-
-        internal static LanguageVersion CurrentVersion => LanguageVersion.CSharp13;
-
-        /// <summary>Inference of tuple element names was added in C# 7.1</summary>
-        internal static bool DisallowInferredTupleElementNames(this LanguageVersion self)
-        {
-            return self < MessageID.IDS_FeatureInferredTupleNames.RequiredVersion();
-        }
-
-        internal static bool AllowNonTrailingNamedArguments(this LanguageVersion self)
-        {
-            return self >= MessageID.IDS_FeatureNonTrailingNamedArguments.RequiredVersion();
-        }
-
-        internal static bool AllowAttributesOnBackingFields(this LanguageVersion self)
-        {
-            return self >= MessageID.IDS_FeatureAttributesOnBackingFields.RequiredVersion();
-        }
-
-        internal static bool AllowImprovedOverloadCandidates(this LanguageVersion self)
-        {
-            return self >= MessageID.IDS_FeatureImprovedOverloadCandidates.RequiredVersion();
         }
     }
 }

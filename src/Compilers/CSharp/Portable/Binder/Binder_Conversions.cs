@@ -410,43 +410,13 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 if (conversion.IsUserDefined)
                 {
-                    if (conversion.Method is MethodSymbol method && method.IsStatic)
-                    {
-                        if (method.IsAbstract || method.IsVirtual)
-                        {
-                            Debug.Assert(conversion.ConstrainedToTypeOpt is TypeParameterSymbol);
 
-                            if (Compilation.SourceModule != method.ContainingModule)
-                            {
-                                CheckFeatureAvailability(syntax, MessageID.IDS_FeatureStaticAbstractMembersInInterfaces, diagnostics);
-
-                                if (!Compilation.Assembly.RuntimeSupportsStaticAbstractMembersInInterfaces)
-                                {
-                                    Error(diagnostics, ErrorCode.ERR_RuntimeDoesNotSupportStaticAbstractMembersInInterfaces, syntax);
-                                }
-                            }
-                        }
-
-                        if (SyntaxFacts.IsCheckedOperator(method.Name) &&
-                            Compilation.SourceModule != method.ContainingModule)
-                        {
-                            CheckFeatureAvailability(syntax, MessageID.IDS_FeatureCheckedUserDefinedOperators, diagnostics);
-                        }
-                    }
                 }
                 else if (conversion.IsInlineArray)
                 {
-                    if (!Compilation.Assembly.RuntimeSupportsInlineArrayTypes)
-                    {
-                        Error(diagnostics, ErrorCode.ERR_RuntimeDoesNotSupportInlineArrayTypes, syntax);
-                    }
-
-                    CheckFeatureAvailability(syntax, MessageID.IDS_FeatureInlineArrays, diagnostics);
-
                     Debug.Assert(source.Type is { });
 
                     FieldSymbol? elementField = source.Type.TryGetInlineArrayElementField();
-                    Debug.Assert(elementField is { });
 
                     diagnostics.ReportUseSite(elementField, syntax);
 
@@ -482,11 +452,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
                 else if (conversion.IsSpan)
                 {
-                    Debug.Assert(source.Type is not null);
-                    Debug.Assert(destination.IsSpan() || destination.IsReadOnlySpan());
-
-                    CheckFeatureAvailability(syntax, MessageID.IDS_FeatureFirstClassSpan, diagnostics);
-
                     // NOTE: We cannot use well-known members because per the spec
                     // the Span types involved in the Span conversions can be any that match the type name.
 
@@ -536,7 +501,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                             castUpMethod?
                                 .AsMember((NamedTypeSymbol)destination)
                                 .Construct([((NamedTypeSymbol)source.Type).TypeArgumentsWithAnnotationsNoUseSiteDiagnostics[0]])
-                                .CheckConstraints(new ConstraintsHelper.CheckConstraintsArgs(Compilation, Conversions, includeNullability: false, syntax.Location, diagnostics));
+                                .CheckConstraints(new ConstraintsHelper.CheckConstraintsArgs(Compilation, Conversions, syntax.Location, diagnostics));
                         }
                     }
 
@@ -729,13 +694,9 @@ namespace Microsoft.CodeAnalysis.CSharp
         private static void CheckInlineArrayTypeIsSupported(SyntaxNode syntax, TypeSymbol inlineArrayType, TypeSymbol elementType, BindingDiagnosticBag diagnostics)
         {
             if (elementType.IsPointerOrFunctionPointer() || elementType.IsRestrictedType())
-            {
                 Error(diagnostics, ErrorCode.ERR_BadTypeArgument, syntax, elementType);
-            }
             else if (inlineArrayType.IsRestrictedType())
-            {
                 Error(diagnostics, ErrorCode.ERR_BadTypeArgument, syntax, inlineArrayType);
-            }
         }
 
         private static BoundExpression ConvertObjectCreationExpression(
@@ -1945,16 +1906,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             conversion.MarkUnderlyingConversionsChecked();
             var constantValue = FoldConditionalOperator(condition, trueExpr, falseExpr);
             hasErrors |= constantValue?.IsBad == true;
-            if (targetTyped && !destination.IsErrorType() && !Compilation.IsFeatureEnabled(MessageID.IDS_FeatureTargetTypedConditional))
-            {
-                diagnostics.Add(
-                    ErrorCode.ERR_NoImplicitConvTargetTypedConditional,
-                    source.Syntax.Location,
-                    Compilation.LanguageVersion.ToDisplayString(),
-                    source.Consequence.Display,
-                    source.Alternative.Display,
-                    new CSharpRequiredLanguageVersion(MessageID.IDS_FeatureTargetTypedConditional.RequiredVersion()));
-            }
 
             return new BoundConditionalOperator(source.Syntax, isRef: false, condition, trueExpr, falseExpr, constantValue, source.Type, wasTargetTyped: targetTyped, destination, hasErrors)
                 .WithSuppression(source.IsSuppressed);
@@ -2163,10 +2114,6 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private BoundExpression CreateFunctionTypeConversion(SyntaxNode syntax, BoundExpression source, Conversion conversion, bool isCast, ConversionGroup? conversionGroup, TypeSymbol destination, BindingDiagnosticBag diagnostics)
         {
-            Debug.Assert(conversion.Kind == ConversionKind.FunctionType);
-            Debug.Assert(source.Kind is BoundKind.MethodGroup or BoundKind.UnboundLambda);
-            Debug.Assert(syntax.IsFeatureEnabled(MessageID.IDS_FeatureInferredDelegateType));
-
             CompoundUseSiteInfo<AssemblySymbol> useSiteInfo = GetNewCompoundUseSiteInfo(diagnostics);
             var delegateType = source.GetInferredDelegateType(ref useSiteInfo);
             Debug.Assert(delegateType is { });
@@ -2405,11 +2352,9 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (conversion.Kind)
             {
                 case ConversionKind.StackAllocToPointerType:
-                    ReportUnsafeIfNotAllowed(syntax.Location, diagnostics);
                     stackAllocType = new PointerTypeSymbol(TypeWithAnnotations.Create(elementType));
                     break;
                 case ConversionKind.StackAllocToSpanType:
-                    CheckFeatureAvailability(syntax, MessageID.IDS_FeatureRefStructs, diagnostics);
                     stackAllocType = Compilation.GetWellKnownType(WellKnownType.System_Span_T).Construct(elementType);
                     break;
                 default:
@@ -2579,7 +2524,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!IsBadBaseAccess(node, receiverOpt, methodSymbol, diagnostics))
             {
-                CheckReceiverAndRuntimeSupportForSymbolAccess(node, receiverOpt, methodSymbol, diagnostics);
+                CheckReceiverForSymbolAccess(node, receiverOpt, methodSymbol, diagnostics);
             }
 
             if (MemberGroupFinalValidationAccessibilityChecks(receiverOpt, methodSymbol, node, diagnostics, invokedAsExtensionMethod))
@@ -2626,7 +2571,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // applicable candidate set, so the applicable candidate set consists solely of
             // M(object, object) and is therefore the best match.
 
-            return !methodSymbol.CheckConstraints(new ConstraintsHelper.CheckConstraintsArgs(this.Compilation, this.Conversions, includeNullability: false, node.Location, diagnostics));
+            return !methodSymbol.CheckConstraints(new ConstraintsHelper.CheckConstraintsArgs(this.Compilation, this.Conversions, node.Location, diagnostics));
         }
 
         /// <summary>
@@ -2722,7 +2667,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                             errorNode = node.Parent;
                         }
 
-                        ErrorCode code = InFieldInitializer ? ErrorCode.ERR_FieldInitRefNonstatic : ErrorCode.ERR_ObjectRequired;
+                        ErrorCode code = ErrorCode.ERR_ObjectRequired;
                         diagnostics.Add(code, errorNode.Location, memberSymbol);
                         return true;
                     }
@@ -3019,12 +2964,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 // CS0762: Cannot create delegate from method '{0}' because it is a partial method without an implementing declaration
                 Error(diagnostics, ErrorCode.ERR_PartialMethodToDelegate, syntax.Location, selectedMethod);
-                return true;
-            }
-
-            if ((selectedMethod.HasParameterContainingPointerType() || selectedMethod.ReturnType.ContainsPointer())
-                && ReportUnsafeIfNotAllowed(syntax, diagnostics))
-            {
                 return true;
             }
 

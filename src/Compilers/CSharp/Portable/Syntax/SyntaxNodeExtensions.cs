@@ -269,11 +269,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                         (current.Parent is DelegateDeclarationSyntax delegateDeclaration && delegateDeclaration.ReturnType == current) ||
                         (current.Parent is VariableDeclarationSyntax { Parent: LocalDeclarationStatementSyntax } variableDeclaration && variableDeclaration.Type == current));
 #endif
-
-                    MessageID.IDS_FeatureRefLocalsReturns.CheckFeatureAvailability(diagnostics, refType.RefKeyword);
-
-                    if (refType.ReadOnlyKeyword != default)
-                        MessageID.IDS_FeatureReadOnlyReferences.CheckFeatureAvailability(diagnostics, refType.ReadOnlyKeyword);
                 }
 
                 return refType.Type;
@@ -323,8 +318,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                 refKind = RefKind.None;
                 return syntax;
             }
-
-            MessageID.IDS_FeatureRefLocalsReturns.CheckFeatureAvailability(diagnostics, refExpression.RefKeyword);
 
             refKind = RefKind.Ref;
             expression.CheckDeconstructionCompatibleArgument(diagnostics);

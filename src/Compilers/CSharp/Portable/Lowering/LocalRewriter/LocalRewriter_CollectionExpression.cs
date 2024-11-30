@@ -533,8 +533,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         private static bool ShouldUseInlineArray(BoundCollectionExpressionBase node, CSharpCompilation compilation)
         {
             return !node.HasSpreadElements(out _, out _) &&
-                node.Elements.Length > 0 &&
-                compilation.Assembly.RuntimeSupportsInlineArrayTypes;
+                node.Elements.Length > 0;
         }
 
         private BoundExpression CreateAndPopulateSpanFromInlineArray(

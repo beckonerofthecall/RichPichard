@@ -60,19 +60,9 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private static void GetRawDiagnosticInfos(Binder binder, SyntaxToken questionToken, ArrayBuilder<DiagnosticInfo> infos)
         {
-            Debug.Assert(questionToken.SyntaxTree != null);
-            var tree = (CSharpSyntaxTree)questionToken.SyntaxTree;
-
-            const MessageID featureId = MessageID.IDS_FeatureNullableReferenceTypes;
-            var info = featureId.GetFeatureAvailabilityDiagnosticInfo(tree.Options);
-            if (info is object)
+            if (!binder.AreNullableAnnotationsEnabled(questionToken))
             {
-                infos.Add(info);
-            }
-
-            if (info?.Severity != DiagnosticSeverity.Error && !binder.AreNullableAnnotationsEnabled(questionToken))
-            {
-                var code = tree.IsGeneratedCode(binder.Compilation.Options.SyntaxTreeOptionsProvider, CancellationToken.None)
+                var code = ((CSharpSyntaxTree)questionToken.SyntaxTree).IsGeneratedCode(binder.Compilation.Options.SyntaxTreeOptionsProvider, CancellationToken.None)
                     ? ErrorCode.WRN_MissingNonNullTypesContextForAnnotationInGeneratedCode
                     : ErrorCode.WRN_MissingNonNullTypesContextForAnnotation;
                 infos.Add(new CSDiagnosticInfo(code));

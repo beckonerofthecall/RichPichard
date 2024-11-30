@@ -730,7 +730,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                                 continue;
                             }
 
-                            var flags = BinderFlags.SuppressConstraintChecks;
+                            var flags = BinderFlags.SuppressConstraintChecks | BinderFlags.UnsafeRegion;
                             if (usingDirective.UnsafeKeyword != default)
                             {
                                 var unsafeKeywordLocation = usingDirective.UnsafeKeyword.GetLocation();
@@ -738,21 +738,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                                 {
                                     diagnostics.Add(ErrorCode.ERR_BadUnsafeInUsingDirective, unsafeKeywordLocation);
                                 }
-                                else
-                                {
-                                    MessageID.IDS_FeatureUsingTypeAlias.CheckFeatureAvailability(diagnostics, usingDirective, unsafeKeywordLocation);
-                                }
-
-                                flags |= BinderFlags.UnsafeRegion;
-                            }
-                            else
-                            {
-                                // Prior to C#12, allow the using static type to be an unsafe region.  This allows us to
-                                // maintain compat with prior versions of the compiler that allowed `using static
-                                // List<int*[]>;` to be written.  In 12.0 and onwards though, we require the code to
-                                // explicitly contain the `unsafe` keyword.
-                                if (!compilation.IsFeatureEnabled(MessageID.IDS_FeatureUsingTypeAlias))
-                                    flags |= BinderFlags.UnsafeRegion;
                             }
 
                             var directiveDiagnostics = BindingDiagnosticBag.GetInstance();

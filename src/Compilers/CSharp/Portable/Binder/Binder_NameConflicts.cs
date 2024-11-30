@@ -93,37 +93,18 @@ namespace Microsoft.CodeAnalysis.CSharp
         private bool ValidateNameConflictsInScope(Symbol? symbol, Location location, string name, BindingDiagnosticBag diagnostics)
         {
             if (string.IsNullOrEmpty(name))
-            {
                 return false;
-            }
-
-            bool allowShadowing = Compilation.IsFeatureEnabled(MessageID.IDS_FeatureNameShadowingInNestedFunctions);
 
             for (Binder? binder = this; binder != null; binder = binder.Next)
             {
                 // no local scopes enclose members
-                if (binder is InContainerBinder)
-                {
-                    return false;
-                }
-
-                var scope = binder as LocalScopeBinder;
-                if (scope?.EnsureSingleDefinition(symbol, name, location, diagnostics) == true)
-                {
+                if (binder is InContainerBinder || binder is LocalScopeBinder scope && scope?.EnsureSingleDefinition(symbol, name, location, diagnostics) == true)
                     return true;
-                }
 
                 // If shadowing is enabled, avoid checking for conflicts outside of local functions or lambdas.
-                if (allowShadowing && binder.IsNestedFunctionBinder)
-                {
+                // Declarations within a member do not conflict with declarations outside.
+                if (binder.IsNestedFunctionBinder || binder.IsLastBinderWithinMember())
                     return false;
-                }
-
-                if (binder.IsLastBinderWithinMember())
-                {
-                    // Declarations within a member do not conflict with declarations outside.
-                    return false;
-                }
             }
 
             return false;

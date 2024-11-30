@@ -280,7 +280,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                     if (diagnose)
                     {
-                        _diagnostics.Add(ErrorCode.WRN_FailedInclude, location, filePathValue, xpathValue, new LocalizableErrorArgument(MessageID.IDS_OperationCausedStackOverflow));
+                        _diagnostics.Add(ErrorCode.WRN_FailedInclude, location, filePathValue, xpathValue);
                     }
 
                     commentMessage = ErrorFacts.GetMessage(MessageID.IDS_XMLNOINCLUDE, CultureInfo.CurrentUICulture);

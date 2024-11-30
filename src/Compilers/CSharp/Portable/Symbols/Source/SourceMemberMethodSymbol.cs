@@ -1079,37 +1079,9 @@ done:
         protected void CheckModifiersForBody(Location location, BindingDiagnosticBag diagnostics)
         {
             if (IsExtern && !IsAbstract)
-            {
                 diagnostics.Add(ErrorCode.ERR_ExternHasBody, location, this);
-            }
             else if (IsAbstract && !IsExtern)
-            {
                 diagnostics.Add(ErrorCode.ERR_AbstractHasBody, location, this);
-            }
-            // Do not report error for IsAbstract && IsExtern. Dev10 reports CS0180 only
-            // in that case ("member cannot be both extern and abstract").
-        }
-
-        protected void CheckFeatureAvailabilityAndRuntimeSupport(SyntaxNode declarationSyntax, Location location, bool hasBody, BindingDiagnosticBag diagnostics)
-        {
-            if (_containingType.IsInterface)
-            {
-                if ((!IsStatic || MethodKind is MethodKind.StaticConstructor) &&
-                    (hasBody || IsExplicitInterfaceImplementation))
-                {
-                    Binder.CheckFeatureAvailability(declarationSyntax, MessageID.IDS_DefaultInterfaceImplementation, diagnostics, location);
-                }
-
-                if ((((hasBody || IsExtern) && !(IsStatic && IsVirtual)) || IsExplicitInterfaceImplementation) && !ContainingAssembly.RuntimeSupportsDefaultInterfaceImplementation)
-                {
-                    diagnostics.Add(ErrorCode.ERR_RuntimeDoesNotSupportDefaultInterfaceImplementation, location);
-                }
-
-                if (((!hasBody && IsAbstract) || IsVirtual) && !IsExplicitInterfaceImplementation && IsStatic && !ContainingAssembly.RuntimeSupportsStaticAbstractMembersInInterfaces)
-                {
-                    diagnostics.Add(ErrorCode.ERR_RuntimeDoesNotSupportStaticAbstractMembersInInterfaces, location);
-                }
-            }
         }
 
         /// <summary>

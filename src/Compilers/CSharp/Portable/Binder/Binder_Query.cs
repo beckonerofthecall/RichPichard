@@ -22,8 +22,6 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal BoundExpression BindQuery(QueryExpressionSyntax node, BindingDiagnosticBag diagnostics)
         {
-            MessageID.IDS_FeatureQueryExpression.CheckFeatureAvailability(diagnostics, node.FromClause.FromKeyword);
-
             var fromClause = node.FromClause;
             var boundFromExpression = BindLeftOfPotentialColorColorMemberAccess(fromClause.Expression, diagnostics);
 
@@ -767,10 +765,6 @@ namespace Microsoft.CodeAnalysis.CSharp
         private BoundBlock CreateLambdaBlockForQueryClause(ExpressionSyntax expression, BoundExpression result, BindingDiagnosticBag diagnostics)
         {
             var locals = this.GetDeclaredLocalsForScope(expression);
-            if (locals.Any())
-            {
-                CheckFeatureAvailability(expression, MessageID.IDS_FeatureExpressionVariablesInQueriesAndInitializers, diagnostics, locals[0].GetFirstLocation());
-            }
 
             return this.CreateBlockFromExpression(expression, locals, RefKind.None, result, expression, diagnostics);
         }
@@ -950,7 +944,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 else if (ultimateReceiver.Kind == BoundKind.Lambda || ultimateReceiver.Kind == BoundKind.UnboundLambda)
                 {
                     // Could not find an implementation of the query pattern for source type '{0}'.  '{1}' not found.
-                    diagnostics.Add(ErrorCode.ERR_QueryNoProvider, node.Location, MessageID.IDS_AnonMethod.Localize(), methodName);
+                    diagnostics.Add(ErrorCode.ERR_QueryNoProvider, node.Location, methodName);
                 }
                 else if (ultimateReceiver.Kind == BoundKind.MethodGroup)
                 {

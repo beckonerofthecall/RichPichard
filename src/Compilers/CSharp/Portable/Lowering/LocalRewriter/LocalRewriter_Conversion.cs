@@ -577,8 +577,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         EnsureParamCollectionAttributeExists(rewrittenOperand.Syntax, rewrittenType);
                         Debug.Assert(_factory.TopLevelMethod is { });
 
-                        if (_factory.Compilation.LanguageVersion >= MessageID.IDS_FeatureCacheStaticMethodGroupConversion.RequiredVersion()
-                            && !_inExpressionLambda // The tree structure / meaning for expression trees should remain untouched.
+                        if (!_inExpressionLambda // The tree structure / meaning for expression trees should remain untouched.
                             && _factory.TopLevelMethod.MethodKind != MethodKind.StaticConstructor // Avoid caching twice if people do it manually.
                             && DelegateCacheRewriter.CanRewrite(boundDelegateCreation))
                         {
@@ -1488,7 +1487,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             Debug.Assert(rewrittenOperand != null);
             Debug.Assert((object)rewrittenType != null);
             Debug.Assert(rewrittenOperand.Type is { });
-            Debug.Assert(!_compilation.Assembly.RuntimeSupportsNumericIntPtr);
 
             TypeSymbol source = rewrittenOperand.Type;
             TypeSymbol target = rewrittenType;
@@ -1787,7 +1785,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
                 case ConversionKind.IntPtr:
                     {
-                        Debug.Assert(!_compilation.Assembly.RuntimeSupportsNumericIntPtr);
                         SpecialMember member = GetIntPtrConversionMethod(fromType, toType);
                         MethodSymbol method;
                         if (!TryGetSpecialTypeMethod(syntax, member, out method))

@@ -18,8 +18,6 @@ namespace Microsoft.CodeAnalysis.CSharp
     {
         private BoundExpression BindAwait(AwaitExpressionSyntax node, BindingDiagnosticBag diagnostics)
         {
-            MessageID.IDS_FeatureAsync.CheckFeatureAvailability(diagnostics, node.AwaitKeyword);
-
             BoundExpression expression = BindRValueWithoutTargetType(node.Expression, diagnostics);
 
             return BindAwait(expression, node, diagnostics);
@@ -217,22 +215,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 Error(diagnostics, ErrorCode.ERR_BadAwaitInCatchFilter, nodeOrToken.GetLocation()!);
                 return true;
             }
-            else if (this.Flags.Includes(BinderFlags.InFinallyBlock) &&
-                (nodeOrToken.SyntaxTree as CSharpSyntaxTree)?.Options?.IsFeatureEnabled(MessageID.IDS_AwaitInCatchAndFinally) == false)
-            {
-                Error(diagnostics, ErrorCode.ERR_BadAwaitInFinally, nodeOrToken.GetLocation()!);
-                return true;
-            }
-            else if (this.Flags.Includes(BinderFlags.InCatchBlock) &&
-                (nodeOrToken.SyntaxTree as CSharpSyntaxTree)?.Options?.IsFeatureEnabled(MessageID.IDS_AwaitInCatchAndFinally) == false)
-            {
-                Error(diagnostics, ErrorCode.ERR_BadAwaitInCatch, nodeOrToken.GetLocation()!);
-                return true;
-            }
             else
-            {
                 return false;
-            }
         }
 
         /// <summary>

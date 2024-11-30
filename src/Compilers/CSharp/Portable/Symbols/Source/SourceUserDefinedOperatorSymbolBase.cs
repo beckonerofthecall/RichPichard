@@ -163,31 +163,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                         result &= ~DeclarationModifiers.Sealed;
                     }
 
-                    LanguageVersion availableVersion = ((CSharpParseOptions)location.SourceTree.Options).LanguageVersion;
-                    LanguageVersion requiredVersion = MessageID.IDS_FeatureStaticAbstractMembersInInterfaces.RequiredVersion();
-
-                    if (availableVersion < requiredVersion)
-                    {
-                        var requiredVersionArgument = new CSharpRequiredLanguageVersion(requiredVersion);
-                        var availableVersionArgument = availableVersion.ToDisplayString();
-
-                        if ((result & DeclarationModifiers.Abstract) != 0)
-                        {
-                            reportModifierIfPresent(result, DeclarationModifiers.Abstract, location, diagnostics, requiredVersionArgument, availableVersionArgument);
-                        }
-                        else
-                        {
-                            reportModifierIfPresent(result, DeclarationModifiers.Virtual, location, diagnostics, requiredVersionArgument, availableVersionArgument);
-                        }
-
-                        reportModifierIfPresent(result, DeclarationModifiers.Sealed, location, diagnostics, requiredVersionArgument, availableVersionArgument);
-                    }
-
                     result &= ~DeclarationModifiers.Sealed;
-                }
-                else if ((result & DeclarationModifiers.Static) != 0 && syntax is OperatorDeclarationSyntax { OperatorToken: var opToken } && opToken.Kind() is not (SyntaxKind.EqualsEqualsToken or SyntaxKind.ExclamationEqualsToken))
-                {
-                    Binder.CheckFeatureAvailability(location.SourceTree, MessageID.IDS_DefaultInterfaceImplementation, diagnostics, location);
                 }
             }
 
@@ -200,17 +176,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
 
             return result;
-
-            static void reportModifierIfPresent(DeclarationModifiers result, DeclarationModifiers errorModifier, Location location, BindingDiagnosticBag diagnostics, CSharpRequiredLanguageVersion requiredVersionArgument, string availableVersionArgument)
-            {
-                if ((result & errorModifier) != 0)
-                {
-                    diagnostics.Add(ErrorCode.ERR_InvalidModifierForLanguageVersion, location,
-                                    ModifierUtils.ConvertSingleModifierToSyntaxText(errorModifier),
-                                    availableVersionArgument,
-                                    requiredVersionArgument);
-                }
-            }
         }
 
         protected (TypeWithAnnotations ReturnType, ImmutableArray<ParameterSymbol> Parameters) MakeParametersAndBindReturnType(BaseMethodDeclarationSyntax declarationSyntax, TypeSyntax returnTypeSyntax, BindingDiagnosticBag diagnostics)
@@ -724,7 +689,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             else if (this.GetParameterType(1).StrippedType().SpecialType != SpecialType.System_Int32)
             {
                 var location = this.GetFirstLocation();
-                Binder.CheckFeatureAvailability(location.SourceTree, MessageID.IDS_FeatureRelaxedShiftOperator, diagnostics, location);
             }
 
             CheckReturnIsNotVoid(diagnostics);

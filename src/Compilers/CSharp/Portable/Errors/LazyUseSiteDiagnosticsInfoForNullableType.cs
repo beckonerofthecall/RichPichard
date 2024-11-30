@@ -30,11 +30,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         protected override DiagnosticInfo? ResolveInfo()
         {
-            if (_possiblyNullableTypeSymbol.IsNullableType())
-            {
-                return _possiblyNullableTypeSymbol.Type.OriginalDefinition.GetUseSiteInfo().DiagnosticInfo;
-            }
-            return Binder.GetNullableUnconstrainedTypeParameterDiagnosticIfNecessary(_languageVersion, _possiblyNullableTypeSymbol);
+            return _possiblyNullableTypeSymbol.IsNullableType() ? _possiblyNullableTypeSymbol.Type.OriginalDefinition.GetUseSiteInfo().DiagnosticInfo : null;
         }
     }
 }

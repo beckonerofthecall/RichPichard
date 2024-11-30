@@ -30,9 +30,7 @@ internal class CSharpPreferFrameworkTypeDiagnosticAnalyzer :
 
     // Only offer to change nint->System.IntPtr when it would preserve semantics exactly.
     protected override bool IsIdentifierNameReplaceableWithFrameworkType(SemanticModel semanticModel, IdentifierNameSyntax node)
-        => (node.IsNint || node.IsNuint) &&
-           semanticModel.SyntaxTree.Options.LanguageVersion() >= LanguageVersion.CSharp9 &&
-           semanticModel.Compilation.SupportsRuntimeCapability(RuntimeCapability.NumericIntPtr);
+        => node.IsNint || node.IsNuint;
 
     protected override bool IsInMemberAccessOrCrefReferenceContext(ExpressionSyntax node)
         => node.IsDirectChildOfMemberAccessExpression() || node.InsideCrefReference();

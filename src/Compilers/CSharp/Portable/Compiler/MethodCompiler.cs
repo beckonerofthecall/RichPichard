@@ -614,7 +614,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                 // warnings for any static non-nullable fields. (If there is no .cctor, there
                 // shouldn't be any initializers but for robustness, we check both.)
                 if (processedStaticInitializers.BoundInitializers.IsDefaultOrEmpty &&
-                    _compilation.LanguageVersion >= MessageID.IDS_FeatureNullableReferenceTypes.RequiredVersion() &&
                     containingType is { IsImplicitlyDeclared: false, TypeKind: TypeKind.Class or TypeKind.Struct or TypeKind.Interface } &&
                     ReportNullableDiagnostics)
                 {
@@ -1803,20 +1802,17 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                     if (reportNullableDiagnostics)
                     {
-                        Debug.Assert(diagnostics.DiagnosticBag != null);
+                        Debug.Assert(diagnostics.DiagnosticBag is not null);
+
                         if (compilation.IsNullableAnalysisEnabledIn(method))
                         {
-                            var isSufficientLangVersion = compilation.LanguageVersion >= MessageID.IDS_FeatureNullableReferenceTypes.RequiredVersion();
-
                             methodBodyForSemanticModel = NullableWalker.AnalyzeAndRewrite(
                                 compilation,
                                 method,
                                 methodBody,
                                 bodyBinder,
                                 nullableInitialState,
-                                // if language version is insufficient, we do not want to surface nullability diagnostics,
-                                // but we should still provide nullability information through the semantic model.
-                                isSufficientLangVersion ? diagnostics.DiagnosticBag : new DiagnosticBag(),
+                                diagnostics.DiagnosticBag,
                                 createSnapshots: true,
                                 out snapshotManager,
                                 ref remappedSymbols);

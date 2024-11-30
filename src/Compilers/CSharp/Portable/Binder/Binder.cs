@@ -25,6 +25,15 @@ namespace Microsoft.CodeAnalysis.CSharp
         internal readonly BinderFlags Flags;
 
         /// <summary>
+        /// True if we are currently in an unsafe region (type, member, or block).
+        /// </summary>
+        /// <remarks>
+        /// Does not imply that this compilation allows unsafe regions (could be in an error recovery scenario).
+        /// To determine that, check this.Compilation.Options.AllowUnsafe.
+        /// </remarks>
+        internal bool InUnsafeRegion => this.Flags.Includes(BinderFlags.UnsafeRegion);
+
+        /// <summary>
         /// Used to create a root binder.
         /// </summary>
         internal Binder(CSharpCompilation compilation)

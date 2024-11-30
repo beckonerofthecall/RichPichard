@@ -178,7 +178,7 @@
                 case ErrorCode.WRN_UnreferencedLocalFunction:
                 case ErrorCode.WRN_FilterIsConstantFalse:
                 case ErrorCode.WRN_FilterIsConstantFalseRedundantTryCatch:
-                case ErrorCode.WRN_AttributesOnBackingFieldsNotAvailable:
+                //case ErrorCode.WRN_AttributesOnBackingFieldsNotAvailable:
                 case ErrorCode.WRN_TupleBinopLiteralNameMismatch:
                 case ErrorCode.WRN_TypeParameterSameAsOuterMethodTypeParameter:
                 case ErrorCode.WRN_UnconsumedEnumeratorCancellationAttributeUsage:
@@ -192,9 +192,9 @@
                 case ErrorCode.WRN_SwitchExpressionNotExhaustiveWithUnnamedEnumValue:
                 case ErrorCode.WRN_ThrowPossibleNull:
                 case ErrorCode.WRN_ConvertingNullableToNonNullable:
-                case ErrorCode.WRN_NullReferenceAssignment:
+                //case ErrorCode.WRN_NullReferenceAssignment:
                 case ErrorCode.WRN_NullReferenceReceiver:
-                case ErrorCode.WRN_NullReferenceReturn:
+                //case ErrorCode.WRN_NullReferenceReturn:
                 case ErrorCode.WRN_NullReferenceArgument:
                 case ErrorCode.WRN_UnboxPossibleNull:
                 case ErrorCode.WRN_DisallowNullAttributeForbidsMaybeNullAssignment:
@@ -214,7 +214,7 @@
                 case ErrorCode.WRN_NullabilityMismatchInReturnTypeOfTargetDelegate:
                 case ErrorCode.WRN_NullabilityMismatchInParameterTypeOfTargetDelegate:
                 case ErrorCode.WRN_NullabilityMismatchInArgumentForOutput:
-                case ErrorCode.WRN_NullAsNonNullable:
+                //case ErrorCode.WRN_NullAsNonNullable:
                 case ErrorCode.WRN_NullableValueTypeMayBeNull:
                 case ErrorCode.WRN_NullabilityMismatchInTypeParameterConstraint:
                 case ErrorCode.WRN_MissingNonNullTypesContextForAnnotation:

@@ -406,7 +406,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     mods = ModifierUtils.CheckModifiers(
                         isForTypeDeclaration: true, isForInterfaceMember: false,
                         mods, allowedModifiers, declaration.Declarations[i].NameLocation, diagnostics,
-                        modifierTokens: null, modifierErrors: out modifierErrors);
+                        modifierErrors: out modifierErrors);
 
                     // It is an error for the same modifier to appear multiple times.
                     if (!modifierErrors)
@@ -493,10 +493,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return;
             }
 
-            if (reportIfContextual(SyntaxKind.RecordKeyword, MessageID.IDS_FeatureRecords, ErrorCode.WRN_RecordNamedDisallowed)
-                || reportIfContextual(SyntaxKind.RequiredKeyword, MessageID.IDS_FeatureRequiredMembers, ErrorCode.ERR_RequiredNameDisallowed)
-                || reportIfContextual(SyntaxKind.FileKeyword, MessageID.IDS_FeatureFileTypes, ErrorCode.ERR_FileTypeNameDisallowed)
-                || reportIfContextual(SyntaxKind.ScopedKeyword, MessageID.IDS_FeatureRefFields, ErrorCode.ERR_ScopedTypeNameDisallowed))
+            if (reportIfContextual(SyntaxKind.RecordKeyword, ErrorCode.WRN_RecordNamedDisallowed)
+                || reportIfContextual(SyntaxKind.RequiredKeyword, ErrorCode.ERR_RequiredNameDisallowed)
+                || reportIfContextual(SyntaxKind.FileKeyword, ErrorCode.ERR_FileTypeNameDisallowed)
+                || reportIfContextual(SyntaxKind.ScopedKeyword, ErrorCode.ERR_ScopedTypeNameDisallowed))
             {
                 return;
             }
@@ -505,9 +505,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 diagnostics.Add(ErrorCode.WRN_LowerCaseTypeName, location, name);
             }
 
-            bool reportIfContextual(SyntaxKind contextualKind, MessageID featureId, ErrorCode error)
+            bool reportIfContextual(SyntaxKind contextualKind, ErrorCode error)
             {
-                if (name == SyntaxFacts.GetText(contextualKind) && compilation.LanguageVersion >= featureId.RequiredVersion())
+                if (name == SyntaxFacts.GetText(contextualKind))
                 {
                     diagnostics.Add(error, location);
                     return true;
@@ -1351,14 +1351,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     }
 
                     symbols.Add(t);
-                }
-
-                if (IsInterface)
-                {
-                    foreach (var t in symbols)
-                    {
-                        Binder.CheckFeatureAvailability(t.DeclaringSyntaxReferences[0].GetSyntax(), MessageID.IDS_DefaultInterfaceImplementation, diagnostics, t.GetFirstLocation());
-                    }
                 }
 
                 Debug.Assert(s_emptyTypeMembers.Count == 0);
@@ -4120,7 +4112,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                         }
                         else
                         {
-                            MessageID.IDS_FeatureParameterlessStructConstructors.CheckFeatureAvailability(diagnostics, m.DeclaringCompilation, location);
                             if (m.DeclaredAccessibility != Accessibility.Public)
                             {
                                 diagnostics.Add(ErrorCode.ERR_NonPublicParameterlessStructConstructor, location);
@@ -4149,7 +4140,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 {
                     hasInitializers = true;
                     var symbol = initializer.FieldOpt.AssociatedSymbol ?? initializer.FieldOpt;
-                    MessageID.IDS_FeatureStructFieldInitializers.CheckFeatureAvailability(diagnostics, symbol.DeclaringCompilation, symbol.GetFirstLocation());
                 }
             }
 
@@ -4465,40 +4455,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                 var baseToStringMethod = getBaseToStringMethod();
 
-                if (baseToStringMethod is { IsSealed: true })
+                if (baseToStringMethod is not { IsSealed: true } && !memberSignatures.TryGetValue(targetMethod, out Symbol? existingToStringMethod))
                 {
-                    if (baseToStringMethod.ContainingModule != this.ContainingModule && !this.DeclaringCompilation.IsFeatureEnabled(MessageID.IDS_FeatureSealedToStringInRecord))
-                    {
-                        var languageVersion = ((CSharpParseOptions)this.GetFirstLocation().SourceTree!.Options).LanguageVersion;
-                        var requiredVersion = MessageID.IDS_FeatureSealedToStringInRecord.RequiredVersion();
-                        diagnostics.Add(
-                            ErrorCode.ERR_InheritingFromRecordWithSealedToString,
-                            this.GetFirstLocation(),
-                            languageVersion.ToDisplayString(),
-                            new CSharpRequiredLanguageVersion(requiredVersion));
-                    }
-                }
-                else
-                {
-                    if (!memberSignatures.TryGetValue(targetMethod, out Symbol? existingToStringMethod))
-                    {
-                        var toStringMethod = new SynthesizedRecordToString(
-                            this,
-                            printMethod,
-                            memberOffset: members.Count);
-                        members.Add(toStringMethod);
-                    }
-                    else
-                    {
-                        var toStringMethod = (MethodSymbol)existingToStringMethod;
-                        if (!SynthesizedRecordObjectMethod.VerifyOverridesMethodFromObject(toStringMethod, SpecialMember.System_Object__ToString, diagnostics) && toStringMethod.IsSealed && !IsSealed)
-                        {
-                            MessageID.IDS_FeatureSealedToStringInRecord.CheckFeatureAvailability(
-                                diagnostics,
-                                this.DeclaringCompilation,
-                                toStringMethod.GetFirstLocation());
-                        }
-                    }
+                    var toStringMethod = new SynthesizedRecordToString(
+                        this,
+                        printMethod,
+                        memberOffset: members.Count);
+                    members.Add(toStringMethod);
                 }
 
                 MethodSymbol? getBaseToStringMethod()
@@ -4557,7 +4520,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     else if (existingMember is FieldSymbol { IsStatic: false } field
                         && field.TypeWithAnnotations.Equals(param.TypeWithAnnotations, TypeCompareKind.AllIgnoreOptions))
                     {
-                        Binder.CheckFeatureAvailability(syntax, MessageID.IDS_FeaturePositionalFieldsInRecords, diagnostics);
                         if (!isInherited || checkMemberNotHidden(field, param))
                         {
                             existingOrAddedMembers.Add(field);

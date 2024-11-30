@@ -59,31 +59,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// T where T : struct => false
         /// T where T : class => false
         /// T where T : class? => true
-        /// T where T : IComparable => true
-        /// T where T : IComparable? => true
-        /// T where T : notnull => true
-        /// </summary>
-        /// <remarks>
-        /// In C#9, annotations are allowed regardless of constraints.
-        /// </remarks>
-        public static bool IsTypeParameterDisallowingAnnotationInCSharp8(this TypeSymbol type)
-        {
-            if (type.TypeKind != TypeKind.TypeParameter)
-            {
-                return false;
-            }
-            var typeParameter = (TypeParameterSymbol)type;
-            // https://github.com/dotnet/roslyn/issues/30056: Test `where T : unmanaged`. See
-            // UninitializedNonNullableFieldTests.TypeParameterConstraints for instance.
-            return !typeParameter.IsValueType && !(typeParameter.IsReferenceType && typeParameter.IsNotNullable == true);
-        }
-
-        /// <summary>
-        /// Assuming that nullable annotations are enabled:
-        /// T => true
-        /// T where T : struct => false
-        /// T where T : class => false
-        /// T where T : class? => true
         /// T where T : IComparable => false
         /// T where T : IComparable? => true
         /// </summary>

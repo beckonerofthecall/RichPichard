@@ -407,7 +407,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             Debug.Assert(syntax.IsAnonymousFunction());
             bool hasErrors = !types.IsDefault && types.Any(static t => t.Type?.Kind == SymbolKind.ErrorType);
 
-            var functionType = FunctionTypeSymbol.CreateIfFeatureEnabled(syntax, binder, static (binder, expr) => ((UnboundLambda)expr).Data.InferDelegateType());
+            var functionType = new FunctionTypeSymbol(binder, static (binder, expr) => ((UnboundLambda)expr).Data.InferDelegateType());
             var data = new PlainUnboundLambdaState(binder, returnRefKind, returnType, parameterAttributes, names, discardsOpt, types, refKinds, declaredScopes, defaultValues, syntaxList, isAsync: isAsync, isStatic: isStatic, includeCache: true);
             var lambda = new UnboundLambda(syntax, data, functionType, withDependencies, hasErrors: hasErrors);
             data.SetUnboundLambda(lambda);
@@ -433,7 +433,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         internal UnboundLambda WithNoCache()
         {
             var data = Data.WithCaching(false);
-            if ((object)data == Data)
+            if (data == Data)
             {
                 return this;
             }
@@ -843,15 +843,13 @@ namespace Microsoft.CodeAnalysis.CSharp
             ParameterHelpers.EnsureNullableAttributeExists(compilation, lambdaSymbol, lambdaParameters, diagnostics, modifyCompilation: false);
             // Note: we don't need to warn on annotations used in #nullable disable context for lambdas, as this is handled in binding already
 
-            ValidateUnsafeParameters(diagnostics, cacheKey.ParameterTypes);
-
             bool reachableEndpoint = ControlFlowPass.Analyze(compilation, lambdaSymbol, block, diagnostics.DiagnosticBag);
             if (reachableEndpoint)
             {
                 if (Binder.MethodOrLambdaRequiresValue(lambdaSymbol, this.Binder.Compilation))
                 {
                     // Not all code paths return a value in {0} of type '{1}'
-                    diagnostics.Add(ErrorCode.ERR_AnonymousReturnExpected, lambdaSymbol.DiagnosticLocation, this.MessageID.Localize(), delegateType);
+                    diagnostics.Add(ErrorCode.ERR_AnonymousReturnExpected, lambdaSymbol.DiagnosticLocation, delegateType);
                 }
                 else
                 {
@@ -867,7 +865,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     !lambdaSymbol.IsAsyncEffectivelyReturningGenericTask(compilation))
                 {
                     // Cannot convert async {0} to delegate type '{1}'. An async {0} may return void, Task or Task&lt;T&gt;, none of which are convertible to '{1}'.
-                    diagnostics.Add(ErrorCode.ERR_CantConvAsyncAnonFuncReturns, lambdaSymbol.DiagnosticLocation, lambdaSymbol.MessageID.Localize(), delegateType);
+                    diagnostics.Add(ErrorCode.ERR_CantConvAsyncAnonFuncReturns, lambdaSymbol.DiagnosticLocation, delegateType);
                 }
             }
 
@@ -901,31 +899,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             return CreateLambdaSymbol(containingSymbol, returnType, parameterTypes, parameterRefKinds, refKind);
         }
 
-        private void ValidateUnsafeParameters(BindingDiagnosticBag diagnostics, ImmutableArray<TypeWithAnnotations> targetParameterTypes)
-        {
-            // It is legal to use a delegate type that has unsafe parameter types inside
-            // a safe context if the anonymous method has no parameter list!
-            //
-            // unsafe delegate void D(int* p);
-            // class C { D d = delegate {}; }
-            //
-            // is legal even if C is not an unsafe context because no int* is actually used.
-
-            if (this.HasSignature)
-            {
-                // NOTE: we can get here with targetParameterTypes.Length > ParameterCount
-                // in a case where we are binding for error reporting purposes 
-                var numParametersToCheck = Math.Min(targetParameterTypes.Length, ParameterCount);
-                for (int i = 0; i < numParametersToCheck; i++)
-                {
-                    if (targetParameterTypes[i].Type.ContainsPointer())
-                    {
-                        this.Binder.ReportUnsafeIfNotAllowed(this.ParameterLocation(i), diagnostics);
-                    }
-                }
-            }
-        }
-
         private BoundLambda ReallyInferReturnType(
             NamedTypeSymbol? delegateType,
             ImmutableArray<TypeWithAnnotations> parameterTypes,
@@ -944,9 +917,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     hadExpressionlessReturn: false,
                     refKind,
                     returnType,
-                    inferredFromFunctionType: false,
-                    ImmutableArray<DiagnosticInfo>.Empty,
-                    ImmutableArray<AssemblySymbol>.Empty);
+                    inferredFromFunctionType: false, [], []);
             }
             else
             {
@@ -1469,7 +1440,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         }
 
         public override bool HasSignature { get { return !_parameterNames.IsDefault; } }
-
+        
         public override bool HasExplicitReturnType(out RefKind refKind, out TypeWithAnnotations returnType)
         {
             refKind = _returnRefKind;

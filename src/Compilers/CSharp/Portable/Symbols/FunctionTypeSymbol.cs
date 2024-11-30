@@ -42,14 +42,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         private BoundExpression? _expression;
         private NamedTypeSymbol? _lazyDelegateType;
 
-        internal static FunctionTypeSymbol? CreateIfFeatureEnabled(SyntaxNode syntax, Binder binder, Func<Binder, BoundExpression, NamedTypeSymbol?> calculateDelegate)
-        {
-            return syntax.IsFeatureEnabled(MessageID.IDS_FeatureInferredDelegateType) ?
-                new FunctionTypeSymbol(binder, calculateDelegate) :
-                null;
-        }
-
-        private FunctionTypeSymbol(Binder binder, Func<Binder, BoundExpression, NamedTypeSymbol?> calculateDelegate)
+        internal FunctionTypeSymbol(Binder binder, Func<Binder, BoundExpression, NamedTypeSymbol?> calculateDelegate)
         {
             _binder = binder;
             _calculateDelegate = calculateDelegate;

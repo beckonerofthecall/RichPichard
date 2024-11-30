@@ -388,7 +388,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     { Code: (int)ErrorCode.ERR_BadAccess, Arguments: [Symbol s] } => s,
                     { Code: (int)ErrorCode.ERR_InaccessibleGetter, Arguments: [Symbol s] } => s,
                     { Code: (int)ErrorCode.ERR_InaccessibleSetter, Arguments: [Symbol s] } => s,
-                    { Code: (int)ErrorCode.ERR_ImplicitImplementationOfInaccessibleInterfaceMember, Arguments: [_, Symbol s, _] } => s,
+                    //{ Code: (int)ErrorCode.ERR_ImplicitImplementationOfInaccessibleInterfaceMember, Arguments: [_, Symbol s, _] } => s,
                     _ => null
                 };
 

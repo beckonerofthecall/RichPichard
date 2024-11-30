@@ -64,8 +64,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             HasExplicitAccessModifier = hasExplicitAccessMod;
             bool hasAnyBody = syntax.HasAnyBody();
 
-            CheckFeatureAvailabilityAndRuntimeSupport(syntax, location, hasAnyBody, diagnostics);
-
             if (hasAnyBody)
             {
                 CheckModifiersForBody(location, diagnostics);
@@ -161,9 +159,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 // implemented.
                 if (syntax.ConstraintClauses.Count > 0)
                 {
-                    Binder.CheckFeatureAvailability(
-                        syntax.ConstraintClauses[0].WhereKeyword, MessageID.IDS_OverrideWithConstraints, diagnostics);
-
                     declaredConstraints = signatureBinder.WithAdditionalFlags(BinderFlags.GenericConstraintsClause | BinderFlags.SuppressConstraintChecks).
                                               BindTypeParameterConstraintClauses(this, TypeParameters, syntax.TypeParameterList, syntax.ConstraintClauses,
                                                                                  diagnostics, performOnlyCycleSafeValidation: false, isForOverride: true);
@@ -224,15 +219,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 else if ((object)ContainingType.ContainingType != null)
                 {
                     diagnostics.Add(ErrorCode.ERR_ExtensionMethodsDecl, _location, ContainingType.Name);
-                }
-                else if (!ContainingType.IsScriptClass && !(ContainingType.IsStatic && ContainingType.Arity == 0))
-                {
-                    // Duplicate Dev10 behavior by selecting the containing type identifier. However if there
-                    // is no containing type (in the interactive case for instance), select the method identifier.
-                    var typeDecl = syntax.Parent as TypeDeclarationSyntax;
-                    var identifier = (typeDecl != null) ? typeDecl.Identifier : syntax.Identifier;
-                    var loc = identifier.GetLocation();
-                    diagnostics.Add(ErrorCode.ERR_BadExtensionAgg, loc);
                 }
                 else if (!IsStatic)
                 {
@@ -753,12 +739,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 hasExplicitAccessMod = true;
             }
 
-            ModifierUtils.CheckFeatureAvailabilityForStaticAbstractMembersInInterfacesIfNeeded(mods, isExplicitInterfaceImplementation, location, diagnostics);
-
-            ModifierUtils.ReportDefaultInterfaceImplementationModifiers(hasBody, mods,
-                                                                        defaultInterfaceImplementationModifiers,
-                                                                        location, diagnostics);
-
             mods = AddImpliedModifiers(mods, isInterface, methodKind, hasBody);
             return (mods, hasExplicitAccessMod);
         }
@@ -796,11 +776,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             Debug.Assert(!IsStatic || ContainingType.IsInterface || (!IsAbstract && !IsVirtual)); // Otherwise should have been reported and cleared earlier.
 
             bool isExplicitInterfaceImplementationInInterface = isExplicitInterfaceImplementation && ContainingType.IsInterface;
-
-            if (IsPartial && HasExplicitAccessModifier)
-            {
-                Binder.CheckFeatureAvailability(SyntaxNode, MessageID.IDS_FeatureExtendedPartialMethods, diagnostics, location);
-            }
 
             if (IsPartial && IsAbstract)
             {
@@ -1089,13 +1064,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             private ImmutableArray<TypeParameterSymbol> MakeTypeParameters(MethodDeclarationSyntax syntax, BindingDiagnosticBag diagnostics)
             {
                 if (syntax.Arity == 0)
-                {
-                    return ImmutableArray<TypeParameterSymbol>.Empty;
-                }
+                    return [];
 
                 Debug.Assert(syntax.TypeParameterList != null);
-
-                MessageID.IDS_FeatureGenerics.CheckFeatureAvailability(diagnostics, syntax.TypeParameterList.LessThanToken);
 
                 OverriddenMethodTypeParameterMapBase typeMap = null;
                 if (this.IsOverride)

@@ -32,9 +32,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             _breakLabel = new GeneratedLabelSymbol("break");
         }
 
-        protected bool PatternsEnabled =>
-            ((CSharpParseOptions)SwitchSyntax.SyntaxTree.Options)?.IsFeatureEnabled(MessageID.IDS_FeaturePatternMatching) != false;
-
         protected BoundExpression SwitchGoverningExpression
         {
             get
@@ -394,15 +391,6 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 if (switchGoverningType.IsValidV6SwitchGoverningType())
                 {
-                    // Condition (1) satisfied
-
-                    // Note: dev11 actually checks the stripped type, but nullable was introduced at the same
-                    // time, so it doesn't really matter.
-                    if (switchGoverningType.SpecialType == SpecialType.System_Boolean)
-                    {
-                        CheckFeatureAvailability(node, MessageID.IDS_FeatureSwitchOnBool, diagnostics);
-                    }
-
                     return switchGoverningExpression;
                 }
                 else
@@ -422,12 +410,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
                     else if (!switchGoverningType.IsVoidType())
                     {
-                        // Otherwise (3) satisfied
-                        if (!PatternsEnabled)
-                        {
-                            diagnostics.Add(ErrorCode.ERR_V6SwitchGoverningTypeValueExpected, node.Location);
-                        }
-
                         return switchGoverningExpression;
                     }
                     else

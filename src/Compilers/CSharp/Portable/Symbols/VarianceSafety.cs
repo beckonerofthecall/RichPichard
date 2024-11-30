@@ -168,14 +168,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         }
 
         private static bool SkipVarianceSafetyChecks(Symbol member)
-        {
-            if (member.IsStatic && !member.IsAbstract && !member.IsVirtual)
-            {
-                return MessageID.IDS_FeatureVarianceSafetyForStaticInterfaceMembers.RequiredVersion() <= member.DeclaringCompilation.LanguageVersion;
-            }
-
-            return false;
-        }
+            => member.IsStatic && !member.IsAbstract && !member.IsVirtual;
 
         /// <summary>
         /// Accumulate diagnostics related to the variance safety of an interface property.
@@ -469,8 +462,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // UNDONE: related location for use is much more useful
             if (!(context is TypeSymbol) && context.IsStatic && !context.IsAbstract && !context.IsVirtual)
             {
-                diagnostics.Add(ErrorCode.ERR_UnexpectedVarianceStaticMember, location, context, unsafeTypeParameter, actualVariance.Localize(), expectedVariance.Localize(),
-                                new CSharpRequiredLanguageVersion(MessageID.IDS_FeatureVarianceSafetyForStaticInterfaceMembers.RequiredVersion()));
+                diagnostics.Add(ErrorCode.ERR_UnexpectedVarianceStaticMember, location, context, unsafeTypeParameter, actualVariance.Localize(), expectedVariance.Localize()/*,
+                                new CSharpRequiredLanguageVersion(MessageID.IDS_FeatureVarianceSafetyForStaticInterfaceMembers.RequiredVersion())*/);
             }
             else
             {

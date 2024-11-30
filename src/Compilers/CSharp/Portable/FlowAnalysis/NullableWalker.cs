@@ -892,8 +892,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     // because any usages of uninitialized fields will get definite assignment errors anyway.
                     if (!hasThisConstructorInitializer
                         && (!method.ContainingType.IsValueType
-                            || method.IsStatic
-                            || compilation.IsFeatureEnabled(MessageID.IDS_FeatureAutoDefaultStructs)))
+                            || method.IsStatic))
                     {
                         return membersToBeInitialized(method.ContainingType, includeAllMembers: true, includeCurrentTypeRequiredMembers, includeBaseRequiredMembers);
                     }
@@ -1342,7 +1341,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             MethodSymbol? baseOrThisInitializer,
             out VariableState? finalNullableState)
         {
-            if (!HasRequiredLanguageVersion(compilation) || !compilation.IsNullableAnalysisEnabledIn(method))
+            if (!compilation.IsNullableAnalysisEnabledIn(method))
             {
                 if (compilation.IsNullableAnalysisEnabledAlways)
                 {
@@ -1437,7 +1436,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             MethodSymbol? baseOrThisInitializer = GetConstructorThisOrBaseSymbol(constructorBody);
 
-            NullableWalker.AnalyzeIfNeeded(
+            AnalyzeIfNeeded(
                 compilation,
                 method,
                 nodeToAnalyze,
@@ -1620,19 +1619,13 @@ namespace Microsoft.CodeAnalysis.CSharp
             return rewrittenNode;
         }
 
-        private static bool HasRequiredLanguageVersion(CSharpCompilation compilation)
-        {
-            return compilation.LanguageVersion >= MessageID.IDS_FeatureNullableReferenceTypes.RequiredVersion();
-        }
-
         /// <summary>
         /// Returns true if the nullable analysis is needed for the region represented by <paramref name="syntaxNode"/>.
         /// The syntax node is used to determine the overall nullable context for the region.
         /// </summary>
         internal static bool NeedsAnalysis(CSharpCompilation compilation, SyntaxNode syntaxNode)
         {
-            return HasRequiredLanguageVersion(compilation) &&
-                (compilation.IsNullableAnalysisEnabledIn(syntaxNode) || compilation.IsNullableAnalysisEnabledAlways);
+            return (compilation.IsNullableAnalysisEnabledIn(syntaxNode) || compilation.IsNullableAnalysisEnabledAlways);
         }
 
         /// <summary>Analyzes a node in a "one-off" context, such as for attributes or parameter default values.</summary>
@@ -1645,7 +1638,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             bool requiresAnalysis = true;
             var compilation = binder.Compilation;
-            if (!HasRequiredLanguageVersion(compilation) || !compilation.IsNullableAnalysisEnabledIn(syntax))
+            if (!compilation.IsNullableAnalysisEnabledIn(syntax))
             {
                 if (!compilation.IsNullableAnalysisEnabledAlways)
                 {
@@ -2279,7 +2272,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case NullableFlowState.NotNull:
                     return false;
                 case NullableFlowState.MaybeNull:
-                    if (type.Type.IsTypeParameterDisallowingAnnotationInCSharp8() && !(type.Type is TypeParameterSymbol { IsNotNullable: true }))
+                    if (!(type.Type is TypeParameterSymbol { IsNotNullable: true }))
                     {
                         return false;
                     }
@@ -2326,43 +2319,23 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 // Report warning converting null literal to non-nullable reference type.
                 // target (e.g.: `object F() => null;` or calling `void F(object y)` with `F(null)`).
-                ReportDiagnostic(assignmentKind == AssignmentKind.Return ? ErrorCode.WRN_NullReferenceReturn : ErrorCode.WRN_NullAsNonNullable, location);
+                //ReportDiagnostic(assignmentKind == AssignmentKind.Return ? ErrorCode.WRN_NullReferenceReturn : ErrorCode.WRN_NullAsNonNullable, location);
             }
             else if (assignmentKind == AssignmentKind.Argument)
             {
-                ReportDiagnostic(ErrorCode.WRN_NullReferenceArgument, location,
-                    GetParameterAsDiagnosticArgument(parameterOpt),
-                    GetContainingSymbolAsDiagnosticArgument(parameterOpt));
+                //ReportDiagnostic(ErrorCode.WRN_NullReferenceArgument, location,
+                    //GetParameterAsDiagnosticArgument(parameterOpt),
+                    //GetContainingSymbolAsDiagnosticArgument(parameterOpt));
 
                 LearnFromNonNullTest(value, ref State);
             }
             else if (useLegacyWarnings)
             {
-                if (isMaybeDefaultValue(valueType) && !allowUnconstrainedTypeParameterAnnotations(compilation))
-                {
-                    // No W warning reported assigning or casting [MaybeNull]T value to T
-                    // because there is no syntax for declaring the target type as [MaybeNull]T.
-                    return;
-                }
                 ReportNonSafetyDiagnostic(location);
             }
             else
             {
-                ReportDiagnostic(assignmentKind == AssignmentKind.Return ? ErrorCode.WRN_NullReferenceReturn : ErrorCode.WRN_NullReferenceAssignment, location);
-            }
-
-            static bool isMaybeDefaultValue(TypeWithState valueType)
-            {
-                return valueType.Type?.TypeKind == TypeKind.TypeParameter &&
-                    valueType.State == NullableFlowState.MaybeDefault;
-            }
-
-            static bool allowUnconstrainedTypeParameterAnnotations(CSharpCompilation compilation)
-            {
-                // Check IDS_FeatureDefaultTypeParameterConstraint feature since `T?` and `where ... : default`
-                // are treated as a single feature, even though the errors reported for the two cases are distinct.
-                var requiredVersion = MessageID.IDS_FeatureDefaultTypeParameterConstraint.RequiredVersion();
-                return requiredVersion <= compilation.LanguageVersion;
+                //ReportDiagnostic(assignmentKind == AssignmentKind.Return ? ErrorCode.WRN_NullReferenceReturn : ErrorCode.WRN_NullReferenceAssignment, location);
             }
         }
 
@@ -8012,7 +7985,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             ArrayBuilder<TypeParameterDiagnosticInfo>? useSiteDiagnosticsBuilder = null;
             ConstraintsHelper.CheckMethodConstraints(
                 method,
-                new ConstraintsHelper.CheckConstraintsArgs(compilation, _conversions, includeNullability: true, NoLocation.Singleton, diagnostics: null, template: CompoundUseSiteInfo<AssemblySymbol>.Discarded),
+                new ConstraintsHelper.CheckConstraintsArgs(compilation, _conversions, NoLocation.Singleton, diagnostics: null, template: CompoundUseSiteInfo<AssemblySymbol>.Discarded),
                 diagnosticsBuilder,
                 nullabilityBuilder,
                 ref useSiteDiagnosticsBuilder);
@@ -8440,7 +8413,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     var diagnostics = BindingDiagnosticBag.GetInstance(withDiagnostics: true, withDependencies: false);
                     Debug.Assert(diagnostics.DiagnosticBag is { });
 
-                    tupleOpt.CheckConstraints(new ConstraintsHelper.CheckConstraintsArgs(compilation, _conversions, includeNullability: true, node.Syntax.Location, diagnostics: null),
+                    tupleOpt.CheckConstraints(new ConstraintsHelper.CheckConstraintsArgs(compilation, _conversions, node.Syntax.Location, diagnostics: null),
                                               typeSyntax: node.Syntax, locations, nullabilityDiagnosticsOpt: diagnostics);
 
                     Diagnostics.AddRange(diagnostics.DiagnosticBag);
@@ -9136,7 +9109,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 else if (fromExplicitCast && targetTypeWithNullability.NullableAnnotation.IsAnnotated() && !targetType.IsNullableType())
                 {
                     // An explicit cast to a nullable reference type introduces nullability
-                    resultState = targetType?.IsTypeParameterDisallowingAnnotationInCSharp8() == true ? NullableFlowState.MaybeDefault : NullableFlowState.MaybeNull;
+                    resultState = NullableFlowState.MaybeNull;
                 }
 
                 var resultType = TypeWithState.Create(targetType, resultState);
@@ -9149,10 +9122,10 @@ namespace Microsoft.CodeAnalysis.CSharp
                 switch (state)
                 {
                     case NullableFlowState.MaybeNull:
-                        if (targetType.Type?.IsTypeParameterDisallowingAnnotationInCSharp8() == true)
+                        /*if (targetType.Type?.IsTypeParameterDisallowingAnnotationInCSharp8() == true)
                         {
                             var type = operandType.Type;
-                            if (type is null || !type.IsTypeParameterDisallowingAnnotationInCSharp8())
+                            if (type is null)
                             {
                                 return NullableFlowState.MaybeDefault;
                             }
@@ -9162,10 +9135,10 @@ namespace Microsoft.CodeAnalysis.CSharp
                             {
                                 return (annotation == NullableAnnotation.Annotated) ? NullableFlowState.MaybeDefault : NullableFlowState.MaybeNull;
                             }
-                        }
+                        }*/
                         break;
                     case NullableFlowState.MaybeDefault:
-                        if (targetType.Type?.IsTypeParameterDisallowingAnnotationInCSharp8() == false)
+                        //if (targetType.Type?.IsTypeParameterDisallowingAnnotationInCSharp8() == false)
                         {
                             return NullableFlowState.MaybeNull;
                         }
@@ -9183,7 +9156,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 if (state == NullableFlowState.MaybeNull)
                 {
                     var type = operandType.Type;
-                    if (type is null || !type.IsTypeParameterDisallowingAnnotationInCSharp8())
+                    if (type is null)
                     {
                         return NullableFlowState.MaybeDefault;
                     }

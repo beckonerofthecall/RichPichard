@@ -17,14 +17,10 @@ namespace Microsoft.CodeAnalysis.CSharp
     {
         private BoundExpression BindAnonymousObjectCreation(AnonymousObjectCreationExpressionSyntax node, BindingDiagnosticBag diagnostics)
         {
-            MessageID.IDS_FeatureAnonymousTypes.CheckFeatureAvailability(diagnostics, node.NewKeyword);
-
-            //  prepare
             var initializers = node.Initializers;
             int fieldCount = initializers.Count;
             bool hasError = false;
 
-            //  bind field initializers
             BoundExpression[] boundExpressions = new BoundExpression[fieldCount];
             AnonymousTypeField[] fields = new AnonymousTypeField[fieldCount];
             CSharpSyntaxNode[] fieldSyntaxNodes = new CSharpSyntaxNode[fieldCount];

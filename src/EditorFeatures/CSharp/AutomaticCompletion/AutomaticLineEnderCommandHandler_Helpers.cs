@@ -677,8 +677,8 @@ internal partial class AutomaticLineEnderCommandHandler
 
     private static bool ShouldAddBraceForIfStatement(IfStatementSyntax ifStatementNode, int caretPosition)
         => ifStatementNode.Statement is not BlockSyntax
-           && !ifStatementNode.OpenParenToken.IsMissing
-           && !ifStatementNode.CloseParenToken.IsMissing
+           //&& !ifStatementNode.OpenParenToken.IsMissing
+           //&& !ifStatementNode.CloseParenToken.IsMissing
            && !WithinEmbeddedStatement(ifStatementNode, caretPosition);
 
     private static bool ShouldAddBraceForElseClause(ElseClauseSyntax elseClauseNode, int caretPosition)

@@ -372,9 +372,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 return ConstantValue.NotAvailable;
             }
-
-            MessageID.IDS_FeatureOptionalParameter.CheckFeatureAvailability(diagnostics, defaultSyntax.EqualsToken);
-
             binder = GetDefaultParameterValueBinder(defaultSyntax);
             binder = binder.CreateBinderForParameterDefaultValue(this, defaultSyntax);
             Debug.Assert(binder.InParameterDefaultValue);
@@ -1647,13 +1644,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                         }
                         break;
                 }
-
-                Debug.Assert(elementType is { });
-
-                if (collectionTypeKind != CollectionExpressionTypeKind.Array)
-                {
-                    MessageID.IDS_FeatureParamsCollections.CheckFeatureAvailability(diagnostics, ParameterSyntax);
-                }
             }
 
             bool isAtLeastAsVisible(ParameterSyntax syntax, Binder binder, MethodSymbol method, BindingDiagnosticBag diagnostics)
@@ -1680,8 +1670,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 diagnostics.Add(ErrorCode.ERR_ParamsMustBeCollection, ParameterSyntax.Modifiers.First(static m => m.IsKind(SyntaxKind.ParamsKeyword)).GetLocation());
             }
         }
-
-#nullable disable
     }
 
     internal sealed class SourceComplexParameterSymbol : SourceComplexParameterSymbolBase

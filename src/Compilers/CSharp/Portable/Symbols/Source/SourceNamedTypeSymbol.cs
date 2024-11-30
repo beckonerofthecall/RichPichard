@@ -173,12 +173,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                         throw ExceptionUtilities.UnexpectedValue(typeDecl.Kind());
                 }
 
-                MessageID.IDS_FeatureGenerics.CheckFeatureAvailability(diagnostics, tpl.LessThanToken);
-
                 bool isInterfaceOrDelegate = typeKind == SyntaxKind.InterfaceDeclaration || typeKind == SyntaxKind.DelegateDeclaration;
                 var parameterBuilder = new List<TypeParameterBuilder>();
                 parameterBuilders1.Add(parameterBuilder);
+
                 int i = 0;
+
                 foreach (var tp in tpl.Parameters)
                 {
                     if (tp.VarianceKeyword.Kind() != SyntaxKind.None)
@@ -186,10 +186,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                         if (!isInterfaceOrDelegate)
                         {
                             diagnostics.Add(ErrorCode.ERR_IllegalVarianceSyntax, tp.VarianceKeyword.GetLocation());
-                        }
-                        else
-                        {
-                            MessageID.IDS_FeatureTypeVariance.CheckFeatureAvailability(diagnostics, tp.VarianceKeyword);
                         }
                     }
 
@@ -1897,11 +1893,6 @@ next:;
                 else
                 {
                     diagnostics.Add(ErrorCode.ERR_InvalidInlineArrayFields, GetFirstLocation());
-                }
-
-                if (!ContainingAssembly.RuntimeSupportsInlineArrayTypes)
-                {
-                    diagnostics.Add(ErrorCode.ERR_RuntimeDoesNotSupportInlineArrayTypes, GetFirstLocation());
                 }
             }
         }

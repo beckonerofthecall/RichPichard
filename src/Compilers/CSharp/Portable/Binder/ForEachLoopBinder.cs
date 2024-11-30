@@ -213,11 +213,6 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private BoundForEachStatement BindForEachPartsWorker(BindingDiagnosticBag diagnostics, Binder originalBinder)
         {
-            if (IsAsync)
-            {
-                CheckFeatureAvailability(_syntax.AwaitKeyword, MessageID.IDS_FeatureAsyncStreams, diagnostics);
-            }
-
             // Use the right binder to avoid seeing iteration variable
             BoundExpression collectionExpr = originalBinder.GetBinder(_syntax.Expression).BindRValueWithoutTargetType(_syntax.Expression, diagnostics);
 
@@ -236,9 +231,6 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 if (getEnumeratorMethod.IsExtensionMethod && !hasErrors)
                 {
-                    var messageId = IsAsync ? MessageID.IDS_FeatureExtensionGetAsyncEnumerator : MessageID.IDS_FeatureExtensionGetEnumerator;
-                    messageId.CheckFeatureAvailability(diagnostics, Compilation, collectionExpr.Syntax.Location);
-
                     if (getEnumeratorMethod.ParameterRefKinds is { IsDefault: false } refKinds && refKinds[0] == RefKind.Ref)
                     {
                         Error(diagnostics, ErrorCode.ERR_RefLvalueExpected, collectionExpr.Syntax);
@@ -270,25 +262,20 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case SyntaxKind.ForEachStatement:
                     {
                         var node = (ForEachStatementSyntax)_syntax;
-                        // Check for local variable conflicts in the *enclosing* binder; obviously the *current*
-                        // binder has a local that matches!
+                        // Check for local variable conflicts in the *enclosing* binder; obviously the *current* binder has a local that matches!
                         hasNameConflicts = originalBinder.ValidateDeclarationNameConflictsInScope(IterationVariable, diagnostics);
 
-                        // If the type in syntax is "var", then the type should be set explicitly so that the
-                        // Type property doesn't fail.
+                        // If the type in syntax is "var", then the type should be set explicitly so that the Type property doesn't fail.
 
                         TypeSyntax typeSyntax = node.Type;
 
                         if (typeSyntax is ScopedTypeSyntax scopedType)
                         {
-                            // Check for support for 'scoped'.
-                            ModifierUtils.CheckScopedModifierAvailability(typeSyntax, scopedType.ScopedKeyword, diagnostics);
                             typeSyntax = scopedType.Type;
                         }
 
                         if (typeSyntax is RefTypeSyntax refType)
                         {
-                            MessageID.IDS_FeatureRefForEach.CheckFeatureAvailability(diagnostics, typeSyntax);
                             typeSyntax = refType.Type;
                         }
 
@@ -311,19 +298,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                         SourceLocalSymbol local = this.IterationVariable;
                         local.SetTypeWithAnnotations(declType);
 
-                        CheckRestrictedTypeInAsyncMethod(this.ContainingMemberOrLambda, declType.Type, diagnostics, typeSyntax);
-
                         if (local.Scope == ScopedKind.ScopedValue && !declType.Type.IsErrorOrRefLikeOrAllowsRefLikeType())
                         {
                             diagnostics.Add(ErrorCode.ERR_ScopedRefAndRefStructOnly, typeSyntax.Location);
-                        }
-
-                        if (local.RefKind != RefKind.None)
-                        {
-                            if (CheckRefLocalInAsyncOrIteratorMethod(local.IdentifierToken, diagnostics))
-                            {
-                                hasErrors = true;
-                            }
                         }
 
                         if (!hasErrors)
@@ -522,11 +499,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             Conversion currentConversionClassification = this.Conversions.ClassifyConversionFromType(builder.CurrentPropertyGetter.ReturnType, builder.ElementType, isChecked: CheckOverflowAtRuntime, ref useSiteInfo);
 
             TypeSymbol getEnumeratorType = getEnumeratorMethod.ReturnType;
-
-            if (builder.InlineArraySpanType == WellKnownType.Unknown && getEnumeratorType.IsRestrictedType() && (IsDirectlyInIterator || IsInAsyncMethod()))
-            {
-                CheckFeatureAvailability(foreachKeyword, MessageID.IDS_FeatureRefUnsafeInIteratorAsync, diagnostics);
-            }
 
             diagnostics.Add(_syntax.ForEachKeyword, useSiteInfo);
 
@@ -870,8 +842,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                     builder.InlineArrayUsedAsValue = usedAsValue;
                     diagnostics.AddRangeAndFree(enumeratorInfoDiagnostics);
 
-                    CheckFeatureAvailability(collectionExpr.Syntax, MessageID.IDS_FeatureInlineArrays, diagnostics);
-
                     if (result == EnumeratorResult.Succeeded)
                     {
                         if (wellKnownSpan == WellKnownType.System_ReadOnlySpan_T)
@@ -881,10 +851,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                         _ = GetWellKnownTypeMember(WellKnownMember.System_Runtime_CompilerServices_Unsafe__Add_T, diagnostics, syntax: collectionExpr.Syntax);
                         _ = GetWellKnownTypeMember(WellKnownMember.System_Runtime_CompilerServices_Unsafe__As_T, diagnostics, syntax: collectionExpr.Syntax);
-
-                        CheckInlineArrayTypeIsSupported(collectionExpr.Syntax, collectionExpr.Type, elementField.Type, diagnostics);
                     }
-
                     return result;
                 }
 
@@ -1217,14 +1184,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         diagnostics);
 
                     builder.NeedsDisposal = true;
-                    Debug.Assert(argsToParams.IsDefault);
                     builder.PatternDisposeInfo = new MethodArgumentInfo(patternDisposeMethod, argsBuilder.ToImmutableAndFree(), defaultArguments, expanded);
-
-                    if (!isAsync)
-                    {
-                        // We already checked feature availability for async scenarios
-                        CheckFeatureAvailability(expr.Syntax, MessageID.IDS_FeatureDisposalPattern, diagnostics);
-                    }
 
                     return;
                 }
@@ -1262,12 +1222,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                                         out bool needSupportForRefStructInterfaces);
 
                 diagnostics.Add(syntax, useSiteInfo);
-
-                if (needSupportForRefStructInterfaces &&
-                    enumeratorType.ContainingModule != Compilation.SourceModule)
-                {
-                    CheckFeatureAvailability(syntax, MessageID.IDS_FeatureRefStructInterfaces, diagnostics);
-                }
 
                 return result;
             }
@@ -1444,8 +1398,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     if (warningsOnly)
                     {
-                        MessageID patternName = isAsync ? MessageID.IDS_FeatureAsyncStreams : MessageID.IDS_Collection;
-                        diagnostics.Add(ErrorCode.WRN_PatternNotPublicOrNotInstance, collectionSyntax.Location, patternType, patternName.Localize(), result);
+                        //diagnostics.Add(ErrorCode.WRN_PatternNotPublicOrNotInstance, collectionSyntax.Location, patternType, patternName.Localize(), result);
                     }
                     result = null;
                 }
@@ -1480,8 +1433,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 if (warningsOnly)
                 {
-                    diagnostics.Add(ErrorCode.WRN_PatternIsAmbiguous, collectionSyntax.Location, patternType, MessageID.IDS_Collection.Localize(),
-                        applicableMembers[0], applicableMembers[1]);
+                    //diagnostics.Add(ErrorCode.WRN_PatternIsAmbiguous, collectionSyntax.Location, patternType, MessageID.IDS_Collection.Localize(),
+                        //applicableMembers[0], applicableMembers[1]);
                 }
             }
 
@@ -1551,8 +1504,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
             else if (overloadResolutionResult?.GetAllApplicableMembers() is { } applicableMembers && applicableMembers.Length > 1)
             {
-                diagnostics.Add(ErrorCode.WRN_PatternIsAmbiguous, collectionSyntax.Location, collectionExpr.Type, MessageID.IDS_Collection.Localize(),
-                    applicableMembers[0], applicableMembers[1]);
+                //diagnostics.Add(ErrorCode.WRN_PatternIsAmbiguous, collectionSyntax.Location, collectionExpr.Type, MessageID.IDS_Collection.Localize(),
+                    //applicableMembers[0], applicableMembers[1]);
             }
             else if (overloadResolutionResult != null)
             {
@@ -1710,7 +1663,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             CompoundUseSiteInfo<AssemblySymbol> useSiteInfo = GetNewCompoundUseSiteInfo(diagnostics);
             if (this.IsAccessible(patternMemberCandidate, ref useSiteInfo))
             {
-                diagnostics.Add(ErrorCode.WRN_PatternBadSignature, collectionSyntax.Location, enumeratorType, MessageID.IDS_Collection.Localize(), patternMemberCandidate);
+                //diagnostics.Add(ErrorCode.WRN_PatternBadSignature, collectionSyntax.Location, enumeratorType, MessageID.IDS_Collection.Localize(), patternMemberCandidate);
             }
 
             diagnostics.Add(collectionSyntax, useSiteInfo);
@@ -1769,11 +1722,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                         implementedIEnumerable = implementedNonGeneric;
                     }
                 }
-            }
-
-            if (implementedIEnumerable is not null && needSupportForRefStructInterfaces && type.ContainingModule != Compilation.SourceModule)
-            {
-                CheckFeatureAvailability(collectionSyntax, MessageID.IDS_FeatureRefStructInterfaces, diagnostics);
             }
 
             diagnostics.Add(collectionSyntax, useSiteInfo);

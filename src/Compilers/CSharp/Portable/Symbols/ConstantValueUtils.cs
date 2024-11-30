@@ -151,11 +151,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 this.diagnostics = diagnostics;
             }
 
-            public override BoundNode VisitInterpolatedString(BoundInterpolatedString node)
-            {
-                Binder.CheckFeatureAvailability(node.Syntax, MessageID.IDS_FeatureConstantInterpolatedStrings, diagnostics);
-                return null;
-            }
+            public override BoundNode VisitInterpolatedString(BoundInterpolatedString node) => null;
         }
 
         internal static void CheckLangVersionForConstantValue(BoundExpression expression, BindingDiagnosticBag diagnostics)

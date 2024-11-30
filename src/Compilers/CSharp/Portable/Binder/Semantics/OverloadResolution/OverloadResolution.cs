@@ -444,16 +444,13 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             PerformMemberOverloadResolutionStart(results, members, typeArguments, arguments, completeResults, ref useSiteInfo, options, checkOverriddenOrHidden);
 
-            if (Compilation.LanguageVersion.AllowImprovedOverloadCandidates())
+            RemoveStaticInstanceMismatches(results, arguments, receiver);
+
+            RemoveConstraintViolations(results, template: new CompoundUseSiteInfo<AssemblySymbol>(useSiteInfo));
+
+            if ((options & Options.IsMethodGroupConversion) != 0)
             {
-                RemoveStaticInstanceMismatches(results, arguments, receiver);
-
-                RemoveConstraintViolations(results, template: new CompoundUseSiteInfo<AssemblySymbol>(useSiteInfo));
-
-                if ((options & Options.IsMethodGroupConversion) != 0)
-                {
-                    RemoveDelegateConversionsWithWrongReturnType(results, ref useSiteInfo, returnRefKind, returnType, isFunctionPointerConversion: (options & Options.IsFunctionPointerResolution) != 0);
-                }
+                RemoveDelegateConversionsWithWrongReturnType(results, ref useSiteInfo, returnRefKind, returnType, isFunctionPointerConversion: (options & Options.IsFunctionPointerResolution) != 0);
             }
 
             if ((options & Options.IsFunctionPointerResolution) != 0)
@@ -803,7 +800,7 @@ outerDefault:
             ArrayBuilder<TypeParameterDiagnosticInfo> useSiteDiagnosticsBuilder = null;
             bool constraintsSatisfied = ConstraintsHelper.CheckMethodConstraints(
                 method,
-                new ConstraintsHelper.CheckConstraintsArgs(this.Compilation, this.Conversions, includeNullability: false, location: NoLocation.Singleton, diagnostics: null, template),
+                new ConstraintsHelper.CheckConstraintsArgs(this.Compilation, this.Conversions, location: NoLocation.Singleton, diagnostics: null, template),
                 diagnosticsBuilder,
                 nullabilityDiagnosticsBuilderOpt: null,
                 ref useSiteDiagnosticsBuilder);
@@ -1835,11 +1832,6 @@ outerDefault:
             where TMemberResolution : IMemberResolutionResultWithPriority<TMember>
             where TMember : Symbol
         {
-            if (!Compilation.IsFeatureEnabled(MessageID.IDS_OverloadResolutionPriority))
-            {
-                return;
-            }
-
             // - Then, the reduced set of candidate members is grouped by declaring type. Within each group:
             //     - Candidate function members are ordered by *overload_resolution_priority*.
             //     - All members that have a lower *overload_resolution_priority* than the highest found within its declaring type group are removed.
@@ -2919,8 +2911,7 @@ outerDefault:
             // or a library to a version that takes advantage of the feature, but we made this pragmatic
             // choice after we received customer reports of problems in the space.
             // https://github.com/dotnet/roslyn/issues/55345
-            if (_binder.Compilation.IsFeatureEnabled(MessageID.IDS_FeatureImprovedInterpolatedStrings) &&
-                node is BoundUnconvertedInterpolatedString { ConstantValueOpt: null } or BoundBinaryOperator { IsUnconvertedInterpolatedStringAddition: true, ConstantValueOpt: null })
+            if (node is BoundUnconvertedInterpolatedString { ConstantValueOpt: null } or BoundBinaryOperator { IsUnconvertedInterpolatedStringAddition: true, ConstantValueOpt: null })
             {
                 switch ((conv1.Kind, conv2.Kind))
                 {
@@ -3895,7 +3886,7 @@ outerDefault:
                         return RefKind.None;
                     }
 
-                    if (argRefKind == RefKind.Ref && binder.Compilation.IsFeatureEnabled(MessageID.IDS_FeatureRefReadonlyParameters))
+                    if (argRefKind == RefKind.Ref)
                     {
                         return RefKind.Ref;
                     }
@@ -3942,8 +3933,7 @@ outerDefault:
                 return true;
             }
 
-            if (compilation.IsFeatureEnabled(MessageID.IDS_FeatureRefReadonlyParameters) &&
-                (candidateMethodParameterRefKind, delegateParameterRefKind) is (RefKind.In, RefKind.Ref))
+            if ((candidateMethodParameterRefKind, delegateParameterRefKind) is (RefKind.In, RefKind.Ref))
             {
                 return true;
             }

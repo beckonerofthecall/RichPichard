@@ -56,8 +56,6 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             if (syntax is LambdaExpressionSyntax lambdaSyntax)
             {
-                MessageID.IDS_FeatureLambda.CheckFeatureAvailability(diagnostics, lambdaSyntax.ArrowToken);
-
                 checkAttributes(syntax, lambdaSyntax.AttributeLists, diagnostics);
             }
 
@@ -86,7 +84,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                     // delegate (int x) { }
                     // delegate { }
                     var anon = (AnonymousMethodExpressionSyntax)syntax;
-                    MessageID.IDS_FeatureAnonDelegates.CheckFeatureAvailability(diagnostics, anon.DelegateKeyword);
 
                     hasSignature = anon.ParameterList != null;
                     if (hasSignature)
@@ -101,18 +98,10 @@ namespace Microsoft.CodeAnalysis.CSharp
             bool isStatic = false;
 
             foreach (var modifier in syntax.Modifiers)
-            {
                 if (modifier.IsKind(SyntaxKind.AsyncKeyword))
-                {
-                    MessageID.IDS_FeatureAsync.CheckFeatureAvailability(diagnostics, modifier);
                     isAsync = true;
-                }
                 else if (modifier.IsKind(SyntaxKind.StaticKeyword))
-                {
-                    MessageID.IDS_FeatureStaticAnonymousFunction.CheckFeatureAvailability(diagnostics, modifier);
                     isStatic = true;
-                }
-            }
 
             if (parameterSyntaxList != null)
             {
@@ -150,11 +139,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     {
                         if (isAnonymousMethod)
                         {
-                            Error(diagnostics, ErrorCode.ERR_DefaultValueNotAllowed, p.Default.EqualsToken);
-                        }
-                        else
-                        {
-                            MessageID.IDS_FeatureLambdaOptionalParameters.CheckFeatureAvailability(diagnostics, p.Default.EqualsToken);
+                            Error(diagnostics, ErrorCode.ERR_DefaultValueNotAllowed, p.Default.EqualsToken); //
                         }
                     }
 
@@ -262,30 +247,17 @@ namespace Microsoft.CodeAnalysis.CSharp
             static void checkAttributes(AnonymousFunctionExpressionSyntax syntax, SyntaxList<AttributeListSyntax> attributeLists, BindingDiagnosticBag diagnostics)
             {
                 foreach (var attributeList in attributeLists)
-                {
-                    if (syntax.Kind() == SyntaxKind.ParenthesizedLambdaExpression)
-                    {
-                        MessageID.IDS_FeatureLambdaAttributes.CheckFeatureAvailability(diagnostics, attributeList);
-                    }
-                    else
-                    {
+                    if (syntax.Kind() != SyntaxKind.ParenthesizedLambdaExpression)
                         Error(diagnostics, syntax.Kind() == SyntaxKind.SimpleLambdaExpression ? ErrorCode.ERR_AttributesRequireParenthesizedLambdaExpression : ErrorCode.ERR_AttributesNotAllowed, attributeList);
-                    }
-                }
             }
-
         }
 
         private (RefKind, TypeWithAnnotations) BindExplicitLambdaReturnType(TypeSyntax syntax, BindingDiagnosticBag diagnostics)
         {
-            MessageID.IDS_FeatureLambdaReturnType.CheckFeatureAvailability(diagnostics, syntax);
-
             Debug.Assert(syntax is not ScopedTypeSyntax);
             syntax = syntax.SkipScoped(out _).SkipRefInLocalOrReturn(diagnostics, out RefKind refKind);
-            if (syntax is IdentifierNameSyntax { Identifier.RawContextualKind: (int)SyntaxKind.VarKeyword })
-            {
-                diagnostics.Add(ErrorCode.ERR_LambdaExplicitReturnTypeVar, syntax.Location);
-            }
+            //if (syntax is IdentifierNameSyntax { Identifier.RawContextualKind: (int)SyntaxKind.VarKeyword })
+                //diagnostics.Add(ErrorCode.ERR_LambdaExplicitReturnTypeVar, syntax.Location);
 
             var returnType = BindType(syntax, diagnostics);
             var type = returnType.Type;
@@ -374,47 +346,23 @@ namespace Microsoft.CodeAnalysis.CSharp
             // Parser will only have accepted static/async as allowed modifiers on this construct.
             // However, it may have accepted duplicates of those modifiers.  Ensure that any dupes
             // are reported now.
-            ModifierUtils.ToDeclarationModifiers(syntax.Modifiers, isForTypeDeclaration: false, diagnostics.DiagnosticBag ?? new DiagnosticBag());
+            ModifierUtils.ToDeclarationModifiers(syntax.Modifiers, diagnostics.DiagnosticBag ?? new DiagnosticBag());
 
             if (data.HasSignature)
             {
                 var binder = new LocalScopeBinder(this);
-                bool allowShadowingNames = binder.Compilation.IsFeatureEnabled(MessageID.IDS_FeatureNameShadowingInNestedFunctions);
                 var pNames = PooledHashSet<string>.GetInstance();
-                bool seenDiscard = false;
 
                 for (int i = 0; i < lambda.ParameterCount; i++)
                 {
                     var name = lambda.ParameterName(i);
 
-                    if (string.IsNullOrEmpty(name))
-                    {
-                        continue;
-                    }
-
-                    if (lambda.ParameterIsDiscard(i))
-                    {
-                        if (seenDiscard)
-                        {
-                            // We only report the diagnostic on the second and subsequent underscores
-                            MessageID.IDS_FeatureLambdaDiscardParameters.CheckFeatureAvailability(
-                                diagnostics,
-                                binder.Compilation,
-                                lambda.ParameterLocation(i));
-                        }
-
-                        seenDiscard = true;
-                        continue;
-                    }
+                    if (string.IsNullOrEmpty(name)) continue;
 
                     if (!pNames.Add(name))
                     {
                         // The parameter name '{0}' is a duplicate
                         diagnostics.Add(ErrorCode.ERR_DuplicateParamName, lambda.ParameterLocation(i), name);
-                    }
-                    else if (!allowShadowingNames)
-                    {
-                        binder.ValidateLambdaParameterNameConflictsInScope(lambda.ParameterLocation(i), name, diagnostics);
                     }
                 }
                 pNames.Free();

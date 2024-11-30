@@ -369,29 +369,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             BindingDiagnosticBag diagnostics,
             ConsList<TypeSymbol>? basesBeingResolved)
         {
-            if (usingDirective.UnsafeKeyword != default)
-            {
-                MessageID.IDS_FeatureUsingTypeAlias.CheckFeatureAvailability(diagnostics, usingDirective.UnsafeKeyword);
-            }
-            else if (usingDirective.NamespaceOrType is not NameSyntax)
-            {
-                MessageID.IDS_FeatureUsingTypeAlias.CheckFeatureAvailability(diagnostics, usingDirective.NamespaceOrType);
-            }
-
             var syntax = usingDirective.NamespaceOrType;
-            var flags = BinderFlags.SuppressConstraintChecks | BinderFlags.SuppressObsoleteChecks;
-            if (usingDirective.UnsafeKeyword != default)
-            {
-                flags |= BinderFlags.UnsafeRegion;
-            }
-            else
-            {
-                // Prior to C#12, allow the alias to be an unsafe region.  This allows us to maintain compat with prior
-                // versions of the compiler that allowed `using X = List<int*[]>` to be written.  In 12.0 and onwards
-                // though, we require the code to explicitly contain the `unsafe` keyword.
-                if (!DeclaringCompilation.IsFeatureEnabled(MessageID.IDS_FeatureUsingTypeAlias))
-                    flags |= BinderFlags.UnsafeRegion;
-            }
+            var flags = BinderFlags.SuppressConstraintChecks | BinderFlags.SuppressObsoleteChecks | BinderFlags.UnsafeRegion;
 
             var declarationBinder = ContainingSymbol.DeclaringCompilation
                 .GetBinderFactory(syntax.SyntaxTree)
@@ -408,15 +387,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 diagnostics.Add(ErrorCode.ERR_BadNullableReferenceTypeInUsingAlias, nullableType.QuestionToken.GetLocation());
             }
 
-            var namespaceOrType = annotatedNamespaceOrType.NamespaceOrTypeSymbol;
-            if (namespaceOrType is TypeSymbol { IsNativeIntegerWrapperType: true } &&
-                (usingDirective.NamespaceOrType.IsNint || usingDirective.NamespaceOrType.IsNuint))
-            {
-                // using X = nint;
-                MessageID.IDS_FeatureUsingTypeAlias.CheckFeatureAvailability(diagnostics, usingDirective.NamespaceOrType);
-            }
-
-            return namespaceOrType;
+            return annotatedNamespaceOrType.NamespaceOrTypeSymbol;
         }
 
         internal override bool RequiresCompletion

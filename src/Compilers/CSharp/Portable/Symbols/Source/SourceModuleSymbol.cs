@@ -684,19 +684,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         public override ModuleMetadata? GetMetadata() => null;
 
-        internal override bool UseUpdatedEscapeRules
-        {
-            get
-            {
-                if (_lazyUseUpdatedEscapeRules == ThreeState.Unknown)
-                {
-                    var compilation = _assemblySymbol.DeclaringCompilation;
-                    bool value = compilation.IsFeatureEnabled(MessageID.IDS_FeatureRefFields) || _assemblySymbol.RuntimeSupportsByRefFields;
-                    _lazyUseUpdatedEscapeRules = value.ToThreeState();
-                }
-                return _lazyUseUpdatedEscapeRules == ThreeState.True;
-            }
-        }
+        internal override bool UseUpdatedEscapeRules => true;
 
         /// <summary>
         /// Returns data decoded from <see cref="ObsoleteAttribute"/> attribute or null if there is no <see cref="ObsoleteAttribute"/> attribute.

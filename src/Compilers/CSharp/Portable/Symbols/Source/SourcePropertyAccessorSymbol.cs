@@ -161,7 +161,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             _property = property;
             _isAutoPropertyAccessor = false;
 
-            CheckFeatureAvailabilityAndRuntimeSupport(syntax, location, hasBody: true, diagnostics: diagnostics);
             CheckModifiersForBody(location, diagnostics);
 
             ModifierUtils.CheckAccessibility(this.DeclarationModifiers, this, property.IsExplicitInterfaceImplementation, diagnostics, location);
@@ -196,12 +195,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             Debug.Assert(!_property.IsExpressionBodied, "Cannot have accessors in expression bodied lightweight properties");
             var hasAnyBody = hasBlockBody || hasExpressionBody;
             _usesInit = usesInit;
-            if (_usesInit)
-            {
-                Binder.CheckFeatureAvailability(syntax, MessageID.IDS_FeatureInitOnlySetters, diagnostics, location);
-            }
-
-            CheckFeatureAvailabilityAndRuntimeSupport(syntax, location, hasBody: hasAnyBody || isAutoPropertyAccessor, diagnostics);
 
             if (hasAnyBody)
             {
@@ -214,9 +207,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 this.CheckModifiers(location, hasAnyBody, isAutoPropertyAccessor, diagnostics);
             }
-
-            if (modifiers.Count > 0)
-                MessageID.IDS_FeaturePropertyAccessorMods.CheckFeatureAvailability(diagnostics, modifiers[0]);
         }
 
         private static (DeclarationModifiers, Flags) MakeModifiersAndFlags(
@@ -461,12 +451,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                 // Code emitted in C# 7.0 and before must be PEVerify compatible, so we will only make
                 // members implicitly readonly in language versions which support the readonly members feature.
-                var options = (CSharpParseOptions)SyntaxTree.Options;
-                if (!options.IsFeatureEnabled(MessageID.IDS_FeatureReadOnlyMembers))
-                {
-                    return false;
-                }
-
                 // If we have IsReadOnly..ctor, we can use the attribute. Otherwise, we need to NOT be a netmodule and the type must not already exist in order to synthesize it.
                 var isReadOnlyAttributeUsable = DeclaringCompilation.GetWellKnownTypeMember(WellKnownMember.System_Runtime_CompilerServices_IsReadOnlyAttribute__ctor) != null ||
                     (DeclaringCompilation.Options.OutputKind != OutputKind.NetModule &&
@@ -513,10 +497,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             var mods = ModifierUtils.MakeAndCheckNonTypeMemberModifiers(isOrdinaryMethod: false, isForInterfaceMember: isInterface,
                                                                         modifiers, defaultAccess, allowedModifiers, location, diagnostics, out modifierErrors);
-
-            ModifierUtils.ReportDefaultInterfaceImplementationModifiers(hasBody, mods,
-                                                                        defaultInterfaceImplementationModifiers,
-                                                                        location, diagnostics);
 
             return mods;
         }

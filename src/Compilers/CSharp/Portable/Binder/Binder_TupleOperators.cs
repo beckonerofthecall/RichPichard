@@ -407,7 +407,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             var tuple = NamedTypeSymbol.CreateTuple(locationOpt: null,
                 elementTypesWithAnnotations: convertedTypes.SelectAsArray(t => TypeWithAnnotations.Create(t)),
                 elementLocations, elementNames: names, compilation,
-                shouldCheckConstraints: true, includeNullability: false, errorPositions: default, syntax, diagnostics);
+                shouldCheckConstraints: true, errorPositions: default, syntax, diagnostics);
 
             if (!isNullable)
             {

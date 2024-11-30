@@ -363,7 +363,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 base.InstrumentIfStatementConditionalGoto(original, rewritten),
                 TextSpan.FromBounds(
                     syntax.IfKeyword.SpanStart,
-                    syntax.CloseParenToken.Span.End),
+                    syntax.Condition.Span.End),
                 original.HasErrors);
         }
 

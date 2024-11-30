@@ -146,15 +146,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             if (isExplicitInterfaceImplementation && IsAbstract && syntax.AccessorList == null)
             {
-                Debug.Assert(containingType.IsInterface);
-
-                Binder.CheckFeatureAvailability(syntax, MessageID.IDS_DefaultInterfaceImplementation, diagnostics, this.GetFirstLocation());
-
-                if (!ContainingAssembly.RuntimeSupportsDefaultInterfaceImplementation)
-                {
-                    diagnostics.Add(ErrorCode.ERR_RuntimeDoesNotSupportDefaultInterfaceImplementation, this.GetFirstLocation());
-                }
-
                 _addMethod = new SynthesizedEventAccessorSymbol(this, isAdder: true, isExpressionBodied: false, explicitlyImplementedEvent, aliasQualifierOpt);
                 _removeMethod = new SynthesizedEventAccessorSymbol(this, isAdder: false, isExpressionBodied: false, explicitlyImplementedEvent, aliasQualifierOpt);
             }
@@ -165,50 +156,17 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
 
             _explicitInterfaceImplementations =
-                (object?)explicitlyImplementedEvent == null ?
-                    ImmutableArray<EventSymbol>.Empty :
-                    ImmutableArray.Create<EventSymbol>(explicitlyImplementedEvent);
+                (object?)explicitlyImplementedEvent == null ? [] : [explicitlyImplementedEvent];
         }
 
-        public override TypeWithAnnotations TypeWithAnnotations
-        {
-            get { return _type; }
-        }
-
-        public override string Name
-        {
-            get { return _name; }
-        }
-
-        public override MethodSymbol? AddMethod
-        {
-            get { return _addMethod; }
-        }
-
-        public override MethodSymbol? RemoveMethod
-        {
-            get { return _removeMethod; }
-        }
-
-        protected override AttributeLocation AllowedAttributeLocations
-        {
-            get { return AttributeLocation.Event; }
-        }
-
-        private ExplicitInterfaceSpecifierSyntax? ExplicitInterfaceSpecifier
-        {
-            get { return ((EventDeclarationSyntax)this.CSharpSyntaxNode).ExplicitInterfaceSpecifier; }
-        }
-
-        internal override bool IsExplicitInterfaceImplementation
-        {
-            get { return this.ExplicitInterfaceSpecifier != null; }
-        }
-
-        public override ImmutableArray<EventSymbol> ExplicitInterfaceImplementations
-        {
-            get { return _explicitInterfaceImplementations; }
-        }
+        public override TypeWithAnnotations TypeWithAnnotations => _type;
+        public override string Name => _name;
+        public override MethodSymbol? AddMethod => _addMethod;
+        public override MethodSymbol? RemoveMethod => _removeMethod;
+        protected override AttributeLocation AllowedAttributeLocations => AttributeLocation.Event;
+        private ExplicitInterfaceSpecifierSyntax? ExplicitInterfaceSpecifier => ((EventDeclarationSyntax)this.CSharpSyntaxNode).ExplicitInterfaceSpecifier;
+        internal override bool IsExplicitInterfaceImplementation => this.ExplicitInterfaceSpecifier != null;
+        public override ImmutableArray<EventSymbol> ExplicitInterfaceImplementations => _explicitInterfaceImplementations;
 
         internal override void AfterAddingTypeMembersChecks(ConversionsBase conversions, BindingDiagnosticBag diagnostics)
         {

@@ -92,17 +92,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             bool isExpression = !isUsingDeclaration && syntax.Kind() != SyntaxKind.VariableDeclaration;
             bool hasAwait = awaitKeyword != default;
 
-            if (isUsingDeclaration)
-            {
-                CheckFeatureAvailability(usingKeyword, MessageID.IDS_FeatureUsingDeclarations, diagnostics);
-            }
-            else if (hasAwait)
-            {
-                CheckFeatureAvailability(awaitKeyword, MessageID.IDS_FeatureAsyncUsing, diagnostics);
-            }
-
-            Debug.Assert(isUsingDeclaration || usingBinderOpt != null);
-
             bool hasErrors = false;
             ImmutableArray<BoundLocalDeclaration> declarationsOpt = default;
             BoundMultipleLocalDeclarations? multipleDeclarationsOpt = null;
@@ -115,11 +104,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 expressionOpt = usingBinderOpt!.BindTargetExpression(diagnostics, originalBinder);
                 hasErrors |= !bindDisposable(fromExpression: true, out patternDisposeInfo, out awaitableTypeOpt);
-                Debug.Assert(expressionOpt is not null);
-                if (expressionOpt.Type is not null)
-                {
-                    CheckRestrictedTypeInAsyncMethod(originalBinder.ContainingMemberOrLambda, expressionOpt.Type, diagnostics, expressionOpt.Syntax);
-                }
             }
             else
             {
@@ -200,8 +184,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     if (disposeMethod is object)
                     {
                         diagnostics.AddRangeAndFree(patternDiagnostics);
-                        MessageID.IDS_FeatureDisposalPattern.CheckFeatureAvailability(diagnostics, originalBinder.Compilation, syntax.Location);
-
+                        
                         var argumentsBuilder = ArrayBuilder<BoundExpression>.GetInstance(disposeMethod.ParameterCount);
                         ImmutableArray<int> argsToParams = default;
 
@@ -284,12 +267,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
 
                 diagnostics.Add(syntax, useSiteInfo);
-
-                if (needSupportForRefStructInterfaces &&
-                    (fromExpression ? expressionOpt!.Type : declarationTypeOpt)!.ContainingModule != originalBinder.Compilation.SourceModule)
-                {
-                    CheckFeatureAvailability(syntax, MessageID.IDS_FeatureRefStructInterfaces, diagnostics);
-                }
 
                 return result;
             }

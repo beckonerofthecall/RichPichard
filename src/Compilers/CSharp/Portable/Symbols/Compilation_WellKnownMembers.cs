@@ -1040,7 +1040,6 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             internal static void Encode(ArrayBuilder<bool> builder, TypeSymbol type)
             {
-                Debug.Assert(type.ContainingAssembly?.RuntimeSupportsNumericIntPtr != true);
                 type.VisitType((typeSymbol, builder, isNested) => AddFlags(typeSymbol, builder), builder);
             }
 

@@ -1375,10 +1375,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                         }
 
                     case DeclarationModifiers.File:
-                        if ((!IsFeatureEnabled(MessageID.IDS_FeatureFileTypes) || forTopLevelStatements) && !ShouldContextualKeywordBeTreatedAsModifier(parsingStatementNotDeclaration: false))
-                        {
+                        if (forTopLevelStatements && !ShouldContextualKeywordBeTreatedAsModifier(parsingStatementNotDeclaration: false))
                             return;
-                        }
 
                         // LangVersion errors for 'file' modifier are given during binding.
                         modTok = ConvertToKeyword(EatToken());
@@ -1394,14 +1392,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                         break;
 
                     case DeclarationModifiers.Required:
-                        // In C# 11, required in a modifier position is always a keyword if not escaped. Otherwise, we reuse the async detection
-                        // machinery to make a conservative guess as to whether the user meant required to be a keyword, so that they get a good langver
-                        // diagnostic and all the machinery to upgrade their project kicks in. The only exception to this rule is top level statements,
-                        // where the user could conceivably have a local named required. For these locations, we need to disambiguate as well.
-                        if ((!IsFeatureEnabled(MessageID.IDS_FeatureRequiredMembers) || forTopLevelStatements) && !ShouldContextualKeywordBeTreatedAsModifier(parsingStatementNotDeclaration: false))
-                        {
+                        if (forTopLevelStatements && !ShouldContextualKeywordBeTreatedAsModifier(parsingStatementNotDeclaration: false))
                             return;
-                        }
 
                         modTok = ConvertToKeyword(this.EatToken());
 
@@ -1425,11 +1417,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
                 if (token.ContextualKind == SyntaxKind.RecordKeyword)
                 {
-                    // This is an unusual use of LangVersion. Normally we only produce errors when the langversion
-                    // does not support a feature, but in this case we are effectively making a language breaking
-                    // change to consider "record" a type declaration in all ambiguous cases. To avoid breaking
-                    // older code that is not using C# 9 we conditionally parse based on langversion
-                    return IsFeatureEnabled(MessageID.IDS_FeatureRecords);
+                    //For later: Remove
+                    return true;
                 }
 
                 return false;
@@ -1568,11 +1557,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
             if (nextToken.ContextualKind == SyntaxKind.RecordKeyword)
             {
-                // This is an unusual use of LangVersion. Normally we only produce errors when the langversion
-                // does not support a feature, but in this case we are effectively making a language breaking
-                // change to consider "record" a type declaration in all ambiguous cases. To avoid breaking
-                // older code that is not using C# 9 we conditionally parse based on langversion
-                return IsFeatureEnabled(MessageID.IDS_FeatureRecords);
+                //For later: remove
+                return true;
             }
 
             return false;
@@ -2311,11 +2297,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                 case SyntaxKind.IdentifierToken:
                     if (CurrentToken.ContextualKind == SyntaxKind.RecordKeyword)
                     {
-                        // This is an unusual use of LangVersion. Normally we only produce errors when the langversion
-                        // does not support a feature, but in this case we are effectively making a language breaking
-                        // change to consider "record" a type declaration in all ambiguous cases. To avoid breaking
-                        // older code that is not using C# 9 we conditionally parse based on langversion
-                        return IsFeatureEnabled(MessageID.IDS_FeatureRecords);
+                        //For later: Remove.
+                        return true;
                     }
                     return false;
 
@@ -4412,10 +4395,7 @@ parse_member_name:;
         }
 
         private SyntaxToken EatAccessorSemicolon()
-            => this.EatToken(SyntaxKind.SemicolonToken,
-                IsFeatureEnabled(MessageID.IDS_FeatureExpressionBodiedAccessor)
-                    ? ErrorCode.ERR_SemiOrLBraceOrArrowExpected
-                    : ErrorCode.ERR_SemiOrLBraceExpected);
+            => this.EatToken(SyntaxKind.SemicolonToken, ErrorCode.ERR_SemiOrLBraceOrArrowExpected);
 
         private static SyntaxKind GetAccessorKind(SyntaxToken accessorName)
         {
@@ -5694,9 +5674,7 @@ parse_member_name:;
 
         private bool IsCurrentTokenFieldInKeywordContext()
         {
-            return CurrentToken.ContextualKind == SyntaxKind.FieldKeyword &&
-                IsInFieldKeywordContext &&
-                IsFeatureEnabled(MessageID.IDS_FeatureFieldKeyword);
+            return CurrentToken.ContextualKind == SyntaxKind.FieldKeyword && IsInFieldKeywordContext;
         }
 
         private TypeParameterListSyntax ParseTypeParameterList()
@@ -6147,7 +6125,6 @@ parse_member_name:;
             Debug.Assert(this.CurrentToken.Kind == SyntaxKind.LessThanToken);
             var isOpenName = this.IsOpenName();
             open = this.EatToken(SyntaxKind.LessThanToken);
-            open = CheckFeatureAvailability(open, MessageID.IDS_FeatureGenerics);
 
             if (isOpenName)
             {
@@ -8601,11 +8578,7 @@ done:
 
             // There's a special error code for a missing token after an accessor keyword
             CSharpSyntaxNode openBrace = isAccessorBody && this.CurrentToken.Kind != SyntaxKind.OpenBraceToken
-                ? this.AddError(
-                    SyntaxFactory.MissingToken(SyntaxKind.OpenBraceToken),
-                    IsFeatureEnabled(MessageID.IDS_FeatureExpressionBodiedAccessor)
-                        ? ErrorCode.ERR_SemiOrLBraceOrArrowExpected
-                        : ErrorCode.ERR_SemiOrLBraceExpected)
+                ? this.AddError(SyntaxFactory.MissingToken(SyntaxKind.OpenBraceToken), ErrorCode.ERR_SemiOrLBraceOrArrowExpected)
                 : this.EatToken(SyntaxKind.OpenBraceToken);
 
             var statements = _pool.Allocate<StatementSyntax>();
@@ -9463,8 +9436,6 @@ done:
 
         private IfStatementSyntax ParseIfStatement(SyntaxList<AttributeListSyntax> attributes)
         {
-            Debug.Assert(this.CurrentToken.Kind == SyntaxKind.IfKeyword);
-
             var stack = ArrayBuilder<(SyntaxToken, SyntaxToken, ExpressionSyntax, SyntaxToken, StatementSyntax, SyntaxToken)>.GetInstance();
 
             StatementSyntax alternative = null;
@@ -9472,9 +9443,11 @@ done:
             while (true)
             {
                 var ifKeyword = this.EatToken(SyntaxKind.IfKeyword);
-                var openParen = this.EatToken(SyntaxKind.OpenParenToken);
-                var condition = this.ParseExpressionCore();
-                var closeParen = this.EatToken(SyntaxKind.CloseParenToken);
+                //var openParen = this.EatToken(SyntaxKind.OpenParenToken);
+                var openParen = SyntaxFactory.MissingToken(SyntaxKind.OpenParenToken);
+                var condition = ifKeyword != null ? this.ParseExpressionCore() : null;
+                var closeParen = SyntaxFactory.MissingToken(SyntaxKind.CloseParenToken);
+                //var closeParen = this.EatToken(SyntaxKind.CloseParenToken);
                 var consequence = this.ParseEmbeddedStatement();
 
                 var elseKeyword = this.CurrentToken.Kind != SyntaxKind.ElseKeyword ?
@@ -9530,12 +9503,17 @@ done:
         {
             Debug.Assert(this.CurrentToken.Kind == SyntaxKind.ElseKeyword);
 
+
+
+            +
             return _syntaxFactory.IfStatement(
                 attributes,
                 this.EatToken(SyntaxKind.IfKeyword, ErrorCode.ERR_ElseCannotStartStatement),
-                this.EatToken(SyntaxKind.OpenParenToken),
+                //this.EatToken(SyntaxKind.OpenParenToken),
+                SyntaxFactory.MissingToken(SyntaxKind.OpenParenToken),
                 this.ParseExpressionCore(),
-                this.EatToken(SyntaxKind.CloseParenToken),
+                SyntaxFactory.MissingToken(SyntaxKind.CloseParenToken),
+                //this.EatToken(SyntaxKind.CloseParenToken),
                 this.ParseExpressionStatement(attributes: default),
                 this.ParseElseClauseOpt());
         }

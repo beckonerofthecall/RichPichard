@@ -205,12 +205,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 var methodOwner = owner as MethodSymbol;
                 var typeParameters = (object)methodOwner != null ?
-                    methodOwner.TypeParameters :
-                    default(ImmutableArray<TypeParameterSymbol>);
+                    methodOwner.TypeParameters : default;
 
                 Debug.Assert(methodOwner?.MethodKind != MethodKind.LambdaMethod);
-                bool allowShadowingNames = withTypeParametersBinder.Compilation.IsFeatureEnabled(MessageID.IDS_FeatureNameShadowingInNestedFunctions) &&
-                    methodOwner?.MethodKind == MethodKind.LocalFunction;
+                bool allowShadowingNames = methodOwner?.MethodKind == MethodKind.LocalFunction;
 
                 withTypeParametersBinder.ValidateParameterNameConflicts(typeParameters, parameters.Cast<TParameterSymbol, ParameterSymbol>(), allowShadowingNames, diagnostics);
             }
@@ -423,14 +421,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             bool parsingLambdaParams,
             bool parsingAnonymousMethodParams)
         {
-            Debug.Assert(!parsingLambdaParams || !parsingAnonymousMethodParams);
-
             var seenThis = false;
             var seenRef = false;
             var seenOut = false;
             var seenParams = false;
             var seenIn = false;
-            bool seenScoped = false;
             bool seenReadonly = false;
 
             SyntaxToken? previousModifier = null;
@@ -439,180 +434,91 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 switch (modifier.Kind())
                 {
                     case SyntaxKind.ThisKeyword:
-                        Binder.CheckFeatureAvailability(modifier, MessageID.IDS_FeatureExtensionMethod, diagnostics);
-
-                        if (seenRef || seenIn)
-                        {
-                            Binder.CheckFeatureAvailability(modifier, MessageID.IDS_FeatureRefExtensionMethods, diagnostics);
-                        }
 
                         if (parsingLambdaParams || parsingAnonymousMethodParams)
-                        {
                             diagnostics.Add(ErrorCode.ERR_ThisInBadContext, modifier.GetLocation());
-                        }
                         else if (seenThis)
-                        {
                             addERR_DupParamMod(diagnostics, modifier);
-                        }
                         else if (seenOut)
-                        {
                             addERR_BadParameterModifiers(diagnostics, modifier, SyntaxKind.OutKeyword);
-                        }
                         else if (seenParams)
-                        {
                             diagnostics.Add(ErrorCode.ERR_BadParamModThis, modifier.GetLocation());
-                        }
                         else
-                        {
                             seenThis = true;
-                        }
+
                         break;
 
                     case SyntaxKind.RefKeyword:
-                        if (seenThis)
-                        {
-                            Binder.CheckFeatureAvailability(modifier, MessageID.IDS_FeatureRefExtensionMethods, diagnostics);
-                        }
 
                         if (seenRef)
-                        {
                             addERR_DupParamMod(diagnostics, modifier);
-                        }
                         else if (seenParams)
-                        {
                             addERR_ParamsCantBeWithModifier(diagnostics, modifier, SyntaxKind.RefKeyword);
-                        }
                         else if (seenOut)
-                        {
                             addERR_BadParameterModifiers(diagnostics, modifier, SyntaxKind.OutKeyword);
-                        }
                         else if (seenIn)
-                        {
                             addERR_BadParameterModifiers(diagnostics, modifier, SyntaxKind.InKeyword);
-                        }
                         else
-                        {
                             seenRef = true;
-                        }
+
                         break;
 
                     case SyntaxKind.OutKeyword:
                         if (seenOut)
-                        {
                             addERR_DupParamMod(diagnostics, modifier);
-                        }
                         else if (seenThis)
-                        {
                             addERR_BadParameterModifiers(diagnostics, modifier, SyntaxKind.ThisKeyword);
-                        }
                         else if (seenParams)
-                        {
                             addERR_ParamsCantBeWithModifier(diagnostics, modifier, SyntaxKind.OutKeyword);
-                        }
                         else if (seenRef)
-                        {
                             addERR_BadParameterModifiers(diagnostics, modifier, SyntaxKind.RefKeyword);
-                        }
                         else if (seenIn)
-                        {
                             addERR_BadParameterModifiers(diagnostics, modifier, SyntaxKind.InKeyword);
-                        }
                         else
-                        {
                             seenOut = true;
-                        }
+
                         break;
 
                     case SyntaxKind.ParamsKeyword when !parsingFunctionPointerParams:
                         if (parsingAnonymousMethodParams)
-                        {
                             diagnostics.Add(ErrorCode.ERR_IllegalParams, modifier.GetLocation());
-                        }
                         else if (seenParams)
-                        {
                             addERR_DupParamMod(diagnostics, modifier);
-                        }
                         else if (seenThis)
-                        {
                             diagnostics.Add(ErrorCode.ERR_BadParamModThis, modifier.GetLocation());
-                        }
                         else if (seenRef)
-                        {
                             addERR_BadParameterModifiers(diagnostics, modifier, SyntaxKind.RefKeyword);
-                        }
                         else if (seenIn)
-                        {
                             addERR_BadParameterModifiers(diagnostics, modifier, SyntaxKind.InKeyword);
-                        }
                         else if (seenOut)
-                        {
                             addERR_BadParameterModifiers(diagnostics, modifier, SyntaxKind.OutKeyword);
-                        }
                         else
-                        {
                             seenParams = true;
-                        }
 
-                        if (parsingLambdaParams)
-                        {
-                            MessageID.IDS_FeatureLambdaParamsArray.CheckFeatureAvailability(diagnostics, modifier);
-                        }
                         break;
 
                     case SyntaxKind.InKeyword:
-                        Binder.CheckFeatureAvailability(modifier, MessageID.IDS_FeatureReadOnlyReferences, diagnostics);
-
-                        if (seenThis)
-                        {
-                            Binder.CheckFeatureAvailability(modifier, MessageID.IDS_FeatureRefExtensionMethods, diagnostics);
-                        }
 
                         if (seenIn)
-                        {
                             addERR_DupParamMod(diagnostics, modifier);
-                        }
                         else if (seenOut)
-                        {
                             addERR_BadParameterModifiers(diagnostics, modifier, SyntaxKind.OutKeyword);
-                        }
                         else if (seenRef)
-                        {
                             addERR_BadParameterModifiers(diagnostics, modifier, SyntaxKind.RefKeyword);
-                        }
                         else if (seenParams)
-                        {
                             addERR_ParamsCantBeWithModifier(diagnostics, modifier, SyntaxKind.InKeyword);
-                        }
                         else
-                        {
                             seenIn = true;
-                        }
-                        break;
 
-                    case SyntaxKind.ScopedKeyword when !parsingFunctionPointerParams:
-                        ModifierUtils.CheckScopedModifierAvailability(parameter, modifier, diagnostics);
-                        Debug.Assert(!seenIn);
-                        Debug.Assert(!seenOut);
-                        Debug.Assert(!seenRef);
-                        Debug.Assert(!seenScoped);
-
-                        seenScoped = true;
                         break;
 
                     case SyntaxKind.ReadOnlyKeyword:
                         if (seenReadonly)
-                        {
                             addERR_DupParamMod(diagnostics, modifier);
-                        }
                         else if (previousModifier?.Kind() != SyntaxKind.RefKeyword)
-                        {
                             diagnostics.Add(ErrorCode.ERR_RefReadOnlyWrongOrdering, modifier);
-                        }
                         else if (seenRef)
-                        {
-                            Binder.CheckFeatureAvailability(modifier, MessageID.IDS_FeatureRefReadonlyParameters, diagnostics);
                             seenReadonly = true;
-                        }
                         break;
 
                     case SyntaxKind.ParamsKeyword when parsingFunctionPointerParams:

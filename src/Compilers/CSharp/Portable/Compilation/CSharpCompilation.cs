@@ -2045,15 +2045,14 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     foreach (var (IsValid, Candidate, SpecificDiagnostics) in taskEntryPoints)
                     {
-                        if (checkValid(Candidate, IsValid, SpecificDiagnostics) &&
-                            CheckFeatureAvailability(Candidate.ExtractReturnTypeSyntax(), MessageID.IDS_FeatureAsyncMain, diagnostics))
+                        if (checkValid(Candidate, IsValid, SpecificDiagnostics))
                         {
                             diagnostics.AddRange(SpecificDiagnostics);
                             viableEntryPoints.Add(Candidate);
                         }
                     }
                 }
-                else if (LanguageVersion >= MessageID.IDS_FeatureAsyncMain.RequiredVersion() && taskEntryPoints.Count > 0)
+                else if (taskEntryPoints.Count > 0)
                 {
                     var taskCandidates = taskEntryPoints.SelectAsArray(s => (Symbol)s.Candidate);
                     var taskLocations = taskCandidates.SelectAsArray(s => s.GetFirstLocation());
@@ -2966,14 +2965,6 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 CheckAssemblyName(builder.DiagnosticBag);
                 builder.AddRange(Options.Errors);
-
-                if (Options.NullableContextOptions != NullableContextOptions.Disable && LanguageVersion < MessageID.IDS_FeatureNullableReferenceTypes.RequiredVersion() &&
-                    _syntaxAndDeclarations.ExternalSyntaxTrees.Any())
-                {
-                    builder.Add(new CSDiagnostic(new CSDiagnosticInfo(ErrorCode.ERR_NullableOptionNotAvailable,
-                                                 nameof(Options.NullableContextOptions), Options.NullableContextOptions, LanguageVersion.ToDisplayString(),
-                                                 new CSharpRequiredLanguageVersion(MessageID.IDS_FeatureNullableReferenceTypes.RequiredVersion())), Location.None));
-                }
 
                 cancellationToken.ThrowIfCancellationRequested();
 
@@ -4134,7 +4125,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                 elementNames: elementNames,
                 compilation: this,
                 shouldCheckConstraints: false,
-                includeNullability: false,
                 errorPositions: default).GetPublicSymbol();
         }
 
@@ -4681,7 +4671,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal bool ShouldEmitNativeIntegerAttributes()
         {
-            return !Assembly.RuntimeSupportsNumericIntPtr;
+            return false;
         }
 
         internal bool ShouldEmitNullableAttributes(Symbol symbol)
@@ -4801,9 +4791,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return sustainedLowLatency != null && sustainedLowLatency.ContainingAssembly == Assembly.CorLibrary;
             }
         }
-
-        private protected override bool SupportsRuntimeCapabilityCore(RuntimeCapability capability)
-            => this.Assembly.SupportsRuntimeCapability(capability);
 
         private abstract class AbstractSymbolSearcher
         {

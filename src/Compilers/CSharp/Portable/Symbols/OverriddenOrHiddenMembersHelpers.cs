@@ -942,12 +942,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             if (csharpOverriddenMethod == runtimeOverriddenMethod && !wasAmbiguous)
                 return false;
 
-            // See https://github.com/dotnet/roslyn/issues/45453. No need to warn when the runtime
-            // supports covariant returns because any methodimpl we produce to identify the specific
-            // overridden method is unambiguously understood by the runtime.
-            if (method.ContainingAssembly.RuntimeSupportsCovariantReturnsOfClasses)
-                return true;
-
             // If the method was declared as a covariant return, there will be a compile-time error since the runtime
             // does not support covariant returns. In this case we do not warn about runtime ambiguity and pretend that
             // we can use a methodimpl (even though it is of a form not supported by the runtime and would result in a

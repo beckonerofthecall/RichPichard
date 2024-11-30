@@ -25,11 +25,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             var location = syntax.Type.Location;
             string name = OperatorFacts.OperatorNameFromDeclaration(syntax);
 
-            if (name == WellKnownMemberNames.CheckedExplicitConversionName)
-            {
-                MessageID.IDS_FeatureCheckedUserDefinedOperators.CheckFeatureAvailability(diagnostics, syntax.CheckedKeyword);
-            }
-            else if (syntax.CheckedKeyword.IsKind(SyntaxKind.CheckedKeyword))
+            if (name != WellKnownMemberNames.CheckedExplicitConversionName && syntax.CheckedKeyword.IsKind(SyntaxKind.CheckedKeyword))
             {
                 diagnostics.Add(ErrorCode.ERR_ImplicitConversionOperatorCantBeChecked, syntax.CheckedKeyword.GetLocation());
             }
@@ -80,14 +76,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 diagnostics.Add(ErrorCode.ERR_OvlUnaryOperatorExpected, syntax.ParameterList.GetLocation());
             }
-
-            if (IsStatic && (IsAbstract || IsVirtual))
-            {
-                CheckFeatureAvailabilityAndRuntimeSupport(syntax, location, hasBody: syntax.Body != null || syntax.ExpressionBody != null, diagnostics: diagnostics);
-            }
-
-            if (syntax.ExplicitInterfaceSpecifier != null)
-                MessageID.IDS_FeatureStaticAbstractMembersInInterfaces.CheckFeatureAvailability(diagnostics, syntax.ExplicitInterfaceSpecifier);
         }
 
         internal ConversionOperatorDeclarationSyntax GetSyntax()

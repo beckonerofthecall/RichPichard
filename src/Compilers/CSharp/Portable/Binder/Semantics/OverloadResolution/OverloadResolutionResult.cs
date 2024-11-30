@@ -675,19 +675,13 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
                 else
                 {
-                    ErrorCode errorCode =
-                        symbol.RequiresInstanceReceiver()
-                        ? Binder.WasImplicitReceiver(receiverOpt) && binder.InFieldInitializer && !binder.BindingTopLevelScriptCode
-                            ? ErrorCode.ERR_FieldInitRefNonstatic
-                            : ErrorCode.ERR_ObjectRequired
+                    ErrorCode errorCode = symbol.RequiresInstanceReceiver()
+                        ? ErrorCode.ERR_ObjectRequired
                         : ErrorCode.ERR_ObjectProhibited;
                     // error CS0176: Member 'Program.M(B)' cannot be accessed with an instance reference; qualify it with a type name instead
                     //     -or-
                     // error CS0120: An object reference is required for the non-static field, method, or property 'Program.M(B)'
-                    diagnostics.Add(new DiagnosticInfoWithSymbols(
-                        errorCode,
-                        new object[] { symbol },
-                        symbols), location);
+                    diagnostics.Add(new DiagnosticInfoWithSymbols(errorCode, [ symbol ], symbols), location);
                 }
             }
 
@@ -1043,7 +1037,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // is, then just report that error.
 
             MethodSymbol method = (MethodSymbol)(Symbol)result.Member;
-            if (!method.CheckConstraints(new ConstraintsHelper.CheckConstraintsArgs(compilation, conversions, includeNullability: false, location, diagnostics)))
+            if (!method.CheckConstraints(new ConstraintsHelper.CheckConstraintsArgs(compilation, conversions, location, diagnostics)))
             {
                 // The error is already reported into the diagnostics bag.
                 return true;
@@ -1251,8 +1245,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
             else if (refArg != refParameter &&
                 !(refArg == RefKind.None && refParameter == RefKind.In) &&
-                !(refArg == RefKind.Ref && refParameter == RefKind.In && binder.Compilation.IsFeatureEnabled(MessageID.IDS_FeatureRefReadonlyParameters)) &&
-                !(refParameter == RefKind.RefReadOnlyParameter && refArg is RefKind.None or RefKind.Ref or RefKind.In))
+                !(refArg == RefKind.Ref && refParameter == RefKind.In &&
+                !(refParameter == RefKind.RefReadOnlyParameter && refArg is RefKind.None or RefKind.Ref or RefKind.In)))
             {
                 // Special case for 'string literal -> interpolated string handler' for better user experience
                 // Skip if parameter's ref kind is 'out' since it is invalid ref kind for passing interpolated string
@@ -1261,17 +1255,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     // CS9205: Expected interpolated string
                     diagnostics.Add(ErrorCode.ERR_ExpectedInterpolatedString, sourceLocation);
-                }
-                else if (refArg == RefKind.Ref && refParameter == RefKind.In && !binder.Compilation.IsFeatureEnabled(MessageID.IDS_FeatureRefReadonlyParameters))
-                {
-                    //  Argument {0} may not be passed with the 'ref' keyword in language version {1}. To pass 'ref' arguments to 'in' parameters, upgrade to language version {2} or greater.
-                    diagnostics.Add(
-                        ErrorCode.ERR_BadArgExtraRefLangVersion,
-                        sourceLocation,
-                        symbols,
-                        arg + 1,
-                        binder.Compilation.LanguageVersion.ToDisplayString(),
-                        new CSharpRequiredLanguageVersion(MessageID.IDS_FeatureRefReadonlyParameters.RequiredVersion()));
                 }
                 else if (refParameter is RefKind.None or RefKind.In or RefKind.RefReadOnlyParameter)
                 {

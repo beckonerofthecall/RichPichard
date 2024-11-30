@@ -1007,7 +1007,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     Error(diagnostics, ErrorCode.WRN_AddressOfInAsync, node);
                 }
-                else if (this.IsDirectlyInIterator && Compilation.IsFeatureEnabled(MessageID.IDS_FeatureRefUnsafeInIteratorAsync))
+                else if (this.IsDirectlyInIterator)
                 {
                     Error(diagnostics, ErrorCode.ERR_AddressOfInIterator, node);
                 }
@@ -1740,12 +1740,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                             Error(diagnostics, ErrorCode.ERR_AssignmentInitOnly, node, propertySymbol);
                             return false;
                         }
-
-                        if (setMethod.DeclaringCompilation != this.Compilation)
-                        {
-                            // an error would have already been reported on declaring an init-only setter
-                            CheckFeatureAvailability(node, MessageID.IDS_FeatureInitOnlySetters, diagnostics);
-                        }
                     }
 
                     var accessThroughType = this.GetAccessThroughType(receiver);
@@ -1781,7 +1775,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         return false;
                     }
 
-                    CheckReceiverAndRuntimeSupportForSymbolAccess(node, receiver, setMethod, diagnostics);
+                    CheckReceiverForSymbolAccess(node, receiver, setMethod, diagnostics);
                 }
             }
 
@@ -1825,7 +1819,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         return false;
                     }
 
-                    CheckReceiverAndRuntimeSupportForSymbolAccess(node, receiver, getMethod, diagnostics);
+                    CheckReceiverForSymbolAccess(node, receiver, getMethod, diagnostics);
                 }
             }
 

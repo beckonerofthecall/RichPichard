@@ -315,12 +315,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 #nullable enable
         private static void CheckFieldKeywordUsage(SourcePropertySymbolBase property, BindingDiagnosticBag diagnostics)
         {
-            Debug.Assert(property.PartialImplementationPart is null);
-            if (!property.DeclaringCompilation.IsFeatureEnabled(MessageID.IDS_FeatureFieldKeyword))
-            {
-                return;
-            }
-
             SourcePropertyAccessorSymbol? accessorToBlame = null;
             var propertyFlags = property._propertyFlags;
             var getterUsesFieldKeyword = (propertyFlags & Flags.GetterUsesFieldKeyword) != 0;
@@ -910,7 +904,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 // property uses 'field' or has an auto-implemented accessor.
                 !IsSetOnEitherPart(Flags.HasInitializer))
             {
-                diagnostics.Add(ErrorCode.ERR_InterfacesCantContainFields, Location);
+                diagnostics.Add(ErrorCode.WRN_InterfacesCantContainFields, Location);
             }
 
             if (!IsExpressionBodied)
@@ -1558,12 +1552,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
             else if (attribute.IsTargetAttribute(AttributeDescription.MemberNotNullAttribute))
             {
-                MessageID.IDS_FeatureMemberNotNull.CheckFeatureAvailability(diagnostics, arguments.AttributeSyntaxOpt);
                 CSharpAttributeData.DecodeMemberNotNullAttribute<PropertyWellKnownAttributeData>(ContainingType, ref arguments);
             }
             else if (attribute.IsTargetAttribute(AttributeDescription.MemberNotNullWhenAttribute))
             {
-                MessageID.IDS_FeatureMemberNotNull.CheckFeatureAvailability(diagnostics, arguments.AttributeSyntaxOpt);
                 CSharpAttributeData.DecodeMemberNotNullWhenAttribute<PropertyWellKnownAttributeData>(ContainingType, ref arguments);
             }
             else if (attribute.IsTargetAttribute(AttributeDescription.UnscopedRefAttribute))
@@ -1571,11 +1563,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 if (this.IsValidUnscopedRefAttributeTarget())
                 {
                     arguments.GetOrCreateData<PropertyWellKnownAttributeData>().HasUnscopedRefAttribute = true;
-
-                    if (ContainingType.IsInterface || IsExplicitInterfaceImplementation)
-                    {
-                        MessageID.IDS_FeatureRefStructInterfaces.CheckFeatureAvailability(diagnostics, arguments.AttributeSyntaxOpt);
-                    }
                 }
                 else
                 {
@@ -1584,8 +1571,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
             else if (attribute.IsTargetAttribute(AttributeDescription.OverloadResolutionPriorityAttribute))
             {
-                MessageID.IDS_OverloadResolutionPriority.CheckFeatureAvailability(diagnostics, arguments.AttributeSyntaxOpt);
-
                 if (!CanHaveOverloadResolutionPriority)
                 {
                     diagnostics.Add(IsOverride

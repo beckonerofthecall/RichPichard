@@ -48,9 +48,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 out var getSyntax,
                 out var setSyntax);
 
-            Debug.Assert(!(getterUsesFieldKeyword || setterUsesFieldKeyword) ||
-                ((CSharpParseOptions)syntax.SyntaxTree.Options).IsFeatureEnabled(MessageID.IDS_FeatureFieldKeyword));
-
             bool accessorsHaveImplementation = hasGetAccessorImplementation || hasSetAccessorImplementation;
 
             var explicitInterfaceSpecifier = GetExplicitInterfaceSpecifier(syntax);
@@ -140,27 +137,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 location,
                 diagnostics)
         {
-            Debug.Assert(syntax.Type is not ScopedTypeSyntax);
-
-            if (hasAutoPropertyGet || hasAutoPropertySet)
-            {
-                Binder.CheckFeatureAvailability(
-                    syntax,
-                    hasGetAccessor && hasSetAccessor ?
-                        (hasAutoPropertyGet && hasAutoPropertySet ? MessageID.IDS_FeatureAutoImplementedProperties : MessageID.IDS_FeatureFieldKeyword) :
-                        (hasAutoPropertyGet ? MessageID.IDS_FeatureReadonlyAutoImplementedProperties : MessageID.IDS_FeatureAutoImplementedProperties),
-                    diagnostics,
-                    location);
-            }
-
             CheckForBlockAndExpressionBody(
                 syntax.AccessorList,
                 syntax.GetExpressionBodySyntax(),
                 syntax,
                 diagnostics);
-
-            if (syntax is PropertyDeclarationSyntax { Initializer: { } initializer })
-                MessageID.IDS_FeatureAutoPropertyInitializer.CheckFeatureAvailability(diagnostics, initializer.EqualsToken);
         }
 
         internal override void ForceComplete(SourceLocation? locationOpt, Predicate<Symbol>? filter, CancellationToken cancellationToken)
@@ -441,27 +422,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 mods |= defaultAccess;
             }
             else
-            {
                 hasExplicitAccessMod = true;
-            }
-
-            if ((mods & DeclarationModifiers.Partial) != 0)
-            {
-                Debug.Assert(location.SourceTree is not null);
-
-                LanguageVersion availableVersion = ((CSharpParseOptions)location.SourceTree.Options).LanguageVersion;
-                LanguageVersion requiredVersion = MessageID.IDS_FeaturePartialProperties.RequiredVersion();
-                if (availableVersion < requiredVersion)
-                {
-                    ModifierUtils.ReportUnsupportedModifiersForLanguageVersion(mods, DeclarationModifiers.Partial, location, diagnostics, availableVersion, requiredVersion);
-                }
-            }
-
-            ModifierUtils.CheckFeatureAvailabilityForStaticAbstractMembersInInterfacesIfNeeded(mods, isExplicitInterfaceImplementation, location, diagnostics);
-
-            ModifierUtils.ReportDefaultInterfaceImplementationModifiers(accessorsHaveImplementation, mods,
-                                                                        defaultInterfaceImplementationModifiers,
-                                                                        location, diagnostics);
 
             // Let's overwrite modifiers for interface properties with what they are supposed to be.
             // Proper errors must have been reported by now.

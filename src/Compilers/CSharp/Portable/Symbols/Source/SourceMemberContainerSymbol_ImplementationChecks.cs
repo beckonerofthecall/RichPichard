@@ -844,24 +844,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 }
             }
 
-            // Both `ref` and `out` parameters (and `in` too) are implemented as references and are not distinguished by the runtime
-            // when resolving overrides. Similarly, distinctions between types that would map together because of generic substitution
-            // in the derived type where the override appears are the same from the runtime's point of view. In these cases we will
-            // need to produce a methodimpl to disambiguate. See the call to `RequiresExplicitOverride` below. It produces a boolean
-            // `warnAmbiguous` if the methodimpl could be misinterpreted due to a bug in the runtime
-            // (https://github.com/dotnet/runtime/issues/38119) in which case we produce a warning regarding that ambiguity.
-            // See https://github.com/dotnet/roslyn/issues/45453 for details.
-            if (!this.ContainingAssembly.RuntimeSupportsCovariantReturnsOfClasses && overridingMember is MethodSymbol overridingMethod)
-            {
-                overridingMethod.RequiresExplicitOverride(out bool warnAmbiguous);
-                if (warnAmbiguous)
-                {
-                    var ambiguousMethod = overridingMethod.OverriddenMethod;
-                    diagnostics.Add(ErrorCode.WRN_MultipleRuntimeOverrideMatches, ambiguousMethod.GetFirstLocation(), ambiguousMethod, overridingMember);
-                    suppressAccessors = true;
-                }
-            }
-
             return;
 
             void checkSingleOverriddenMember(Symbol overridingMember, Symbol overriddenMember, BindingDiagnosticBag diagnostics, ref bool suppressAccessors)
@@ -997,23 +979,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                                 var discardedUseSiteInfo = CompoundUseSiteInfo<AssemblySymbol>.Discarded;
                                 if (DeclaringCompilation.Conversions.HasIdentityOrImplicitReferenceConversion(overridingMethod.ReturnTypeWithAnnotations.Type, overriddenMethod.ReturnTypeWithAnnotations.Type, ref discardedUseSiteInfo))
                                 {
-                                    if (!overridingMethod.ContainingAssembly.RuntimeSupportsCovariantReturnsOfClasses)
-                                    {
-                                        diagnostics.Add(ErrorCode.ERR_RuntimeDoesNotSupportCovariantReturnsOfClasses, overridingMemberLocation, overridingMember, overriddenMember, overriddenMethod.ReturnType);
-                                    }
-                                    else if (MessageID.IDS_FeatureCovariantReturnsForOverrides.GetFeatureAvailabilityDiagnosticInfo(this.DeclaringCompilation) is { } diagnosticInfo)
-                                    {
-                                        diagnostics.Add(diagnosticInfo, overridingMemberLocation);
-                                    }
-                                    else
-                                    {
-                                        throw ExceptionUtilities.Unreachable();
-                                    }
+                                    //throw ExceptionUtilities.Unreachable();
                                 }
                                 else
                                 {
                                     // error CS0508: return type must be 'C<V>' to match overridden member 'M<T>()'
-                                    diagnostics.Add(ErrorCode.ERR_CantChangeReturnTypeOnOverride, overridingMemberLocation, overridingMember, overriddenMember, overriddenMethod.ReturnType);
+                                    //diagnostics.Add(ErrorCode.ERR_CantChangeReturnTypeOnOverride, overridingMemberLocation, overridingMember, overriddenMember, overriddenMethod.ReturnType);
                                 }
                             }
                         }
@@ -1067,21 +1038,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                             if (overridingProperty.SetMethod is null &&
                                 DeclaringCompilation.Conversions.HasIdentityOrImplicitReferenceConversion(overridingMemberType.Type, overriddenMemberType.Type, ref discardedUseSiteInfo))
                             {
-                                if (!overridingProperty.ContainingAssembly.RuntimeSupportsCovariantReturnsOfClasses)
-                                {
-                                    diagnostics.Add(ErrorCode.ERR_RuntimeDoesNotSupportCovariantPropertiesOfClasses, overridingMemberLocation, overridingMember, overriddenMember, overriddenMemberType.Type);
-                                }
-                                else
-                                {
-                                    var diagnosticInfo = MessageID.IDS_FeatureCovariantReturnsForOverrides.GetFeatureAvailabilityDiagnosticInfo(this.DeclaringCompilation);
-                                    Debug.Assert(diagnosticInfo is { });
-                                    diagnostics.Add(diagnosticInfo, overridingMemberLocation);
-                                }
+
                             }
                             else
                             {
                                 // error CS1715: 'Derived.M': type must be 'object' to match overridden member 'Base.M'
-                                diagnostics.Add(ErrorCode.ERR_CantChangeTypeOnOverride, overridingMemberLocation, overridingMember, overriddenMember, overriddenMemberType.Type);
+                                //diagnostics.Add(ErrorCode.ERR_CantChangeTypeOnOverride, overridingMemberLocation, overridingMember, overriddenMember, overriddenMemberType.Type);
                                 // https://github.com/dotnet/roslyn/issues/44207 when overriddenMemberType.Type is an inheritable reference type and the covariant return
                                 // feature is enabled, and the platform supports it, and there is no setter, we can say it has to be 'object' **or a derived type**.
                                 // That would probably be a new error code.
@@ -1197,20 +1159,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// </summary>
         private bool IsValidOverrideReturnType(Symbol overridingSymbol, TypeWithAnnotations overridingReturnType, TypeWithAnnotations overriddenReturnType, BindingDiagnosticBag diagnostics)
         {
-            if (overridingSymbol.ContainingAssembly.RuntimeSupportsCovariantReturnsOfClasses &&
-                DeclaringCompilation.LanguageVersion >= MessageID.IDS_FeatureCovariantReturnsForOverrides.RequiredVersion())
-            {
-                var useSiteInfo = new CompoundUseSiteInfo<AssemblySymbol>(diagnostics, ContainingAssembly);
-                var result = DeclaringCompilation.Conversions.HasIdentityOrImplicitReferenceConversion(overridingReturnType.Type, overriddenReturnType.Type, ref useSiteInfo);
-                Location symbolLocation = overridingSymbol.TryGetFirstLocation();
-                diagnostics.Add(symbolLocation, useSiteInfo);
+            var useSiteInfo = new CompoundUseSiteInfo<AssemblySymbol>(diagnostics, ContainingAssembly);
+            var result = DeclaringCompilation.Conversions.HasIdentityOrImplicitReferenceConversion(overridingReturnType.Type, overriddenReturnType.Type, ref useSiteInfo);
+            diagnostics.Add(overridingSymbol.TryGetFirstLocation(), useSiteInfo);
 
-                return result;
-            }
-            else
-            {
-                return overridingReturnType.Equals(overriddenReturnType, TypeCompareKind.AllIgnoreOptions);
-            }
+            return result;
         }
 
         private static readonly ReportMismatchInReturnType<Location> ReportBadReturn =
@@ -1523,8 +1476,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // the override is not written directly in source
             return overriddenMember is object &&
                    overridingMember is object &&
-                   compilation is object &&
-                   compilation.IsFeatureEnabled(MessageID.IDS_FeatureNullableReferenceTypes);
+                   compilation is object;
         }
 
         internal static void CheckValidNullableEventOverride<TArg>(
@@ -1794,7 +1746,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             foreach (Diagnostic diagnostic in implementingMemberAndDiagnostics.Diagnostics.Diagnostics)
             {
-                if (diagnostic.Severity == DiagnosticSeverity.Error && diagnostic.Code is not ((int)ErrorCode.ERR_ImplicitImplementationOfNonPublicInterfaceMember or (int)ErrorCode.ERR_ImplicitImplementationOfInaccessibleInterfaceMember))
+                if (diagnostic.Severity == DiagnosticSeverity.Error) //&& diagnostic.Code is not ((int)ErrorCode.ERR_ImplicitImplementationOfNonPublicInterfaceMember or (int)ErrorCode.ERR_ImplicitImplementationOfInaccessibleInterfaceMember))
                 {
                     return default;
                 }

@@ -19,6 +19,11 @@ namespace Microsoft.CodeAnalysis.CSharp
         private ConcurrentSet<AssemblySymbol>? _lazyUsedAssemblyReferences;
         private bool _usedAssemblyReferencesFrozen;
 
+        internal bool ShouldEmitNativeIntegerAttributes(TypeSymbol type)
+        {
+            return this.ShouldEmitNativeIntegerAttributes() && type.ContainsNativeIntegerWrapperType();
+        }
+
         public override ImmutableArray<MetadataReference> GetUsedAssemblyReferences(CancellationToken cancellationToken = default)
         {
             ConcurrentSet<AssemblySymbol>? usedAssemblies = GetCompleteSetOfUsedAssemblies(cancellationToken);

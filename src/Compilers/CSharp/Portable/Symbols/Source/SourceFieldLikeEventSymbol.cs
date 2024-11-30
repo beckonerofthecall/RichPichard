@@ -94,17 +94,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 if ((IsAbstract || IsVirtual) && IsStatic)
                 {
-                    if (!ContainingAssembly.RuntimeSupportsStaticAbstractMembersInInterfaces)
-                    {
-                        diagnostics.Add(ErrorCode.ERR_RuntimeDoesNotSupportStaticAbstractMembersInInterfaces, this.GetFirstLocation());
-                    }
+
                 }
                 else if (this.IsExtern || this.IsStatic)
                 {
-                    if (!ContainingAssembly.RuntimeSupportsDefaultInterfaceImplementation)
-                    {
-                        diagnostics.Add(ErrorCode.ERR_RuntimeDoesNotSupportDefaultInterfaceImplementation, this.GetFirstLocation());
-                    }
+
                 }
                 else if (!this.IsAbstract)
                 {

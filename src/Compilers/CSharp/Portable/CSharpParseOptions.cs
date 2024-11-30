@@ -234,12 +234,6 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             ValidateOptions(builder, MessageProvider.Instance);
 
-            // Validate LanguageVersion not SpecifiedLanguageVersion, after Latest/Default has been converted:
-            if (!LanguageVersion.IsValid())
-            {
-                builder.Add(Diagnostic.Create(MessageProvider.Instance, (int)ErrorCode.ERR_BadLanguageVersion, LanguageVersion.ToString()));
-            }
-
             if (!PreprocessorSymbols.IsDefaultOrEmpty)
             {
                 foreach (var symbol in PreprocessorSymbols)
@@ -254,18 +248,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
                 }
             }
-        }
-
-        internal bool IsFeatureEnabled(MessageID feature)
-        {
-            string? featureFlag = feature.RequiredFeature();
-            if (featureFlag != null)
-            {
-                return Features.ContainsKey(featureFlag);
-            }
-            LanguageVersion availableVersion = LanguageVersion;
-            LanguageVersion requiredVersion = feature.RequiredVersion();
-            return availableVersion >= requiredVersion;
         }
 
         public override bool Equals(object? obj)

@@ -503,12 +503,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             var mods = ModifierUtils.MakeAndCheckNonTypeMemberModifiers(isOrdinaryMethod: false, isForInterfaceMember: isInterface,
                                                                         modifiers, defaultAccess, allowedModifiers, location, diagnostics, out modifierErrors);
 
-            ModifierUtils.CheckFeatureAvailabilityForStaticAbstractMembersInInterfacesIfNeeded(mods, explicitInterfaceImplementation, location, diagnostics);
-
-            ModifierUtils.ReportDefaultInterfaceImplementationModifiers(!isFieldLike, mods,
-                                                                        defaultInterfaceImplementationModifiers,
-                                                                        location, diagnostics);
-
             // Let's overwrite modifiers for interface events with what they are supposed to be. 
             // Proper errors must have been reported by now.
             if (isInterface)

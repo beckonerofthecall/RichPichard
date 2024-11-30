@@ -213,8 +213,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                         constraints |= TypeParameterConstraintKind.Constructor;
                         continue;
                     case SyntaxKind.DefaultConstraint:
-                        CheckFeatureAvailability(syntax, MessageID.IDS_FeatureDefaultTypeParameterConstraint, diagnostics);
-
                         if (!isForOverride)
                         {
                             diagnostics.Add(ErrorCode.ERR_DefaultConstraintOverrideOnly, syntax.GetLocation());
@@ -316,13 +314,6 @@ namespace Microsoft.CodeAnalysis.CSharp
                                 }
                                 else
                                 {
-                                    CheckFeatureAvailability(allowsConstraint, MessageID.IDS_FeatureAllowsRefStructConstraint, diagnostics);
-
-                                    if (!Compilation.Assembly.RuntimeSupportsByRefLikeGenerics)
-                                    {
-                                        Error(diagnostics, ErrorCode.ERR_RuntimeDoesNotSupportByRefLikeGenerics, allowsConstraint);
-                                    }
-
                                     constraints |= TypeParameterConstraintKind.AllowByRefLike;
                                     hasRefStructConstraint = true;
                                 }
@@ -562,15 +553,6 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 switch (type.SpecialType)
                 {
-                    case SpecialType.System_Enum:
-                        CheckFeatureAvailability(syntax, MessageID.IDS_FeatureEnumGenericTypeConstraint, diagnostics);
-                        break;
-
-                    case SpecialType.System_Delegate:
-                    case SpecialType.System_MulticastDelegate:
-                        CheckFeatureAvailability(syntax, MessageID.IDS_FeatureDelegateGenericTypeConstraint, diagnostics);
-                        break;
-
                     case SpecialType.System_Object:
                     case SpecialType.System_ValueType:
                     case SpecialType.System_Array:

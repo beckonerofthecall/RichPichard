@@ -216,13 +216,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             get { return Accessibility.Private; }
         }
 
-        public override ImmutableArray<Location> Locations
-        {
-            get
-            {
-                return ImmutableArray.Create<Location>(_syntax.Location);
-            }
-        }
+        public override ImmutableArray<Location> Locations => [_syntax.Location];
 
         /// <summary>
         /// GetFirstLocation() on lambda symbols covers the entire syntax, which is inconvenient but remains for compatibility.
@@ -243,22 +237,16 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private bool HasExplicitReturnType => _syntax is ParenthesizedLambdaExpressionSyntax { ReturnType: not null };
 
-        public override ImmutableArray<SyntaxReference> DeclaringSyntaxReferences
-        {
-            get
-            {
-                return ImmutableArray.Create<SyntaxReference>(syntaxReferenceOpt);
-            }
-        }
+        public override ImmutableArray<SyntaxReference> DeclaringSyntaxReferences => [syntaxReferenceOpt];
 
         public override Symbol ContainingSymbol
         {
             get { return _containingSymbol; }
         }
 
-        internal override Microsoft.Cci.CallingConvention CallingConvention
+        internal override Cci.CallingConvention CallingConvention
         {
-            get { return Microsoft.Cci.CallingConvention.Default; }
+            get { return Cci.CallingConvention.Default; }
         }
 
         public override bool IsExtensionMethod

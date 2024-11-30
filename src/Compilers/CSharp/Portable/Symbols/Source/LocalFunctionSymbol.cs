@@ -48,7 +48,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             _declarationModifiers =
                 DeclarationModifiers.Private |
-                syntax.Modifiers.ToDeclarationModifiers(isForTypeDeclaration: false, diagnostics: _declarationDiagnostics);
+                syntax.Modifiers.ToDeclarationModifiers(diagnostics: _declarationDiagnostics);
 
             var diagnostics = BindingDiagnosticBag.GetInstance();
             Debug.Assert(diagnostics.DiagnosticBag is { });
@@ -71,12 +71,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             if (IsExtensionMethod)
             {
-                _declarationDiagnostics.Add(ErrorCode.ERR_BadExtensionAgg, GetFirstLocation());
-            }
-
-            foreach (var param in syntax.ParameterList.Parameters)
-            {
-                ReportAttributesDisallowed(param.AttributeLists, diagnostics);
+                _declarationDiagnostics.Add(ErrorCode.ERR_BadExtensionMeth, GetFirstLocation());
             }
 
             syntax.ReturnType.SkipRefInLocalOrReturn(diagnostics, out _refKind);
@@ -390,18 +385,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             return true;
         }
 
-        private void ReportAttributesDisallowed(SyntaxList<AttributeListSyntax> attributes, BindingDiagnosticBag diagnostics)
-        {
-            var diagnosticInfo = MessageID.IDS_FeatureLocalFunctionAttributes.GetFeatureAvailabilityDiagnosticInfo((CSharpParseOptions)syntaxReferenceOpt.SyntaxTree.Options);
-            if (diagnosticInfo is object)
-            {
-                foreach (var attrList in attributes)
-                {
-                    diagnostics.Add(diagnosticInfo, attrList.Location);
-                }
-            }
-        }
-
         private ImmutableArray<SourceMethodTypeParameterSymbol> MakeTypeParameters(BindingDiagnosticBag diagnostics)
         {
             var result = ArrayBuilder<SourceMethodTypeParameterSymbol>.GetInstance();
@@ -413,9 +396,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 {
                     diagnostics.Add(ErrorCode.ERR_IllegalVarianceSyntax, parameter.VarianceKeyword.GetLocation());
                 }
-
-                ReportAttributesDisallowed(parameter.AttributeLists, diagnostics);
-
                 var identifier = parameter.Identifier;
                 var location = identifier.GetLocation();
                 var name = identifier.ValueText ?? "";

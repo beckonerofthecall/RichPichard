@@ -3941,23 +3941,11 @@ namespace Microsoft.CodeAnalysis.CSharp
         }
 
 #nullable enable
-        private bool IsFeatureFirstClassSpanEnabled
-        {
-            get
-            {
-                // Note: when Compilation is null, we assume latest LangVersion.
-                return Compilation?.IsFeatureEnabled(MessageID.IDS_FeatureFirstClassSpan) != false;
-            }
-        }
 
         private bool HasImplicitSpanConversion(TypeSymbol? source, TypeSymbol destination, ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo)
         {
-            if (source is null || !IsFeatureFirstClassSpanEnabled)
-            {
-                return false;
-            }
+            if (source is null) return false;
 
-            // SPEC: From any single-dimensional `array_type` with element type `Ei`...
             if (source is ArrayTypeSymbol { IsSZArray: true, ElementTypeWithAnnotations: { } elementType })
             {
                 // SPEC: ...to `System.Span<Ei>`.
@@ -4015,11 +4003,6 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </remarks>
         private bool HasExplicitSpanConversion(TypeSymbol? source, TypeSymbol destination, ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo)
         {
-            if (!IsFeatureFirstClassSpanEnabled)
-            {
-                return false;
-            }
-
             // SPEC: From any single-dimensional `array_type` with element type `Ti`
             // to `System.Span<Ui>` or `System.ReadOnlySpan<Ui>`
             // provided an explicit reference conversion exists from `Ti` to `Ui`.

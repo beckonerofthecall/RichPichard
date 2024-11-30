@@ -1920,9 +1920,6 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
 
         internal NamedTypeSymbol EnsureInlineArrayTypeExists(SyntaxNode syntaxNode, SyntheticBoundNodeFactory factory, int arrayLength, DiagnosticBag diagnostics)
         {
-            Debug.Assert(Compilation.Assembly.RuntimeSupportsInlineArrayTypes);
-            Debug.Assert(arrayLength > 0);
-
             string typeName = GeneratedNames.MakeSynthesizedInlineArrayName(arrayLength, CurrentGenerationOrdinal);
             var privateImplClass = GetPrivateImplClass(syntaxNode, diagnostics).PrivateImplementationDetails;
             var typeAdapter = privateImplClass.GetSynthesizedType(typeName);
