@@ -1829,11 +1829,24 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                             implementingType,
                             invokedAsExtensionMethod: false);
 
-                        if (implementingMethod.HasUnscopedRefAttributeOnMethodOrProperty() && !implementedMethod.HasUnscopedRefAttributeOnMethodOrProperty())
-                            diagnostics.Add(
-                                ErrorCode.ERR_UnscopedRefAttributeInterfaceImplementation,
-                                GetImplicitImplementationDiagnosticLocation(implementedMethod, implementingType, implementingMethod),
-                                implementedMethod);
+                        if (implementingMethod.HasUnscopedRefAttributeOnMethodOrProperty())
+                        {
+                            if (implementedMethod.HasUnscopedRefAttributeOnMethodOrProperty())
+                            {
+                                if (!implementingMethod.IsExplicitInterfaceImplementation && implementingMethod is SourceMethodSymbol &&
+                                    implementedMethod.ContainingModule != implementingMethod.ContainingModule)
+                                {
+                                    checkRefStructInterfacesFeatureAvailabilityOnUnscopedRefAttribute(implementingMethod.HasUnscopedRefAttribute ? implementingMethod : implementingMethod.AssociatedSymbol, diagnostics);
+                                }
+                            }
+                            else
+                            {
+                                diagnostics.Add(
+                                    ErrorCode.ERR_UnscopedRefAttributeInterfaceImplementation,
+                                    GetImplicitImplementationDiagnosticLocation(implementedMethod, implementingType, implementingMethod),
+                                    implementedMethod);
+                            }
+                        }
                     }
 
                     switch (interfaceMember.Kind)

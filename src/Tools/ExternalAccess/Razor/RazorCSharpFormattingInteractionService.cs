@@ -45,7 +45,7 @@ namespace Microsoft.CodeAnalysis.ExternalAccess.Razor
                 return ImmutableArray<TextChange>.Empty;
             }
 
-            var formattingOptions = GetFormattingOptions(indentationOptions);
+            var formattingOptions = GetFormattingOptions(document.Project.Solution.Services, indentationOptions);
             var roslynIndentationOptions = new IndentationOptions(formattingOptions)
             {
                 AutoFormattingOptions = autoFormattingOptions.UnderlyingObject,
@@ -63,7 +63,7 @@ namespace Microsoft.CodeAnalysis.ExternalAccess.Razor
             CancellationToken cancellationToken)
         {
             Contract.ThrowIfFalse(root.Language is LanguageNames.CSharp);
-            return Formatter.GetFormattedTextChanges(root, span, services.SolutionServices, GetFormattingOptions(indentationOptions), cancellationToken);
+            return Formatter.GetFormattedTextChanges(root, span, services.SolutionServices, GetFormattingOptions(services.SolutionServices, indentationOptions), cancellationToken);
         }
 
         public static SyntaxNode Format(
@@ -73,13 +73,19 @@ namespace Microsoft.CodeAnalysis.ExternalAccess.Razor
             CancellationToken cancellationToken)
         {
             Contract.ThrowIfFalse(root.Language is LanguageNames.CSharp);
-            return Formatter.Format(root, services.SolutionServices, GetFormattingOptions(indentationOptions), cancellationToken: cancellationToken);
+            return Formatter.Format(root, services.SolutionServices, GetFormattingOptions(services.SolutionServices, indentationOptions), cancellationToken: cancellationToken);
         }
 
-        private static SyntaxFormattingOptions GetFormattingOptions(RazorIndentationOptions indentationOptions)
-            => new CSharpSyntaxFormattingOptions()
+        private static SyntaxFormattingOptions GetFormattingOptions(SolutionServices services, RazorIndentationOptions indentationOptions)
+        {
+            var legacyOptionsService = services.GetService<ILegacyGlobalOptionsWorkspaceService>();
+            var formattingOptions = legacyOptionsService is null
+                ? new CSharpSyntaxFormattingOptions()
+                : legacyOptionsService.GetSyntaxFormattingOptions(services.GetLanguageServices(LanguageNames.CSharp));
+
+            return formattingOptions with
             {
-                LineFormatting = new()
+                LineFormatting = formattingOptions.LineFormatting with
                 {
                     UseTabs = indentationOptions.UseTabs,
                     TabSize = indentationOptions.TabSize,
@@ -87,5 +93,6 @@ namespace Microsoft.CodeAnalysis.ExternalAccess.Razor
                     NewLine = CSharpSyntaxFormattingOptions.Default.NewLine
                 }
             };
+        }
     }
 }
