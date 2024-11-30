@@ -203,7 +203,7 @@ internal sealed partial class AttributeSignatureHelpProvider : AbstractCSharpSig
         {
             return
             [
-                new SymbolDisplayPart(SymbolDisplayPartKind.Text, null, CSharpFeaturesResources.Properties),
+                new SymbolDisplayPart(SymbolDisplayPartKind.Text, null, FeaturesResources.Properties),
                 Punctuation(SyntaxKind.ColonToken),
                 Space()
             ];
